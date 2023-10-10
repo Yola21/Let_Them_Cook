@@ -1,6 +1,7 @@
 package com.letscook.cook.controller;
 
 import com.letscook.cook.model.Cook;
+import com.letscook.cook.model.UpdateCookProfileInput;
 import com.letscook.cook.repository.CookRepository;
 import com.letscook.cook.service.CookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,10 @@ public class CookController {
     @Autowired
     private CookService cookService;
 
-    @Autowired
-    private CookRepository cookRepository;
-
     @GetMapping()
     public List<Cook> getCook() {
-        System.out.println("get mapping called");
-        return cookRepository.findAll();}
+        return cookService.getCooks();
+    }
 
     @GetMapping("/{id}")
     public Cook getCook(@PathVariable() Long id){
@@ -32,12 +30,16 @@ public class CookController {
 
     @PostMapping("/createProfile")
     public ResponseEntity<Cook> createCookProfile(@RequestBody() Cook cook){
-        System.out.println(cook);
         return cookService.createCookProfile(cook);
     }
 
     @GetMapping("/pendingCooks")
     public List<Cook> getAllPendingCooks(){
         return cookService.getAllPendingCook();
+    }
+
+    @PostMapping("/updateProfile")
+    public ResponseEntity<Cook> updateCookProfile(@RequestBody() UpdateCookProfileInput updateCookProfileInput){
+        return cookService.updateCookProfile(updateCookProfileInput);
     }
 }
