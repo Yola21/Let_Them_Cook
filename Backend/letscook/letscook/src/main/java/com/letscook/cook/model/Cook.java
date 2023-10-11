@@ -31,9 +31,12 @@ public class Cook {
     private String status;
 
     @Column(name = "address", nullable = true)
-    private  String address;
+    private String address;
 
     @Column(name = "profile_photo", nullable = true)
-    private  String profilePhoto;
+    private String profilePhoto;
+
+    @Column(name = "business_document", nullable = true)
+    private String businessDocument;
 
 }
