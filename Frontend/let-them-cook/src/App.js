@@ -1,9 +1,10 @@
 import './App.css';
+import Login from './Authentication/Login';
 
 function App() {
   return (
     <div className="App">  
-      Let Them Cook
+      <Login />
     </div>
   );
 }
