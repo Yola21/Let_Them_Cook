@@ -6,9 +6,16 @@
     background-repeat: no-repeat;
     background-size: cover;
 }
-    
-.rightItem {
-    padding: 2rem;
+
+.logoDiv{
+    background: linear-gradient(180deg, #f58319, #f5195b);
+    padding: 1rem;
+    border-radius: 50%;
+}
+
+.logo{
+    width: 3rem;
+    height: 3rem;
 }
   
 .signin {
@@ -20,4 +27,12 @@
     height: 50%;
     padding: 1rem 3rem 10rem 3rem;
     background-color: rgb(255, 255, 255, 0.5);
+}
+
+.actionButton{
+    background: linear-gradient(180deg, #f58319, #f5195b);
+}
+
+.cookingPicture{
+    border-radius: 1rem;
 }

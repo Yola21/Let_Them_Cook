@@ -2,13 +2,15 @@ import React from 'react';
 import cooking from './images/cooking.jpg';
 import Grid from '@mui/material/Grid';
 import './Login.css';
-import { Avatar, Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 
 function Login() {
   return (
     <Grid container className='mainContainer'>
       <Grid item xs={12} container justifyContent='center' alignItems='center' marginTop={2}>
-        <Avatar src={cooking} alt='Let Them Cook' sx={{ width: 100, height: 100 }} />
+        <div className='logoDiv'>
+          <img src="/logo.png" alt="Let Them Cook" className='logo' />
+        </div>
         <div>
           <Typography variant='h5'>Let Them</Typography>
           <Typography variant='h3'>Cook</Typography>
@@ -20,13 +22,13 @@ function Login() {
             <Typography variant='h4'>Late To School?</Typography>
             <Typography>Order food from favorite cooks near by.</Typography> 
           </Grid>
-          <Grid item marginTop='0'>
-            <img src={cooking} alt='Let Them Cook'/>
+          <Grid item>
+            <img src={cooking} alt='Let Them Cook' className='cookingPicture'/>
           </Grid>
         </Grid>
         <Grid item xs={6} container className='rightItem' alignItems='center' justifyContent='center'>
           <div className='signin'>
-            <Typography marginBottom='3rem'>Sign In</Typography>
+            <Typography marginBottom='3rem' variant='h5'>Sign In</Typography>
             <Box
               component="form"
               sx={{
@@ -49,8 +51,11 @@ function Login() {
                 sx={{ marginBottom: '3rem' }}
               />
 
-              <Button variant='contained'>Login</Button>
-              <Button>Forgot Password?</Button>
+              <Button variant='contained' className='actionButton'>Login</Button>
+              <Button sx={{ color: '#f5195b' }}>Forgot Password?</Button>
+              <Button variant="contained" sx={{ marginTop: '2rem' }} className='actionButton'>Register As a Cook</Button>
+              <Typography>OR</Typography>
+              <Button variant="contained" className='actionButton'>Register As a Customer</Button>
             </Box>
             </div>
         </Grid>
