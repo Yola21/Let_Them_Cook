@@ -1,12 +1,13 @@
 package com.letscook.userdetails.repository;
 
-import com.letscook.userdetails.model.UserDetails;
+import com.letscook.userdetails.model.UserInfo;
+import com.letscook.userdetails.model.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface UserDetailsRepository extends JpaRepository<UserDetails, Long> {
+public interface UserDetailsRepository extends JpaRepository<UserInfo, Long> {
 
-    List<UserDetails> findByEmail(String email);
-    List<UserDetails> findByEmailAndPassword(String email,String password);
+    List<UserInfo> findByEmail(String email);
+    List<UserInfo> findByEmailAndPassword(String email,String password);
 }
