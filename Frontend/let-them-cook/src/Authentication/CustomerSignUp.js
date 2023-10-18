@@ -42,18 +42,21 @@ function CustomerSignUp() {
                 required
                 id="outlined-required"
                 label="Email"
+                type='email'
                 sx={{ marginBottom: '1rem' }}
               />
               <TextField
                 required
                 id="outlined-disabled"
                 label="Password"
+                type='password'
                 sx={{ marginBottom: '1rem' }}
               />
               <TextField
                 required
                 id="outlined-disabled"
                 label="Confirm Password"
+                type='password'
                 sx={{ marginBottom: '3rem' }}
               />
 

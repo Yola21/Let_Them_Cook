@@ -2,7 +2,7 @@ import React from 'react';
 import cooking from './images/cooking.jpg';
 import Grid from '@mui/material/Grid';
 import './Login.css';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, Input, TextField, Typography } from '@mui/material';
 
 function CookSignUp() {
   return (
@@ -26,9 +26,9 @@ function CookSignUp() {
             <img src={cooking} alt='Let Them Cook' className='cookingPicture'/>
           </Grid>
         </Grid>
-        <Grid item xs={6} container className='rightItem' alignItems='center' justifyContent='center'>
+        <Grid item xs={6} container className='rightItem' alignItems='flex-start' justifyContent='center'>
           <div className='signin'>
-            <Typography marginBottom='3rem' variant='h5'>Customer Sign Up</Typography>
+            <Typography marginBottom='0.5rem' variant='h5'>Cook Sign Up</Typography>
             <Box
               component="form"
               sx={{
@@ -43,20 +43,37 @@ function CookSignUp() {
                 id="outlined-required"
                 label="Email"
                 sx={{ marginBottom: '1rem' }}
+                type='email'
               />
               <TextField
                 required
                 id="outlined-disabled"
                 label="Password"
                 sx={{ marginBottom: '1rem' }}
-              />
+                type='password'
+                />
               <TextField
                 required
                 id="outlined-disabled"
                 label="Confirm Password"
-                sx={{ marginBottom: '3rem' }}
+                type='password'
+                sx={{ marginBottom: '1rem' }}
               />
-
+              <TextField
+                required
+                id="outlined-disabled"
+                label="Phone Number"
+                type='tel'
+                sx={{ marginBottom: '1rem' }}
+              />
+              <TextField
+                required
+                id="outlined-disabled"
+                label="Business Name"
+                sx={{ marginBottom: '1rem' }}
+              />
+              <Typography>Upload Your Business Verification Document: </Typography>
+              <Input type='file' disableUnderline="true" sx={{ marginBottom: '3rem' }} />
               <Button variant='contained' className='actionButton'>Sign Up</Button>
              </Box>
             </div>
