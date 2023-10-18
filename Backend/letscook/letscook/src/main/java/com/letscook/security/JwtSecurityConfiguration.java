@@ -5,28 +5,20 @@ import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPublicKey;
 import java.util.UUID;
 
-import javax.sql.DataSource;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.nimbusds.jose.JOSEException;
@@ -43,20 +35,16 @@ public class JwtSecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests(
-                auth -> {
-                    auth.requestMatchers(HttpMethod.POST, "/createuser").permitAll().
-                    requestMatchers(HttpMethod.POST, "/getuser").permitAll()//.hasAuthority("SCOPE_cook")
-                            .anyRequest().authenticated();
-                });
+        http.authorizeHttpRequests(auth -> {
+            auth.requestMatchers(HttpMethod.POST, "/register").permitAll().
+                    requestMatchers(HttpMethod.POST, "/login").permitAll()//.hasAuthority("SCOPE_cook")
+                    .requestMatchers(HttpMethod.GET, "/hello").hasAuthority("SCOPE_cook")
+                    .anyRequest().authenticated();
+        });
 
-        http.sessionManagement(
-                session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS)
-        );
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.httpBasic();
+        //http.httpBasic();
 
         http.csrf().disable();
 
@@ -64,34 +52,16 @@ public class JwtSecurityConfiguration {
 
         http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 
-        System.out.println("Security");
-
         return http.build();
     }
-
-//    @Bean
-//    public DataSource dataSource() {
-//        return new EmbeddedDatabaseBuilder()
-//                .setType(EmbeddedDatabaseType.H2)
-//                .addScript(JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION)
-//                .build();
-//    }
 
     @Bean
     public UserDetailsService userDetailService() {
 
-        var user = User.withUsername("in28minutes")
-                //.password("{noop}dummy")
-                .password(passwordEncoder().encode("password"))
-                .roles("USER")
-                .build();
+        var user = User.withUsername("in28minutes").password(passwordEncoder().encode("password")).roles("USER").build();
 
 
-        var admin = User.withUsername("admin")
-                //.password("{noop}dummy")
-                .password(passwordEncoder().encode("password"))
-                .roles("ADMIN")
-                .build();
+        var admin = User.withUsername("admin").password(passwordEncoder().encode("password")).roles("ADMIN").build();
 
         return new InMemoryUserDetailsManager(user, admin);
     }
@@ -115,11 +85,7 @@ public class JwtSecurityConfiguration {
     @Bean
     public RSAKey rsaKey(KeyPair keyPair) {
 
-        return new RSAKey
-                .Builder((RSAPublicKey) keyPair.getPublic())
-                .privateKey(keyPair.getPrivate())
-                .keyID(UUID.randomUUID().toString())
-                .build();
+        return new RSAKey.Builder((RSAPublicKey) keyPair.getPublic()).privateKey(keyPair.getPrivate()).keyID(UUID.randomUUID().toString()).build();
     }
 
     @Bean
@@ -132,9 +98,7 @@ public class JwtSecurityConfiguration {
 
     @Bean
     public JwtDecoder jwtDecoder(RSAKey rsaKey) throws JOSEException {
-        return NimbusJwtDecoder
-                .withPublicKey(rsaKey.toRSAPublicKey())
-                .build();
+        return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
 
     }
 

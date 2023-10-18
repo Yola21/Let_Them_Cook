@@ -43,4 +43,5 @@ public class JwtAuthenticationResource {
     }
 }
 
-record JwtRespose(String token) {}
+record JwtRespose(String token) {
+}

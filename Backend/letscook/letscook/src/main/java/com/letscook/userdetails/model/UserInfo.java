@@ -1,4 +1,5 @@
 package com.letscook.userdetails.model;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import lombok.Getter;

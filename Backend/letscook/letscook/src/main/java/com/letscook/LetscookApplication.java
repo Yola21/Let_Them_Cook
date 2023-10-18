@@ -19,7 +19,6 @@ public class LetscookApplication {
 
 //	@Bean
 //	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//		System.out.println("Security");
 //		http.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest()
 //						.authenticated())
 //				.httpBasic(withDefaults())
