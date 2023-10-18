@@ -66,4 +66,4 @@ function CookSignUp() {
   );
 }
 
-export default CustomerSignUp;
+export default CookSignUp;
