@@ -1,10 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import cooking from './images/cooking.jpg';
 import Grid from '@mui/material/Grid';
 import './Login.css';
 import { Box, Button, TextField, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { userLogin } from './authSlice';
 
 function Login() {
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const dispatch = useDispatch();
+
+  const onChangeEmail = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const onChangePassword = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleLogin = async () => {
+      await dispatch(userLogin({
+        email: email,
+        password: password
+      }));
+
+  };
+
   return (
     <Grid container className='mainContainer'>
       <Grid item xs={12} container justifyContent='center' alignItems='center' marginTop={2}>
@@ -43,6 +66,8 @@ function Login() {
                 id="outlined-required"
                 label="Email"
                 type='email'
+                value={email}
+                onChange={onChangeEmail}
                 sx={{ marginBottom: '1rem' }}
               />
               <TextField
@@ -50,14 +75,20 @@ function Login() {
                 id="outlined-disabled"
                 label="Password"
                 type='password'
+                value={password}
+                onChange={onChangePassword}
                 sx={{ marginBottom: '3rem' }}
               />
 
-              <Button variant='contained' className='actionButton'>Login</Button>
+              <Button variant='contained' className='actionButton' onClick={handleLogin} disabled={ email == null || password == null } >Login</Button>
               <Button sx={{ color: '#f5195b' }}>Forgot Password?</Button>
-              <Button variant="contained" sx={{ marginTop: '2rem' }} className='actionButton'>Register As a Cook</Button>
+              <Link to='/cook/signup'>
+                <Button fullWidth variant="contained" sx={{ marginTop: '2rem' }} className='actionButton'>Register As a Cook</Button>
+              </Link>
               <Typography>OR</Typography>
-              <Button variant="contained" className='actionButton'>Register As a Customer</Button>
+              <Link to='/customer/signup'>
+                <Button variant="contained" className='actionButton'>Register As a Customer</Button>
+              </Link>
             </Box>
             </div>
         </Grid>
