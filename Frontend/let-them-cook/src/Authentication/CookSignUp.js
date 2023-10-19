@@ -1,10 +1,58 @@
-import React from 'react';
+import React, { useState } from 'react';
 import cooking from './images/cooking.jpg';
 import Grid from '@mui/material/Grid';
 import './Login.css';
 import { Box, Button, Input, TextField, Typography } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
+import { createUser } from './authSlice';
 
 function CookSignUp() {
+  const [name, setName] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState(null);
+  const [businessName, setBusinessName] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState(null);
+  const dispatch = useDispatch();
+  const location = useLocation();
+  
+  const userRole = location.pathname.split('/')[1];
+
+  const onNameChange = (e) => {
+    setName(e.target.value);
+  };
+
+  const onEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const onPhoneNumberChange = (e) => {
+    setPhoneNumber(e.target.value);
+  };
+
+  const onBusinessNameChange = (e) => {
+    setBusinessName(e.target.value);
+  };
+
+  const onPasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const onConfirmPasswordChange = (e) => {
+    setConfirmPassword(e.target.value);
+  };
+
+  const handleCookRegistration = () => {
+    console.log({name}, {email}, {password}, {confirmPassword});
+    dispatch(createUser({
+      name ,
+      email,
+      password,
+      role: userRole
+    }));
+  };
+
   return (
     <Grid container className='mainContainer'>
       <Grid item xs={12} container justifyContent='center' alignItems='center' marginTop={2}>
@@ -41,22 +89,18 @@ function CookSignUp() {
               <TextField
                 required
                 id="outlined-required"
-                label="Email"
+                label="Username"
+                value={name}
+                onChange={onNameChange}
                 sx={{ marginBottom: '1rem' }}
-                type='email'
               />
               <TextField
                 required
-                id="outlined-disabled"
-                label="Password"
-                sx={{ marginBottom: '1rem' }}
-                type='password'
-                />
-              <TextField
-                required
-                id="outlined-disabled"
-                label="Confirm Password"
-                type='password'
+                id="outlined-required"
+                label="Email"
+                type='email'
+                value={email}
+                onChange={onEmailChange}
                 sx={{ marginBottom: '1rem' }}
               />
               <TextField
@@ -64,17 +108,39 @@ function CookSignUp() {
                 id="outlined-disabled"
                 label="Phone Number"
                 type='tel'
+                value={phoneNumber}
+                onChange={onPhoneNumberChange}
                 sx={{ marginBottom: '1rem' }}
               />
               <TextField
                 required
                 id="outlined-disabled"
                 label="Business Name"
+                value={businessName}
+                onChange={onBusinessNameChange}
+                sx={{ marginBottom: '1rem' }}
+              />
+              <TextField
+                required
+                id="outlined-disabled"
+                label="Password"
+                type='password'
+                value={password}
+                onChange={onPasswordChange}
+                sx={{ marginBottom: '1rem' }}
+                />
+              <TextField
+                required
+                id="outlined-disabled"
+                label="Confirm Password"
+                type='password'
+                value={confirmPassword}
+                onChange={onConfirmPasswordChange}
                 sx={{ marginBottom: '1rem' }}
               />
               <Typography>Upload Your Business Verification Document: </Typography>
-              <Input type='file' disableUnderline="true" sx={{ marginBottom: '3rem' }} />
-              <Button variant='contained' className='actionButton'>Sign Up</Button>
+              <Input type='file' disableUnderline="true" sx={{ marginBottom: '2rem' }} />
+              <Button variant='contained' className='actionButton' onChange={handleCookRegistration}>Sign Up</Button>
              </Box>
             </div>
         </Grid>
