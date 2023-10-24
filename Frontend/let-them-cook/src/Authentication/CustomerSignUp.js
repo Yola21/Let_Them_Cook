@@ -6,6 +6,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { createUser } from "./authSlice";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { toast } from "react-toastify";
 
 function CustomerSignUp() {
   const [name, setName] = useState(null);
@@ -32,15 +33,23 @@ function CustomerSignUp() {
   };
 
   const handleCustomerRegistration = () => {
-    dispatch(
-      createUser({
-        name,
-        email,
-        password,
-        role: "user",
-        history,
-      })
-    );
+    if (name && email && password && confirmPassword) {
+      if (password === confirmPassword) {
+        dispatch(
+          createUser({
+            name,
+            email,
+            password,
+            role: "user",
+            history,
+          })
+        );
+      } else {
+        toast.warning("PASSWORD AND CONFIRM PASSWORD DOESN'T MATCH!");
+      }
+    } else {
+      toast.warning("PLEASE FILL REQUIRED FIELDS!");
+    }
   };
 
   return (
