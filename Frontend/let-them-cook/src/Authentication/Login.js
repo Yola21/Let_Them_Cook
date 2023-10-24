@@ -6,6 +6,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { userLogin } from "./authSlice";
+import { toast } from "react-toastify";
 
 function Login() {
   const [email, setEmail] = useState(null);
@@ -20,13 +21,17 @@ function Login() {
     setPassword(e.target.value);
   };
 
-  const handleLogin = async () => {
-    await dispatch(
-      userLogin({
-        email: email,
-        password: password,
-      })
-    );
+  const handleLogin = () => {
+    if (email && password) {
+      dispatch(
+        userLogin({
+          email: email,
+          password: password,
+        })
+      );
+    } else {
+      toast.warning("PLEASE FILL REQUIRED FIELDS!");
+    }
   };
 
   return (
@@ -104,7 +109,8 @@ function Login() {
                 variant="contained"
                 className="actionButton"
                 onClick={handleLogin}
-                disabled={email == null || password == null}>
+                // disabled={email == null && password == null}
+              >
                 Login
               </Button>
               <Button sx={{ color: "#000" }}>Forgot Password?</Button>
