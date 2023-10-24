@@ -27,6 +27,7 @@ import {
   setCookBusinessName,
   setCookProfilePicture,
 } from "./authSlice";
+import { toast } from "react-toastify";
 
 function CookSignUp() {
   const [name, setName] = useState(null);
@@ -81,15 +82,26 @@ function CookSignUp() {
   };
 
   const handleCookRegistration = () => {
-    dispatch(
-      createUser({
-        name,
-        email,
-        password,
-        role: userRole,
-        history,
-      })
-    );
+    const enableRegistration =
+      name && email && password && confirmPassword && businessName && address;
+
+    if (enableRegistration) {
+      if (password === confirmPassword) {
+        dispatch(
+          createUser({
+            name,
+            email,
+            password,
+            role: userRole,
+            history,
+          })
+        );
+      } else {
+        toast.warning("PASSWORD AND CONFIRM PASSWORD DOESN'T MATCH!");
+      }
+    } else {
+      toast.warning("PLEASE FILL REQUIRED FIELDS IN BOTH SECTIONS!");
+    }
   };
 
   return (

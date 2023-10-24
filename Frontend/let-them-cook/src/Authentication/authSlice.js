@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { config } from "../config";
+import { toast } from "react-toastify";
 
 export const createUser = createAsyncThunk(
   "auth/createUser",
@@ -20,7 +21,7 @@ export const createUser = createAsyncThunk(
     });
     const userInfo = await response.json();
 
-    if (userInfo != null) {
+    if (userInfo != null && userInfo.role) {
       if (userInfo.role === "cook") {
         thunkApi.dispatch(
           createCookProfile({ id: userInfo.id, history: args.history })
@@ -111,7 +112,12 @@ export const authSlice = createSlice({
     //   console.log("Create User Request Pending");
     // },
     [createUser.fulfilled]: (state, action) => {
-      console.log(action.payload);
+      if (action.payload.role) {
+        action.payload.role !== "cook" &&
+          toast.success("USER CREATED SUCCESSFULLY!");
+      } else {
+        toast.error(action.payload.message.toUpperCase() + "!");
+      }
     },
     [createUser.rejected]: (state, action) => {
       console.log(action.payload.message);
@@ -123,14 +129,13 @@ export const authSlice = createSlice({
     // },
     [userLogin.fulfilled]: (state, action) => {
       state.userToken = action.payload.token;
-      state.currentUserInfo = action.payload.userInfo;
-      state.currentUserRole = action.payload.userInfo.role;
-      if (!action.payload.userInfo) {
-        state.alertType = "error";
-        state.alertMessage = action.payload.message;
+      if (action.payload.userInfo) {
+        state.currentUserInfo = action.payload.userInfo;
+        state.currentUserRole = action.payload.userInfo.role;
+        toast.success("USER LOGGED IN SUCCESSFULLY!");
+      } else {
+        toast.error(action.payload.message.toUpperCase() + "!");
       }
-      state.alertType = "success";
-      state.alertMessage = "User has been logged in successfully!";
     },
     [userLogin.rejected]: (state, action) => {
       console.log(action.payload);
@@ -142,10 +147,7 @@ export const authSlice = createSlice({
     // },
     [createCookProfile.fulfilled]: (state, action) => {
       console.log("Cook profile created", action.payload);
-      // history.push("/login");
-      // state.userToken = action.payload.token;
-      // state.currentUserInfo = action.payload.userInfo;
-      // state.currentUserRole = action.payload.userInfo.role;
+      toast.success("COOK REGISTERED SUCCESSFULLY!");
     },
     [createCookProfile.rejected]: (state, action) => {
       console.log(action.payload);
