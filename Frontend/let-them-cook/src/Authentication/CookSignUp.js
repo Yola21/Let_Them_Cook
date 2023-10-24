@@ -83,7 +83,14 @@ function CookSignUp() {
 
   const handleCookRegistration = () => {
     const enableRegistration =
-      name && email && password && confirmPassword && businessName && address;
+      name &&
+      email &&
+      password &&
+      confirmPassword &&
+      businessName &&
+      address &&
+      businessDocument &&
+      profilePicture;
 
     if (enableRegistration) {
       if (password === confirmPassword) {

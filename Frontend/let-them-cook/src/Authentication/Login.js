@@ -108,9 +108,7 @@ function Login() {
               <Button
                 variant="contained"
                 className="actionButton"
-                onClick={handleLogin}
-                // disabled={email == null && password == null}
-              >
+                onClick={handleLogin}>
                 Login
               </Button>
               <Button sx={{ color: "#000" }}>Forgot Password?</Button>
