@@ -22,7 +22,7 @@ public class CookController {
     private CookService cookService;
 
     @GetMapping()
-    public List<Cook> getCook() {
+    public List<Cook> getCooks() {
         return cookService.getCooks();
     }
 

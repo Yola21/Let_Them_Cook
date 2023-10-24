@@ -4,6 +4,7 @@ import com.letscook.cook.model.Cook;
 import com.letscook.cook.model.CreateCookProfileInput;
 import com.letscook.cook.model.UpdateCookProfileInput;
 import com.letscook.cook.repository.CookRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -38,9 +38,11 @@ public class CookService {
     }
 
     public ResponseEntity<Cook> createCookProfile(CreateCookProfileInput createCookProfileInput) throws IOException {
-        Cook cookToUpdate = cookRepository.findById(createCookProfileInput.getId()).orElseThrow(() -> new EntityNotFoundException("Cook not found with ID: " + createCookProfileInput.getId()));
+        Cook cookToUpdate = new Cook();
+        cookToUpdate.setId(createCookProfileInput.getUserId());
         cookToUpdate.setAddress(createCookProfileInput.getAddress());
         cookToUpdate.setBusinessName(createCookProfileInput.getBusinessName());
+        cookToUpdate.setStatus("pending");
         if (createCookProfileInput.getProfilePhoto() != null) {
             uploadCookProfilePhoto(cookToUpdate, createCookProfileInput.getProfilePhoto());
         }
