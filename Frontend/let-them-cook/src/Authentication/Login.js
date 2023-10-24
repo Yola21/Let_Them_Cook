@@ -119,7 +119,9 @@ function Login() {
                   Register As a Cook
                 </Button>
               </Link>
-              <Typography>OR</Typography>
+              <Typography style={{ display: "flex", justifyContent: "center" }}>
+                OR
+              </Typography>
               <Link to="/customer/signup">
                 <Button variant="contained" className="actionButton">
                   Register As a Customer
