@@ -10,6 +10,7 @@ public class UpdateCookProfileInput {
     private Long id;
     private String address;
     private MultipartFile profilePhoto;
+    private MultipartFile bannerImage;
     private MultipartFile businessDocument;
 }
 

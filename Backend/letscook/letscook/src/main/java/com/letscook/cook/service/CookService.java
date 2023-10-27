@@ -4,6 +4,7 @@ import com.letscook.cook.model.Cook;
 import com.letscook.cook.model.CreateCookProfileInput;
 import com.letscook.cook.model.UpdateCookProfileInput;
 import com.letscook.cook.repository.CookRepository;
+import com.letscook.enums.CookStatus;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,9 @@ public class CookService {
     @Value("${cook.profile.photo.upload.directory}")
     private String uploadCookProfileDirectory;
 
+    @Value("${cook.banner.image.upload.directory}")
+    private String uploadCookBannerImageDirectory;
+
     @Value("${cook.business.document.upload.directory}")
     private String uploadCookBusinessDocumentDirectory;
 
@@ -42,9 +46,12 @@ public class CookService {
         cookToUpdate.setId(createCookProfileInput.getUserId());
         cookToUpdate.setAddress(createCookProfileInput.getAddress());
         cookToUpdate.setBusinessName(createCookProfileInput.getBusinessName());
-        cookToUpdate.setStatus("pending");
+        cookToUpdate.setStatus(String.valueOf(CookStatus.PENDING));
         if (createCookProfileInput.getProfilePhoto() != null) {
             uploadCookProfilePhoto(cookToUpdate, createCookProfileInput.getProfilePhoto());
+        }
+        if (createCookProfileInput.getBannerImage() != null) {
+            uploadCookBannerImage(cookToUpdate, createCookProfileInput.getBannerImage());
         }
         if (createCookProfileInput.getBusinessDocument() != null) {
             uploadBusinessDocument(cookToUpdate, createCookProfileInput.getBusinessDocument());
@@ -54,8 +61,7 @@ public class CookService {
     }
 
     public List<Cook> getAllPendingCook() {
-        String status = "Pending";
-        return cookRepository.findAllByStatusIs(status);
+        return cookRepository.findAllByStatusIs(String.valueOf(CookStatus.PENDING));
     }
 
     private String getFileExtension(String fileName) {
@@ -79,11 +85,15 @@ public class CookService {
             uploadCookProfilePhoto(cookToUpdate, updateCookProfileInput.getProfilePhoto());
         }
 
-        if (cookToUpdate.getStatus().equals("Rejected") && updateCookProfileInput.getBusinessDocument() != null) {
+        if (updateCookProfileInput.getBannerImage() != null) {
+            uploadCookBannerImage(cookToUpdate, updateCookProfileInput.getBannerImage());
+        }
+
+        if (cookToUpdate.getStatus().equals(String.valueOf(CookStatus.REJECTED)) && updateCookProfileInput.getBusinessDocument() != null) {
             uploadBusinessDocument(cookToUpdate, updateCookProfileInput.getBusinessDocument());
         }
 
-        if (!Objects.equals(cookToUpdate.getStatus(), "Rejected") && updateCookProfileInput.getBusinessDocument() != null) {
+        if (cookToUpdate.getStatus().equals(String.valueOf(CookStatus.REJECTED)) && updateCookProfileInput.getBusinessDocument() != null) {
             throw new Error("Not allowed to change business document");
         }
 
@@ -116,6 +126,20 @@ public class CookService {
             throw new IOException(error);
         }
     }
+
+    private void uploadCookBannerImage(Cook cookToUpdate, MultipartFile bannerImage) throws IOException {
+        try {
+            String fileName = cookToUpdate.getId().toString() + "_" + cookToUpdate.getBusinessName() + "_bannerImage" + "." + getFileExtension(bannerImage.getOriginalFilename());
+            String filePath = getFilePath(fileName, uploadCookBannerImageDirectory);
+            File destFile = new File(filePath);
+            destFile.getParentFile().mkdirs();
+            bannerImage.transferTo(destFile);
+            cookToUpdate.setBannerImage(filePath);
+        } catch (IOException error) {
+            throw new IOException(error);
+        }
+    }
+
 
     private String getFilePath(String fileName, String uploadCookDirectory) {
         return Paths.get(uploadCookDirectory, fileName).toAbsolutePath().normalize().toString();
