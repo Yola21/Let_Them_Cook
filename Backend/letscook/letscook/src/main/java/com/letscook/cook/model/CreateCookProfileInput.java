@@ -11,5 +11,6 @@ public class CreateCookProfileInput {
     private String businessName;
     private String address;
     private MultipartFile profilePhoto;
+    private MultipartFile bannerImage;
     private MultipartFile businessDocument;
 }
