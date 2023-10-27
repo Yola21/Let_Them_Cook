@@ -30,6 +30,9 @@ public class Cook {
     @Column(name = "profile_photo", nullable = true)
     private String profilePhoto;
 
+    @Column(name = "banner_image", nullable = true)
+    private String bannerImage;
+
     @Column(name = "business_document", nullable = true)
     private String businessDocument;
 
