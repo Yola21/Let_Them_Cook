@@ -6,6 +6,7 @@ import com.letscook.userdetails.model.JwtResponse;
 import com.letscook.userdetails.model.UserInfo;
 import com.letscook.userdetails.model.UserInput;
 import com.letscook.userdetails.repository.UserDetailsRepository;
+import com.letscook.util.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,9 @@ public class UserService {
     @Autowired
     private JwtEncoder jwtEncoder;
 
+    @Autowired
+    private EmailSenderService senderService;
+
     public ResponseEntity<UserInfo> register(UserInfo userDetails) throws Exception {
         List<UserInfo> userDetailList = userDetailsRepository.findByEmail(userDetails.getEmail());
         if (!userDetailList.isEmpty()) {
@@ -34,6 +38,10 @@ public class UserService {
         } else {
             userDetails.setPassword(passwordEncoder().encode(userDetails.getPassword()));
             UserInfo createdUser = userDetailsRepository.save(userDetails);
+            senderService.sendSimpleEmail(userDetails.getEmail(),
+                    "Successfully registered",
+                    "Hey you have been successfully registered");
+
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         }
 
