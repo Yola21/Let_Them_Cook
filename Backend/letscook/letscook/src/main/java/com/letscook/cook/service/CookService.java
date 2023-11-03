@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
@@ -143,5 +144,23 @@ public class CookService {
 
     private String getFilePath(String fileName, String uploadCookDirectory) {
         return Paths.get(uploadCookDirectory, fileName).toAbsolutePath().normalize().toString();
+    }
+
+    public byte[] getProfilePhoto(Long id) throws IOException {
+
+        Cook cookProfile = cookRepository.findById(id).orElse(null);
+        String path = cookProfile.getProfilePhoto();
+        File destFile = new File(path);
+        byte[] res = Files.readAllBytes(destFile.toPath());
+        return res;
+    }
+
+    public byte[] getBannerPhoto(Long id) throws IOException {
+
+        Cook cookProfile = cookRepository.findById(id).orElse(null);
+        String path = cookProfile.getBannerImage();
+        File destFile = new File(path);
+        byte[] res = Files.readAllBytes(destFile.toPath());
+        return res;
     }
 }
