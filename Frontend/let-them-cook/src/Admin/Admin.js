@@ -1,4 +1,5 @@
 import {
+  Button,
   Paper,
   Table,
   TableBody,
@@ -25,14 +26,13 @@ function Admin() {
 
   return (
     <div>
-      Admin
+      Pending Cooks Requests
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>Business Name</TableCell>
-              <TableCell align="right">Email</TableCell>
-              <TableCell align="right">Phone Number</TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -43,8 +43,10 @@ function Admin() {
                 <TableCell component="th" scope="row">
                   {cook.businessName}
                 </TableCell>
-                <TableCell align="right">{cook.email}</TableCell>
-                <TableCell align="right">{cook.phoneNumber}</TableCell>
+                <TableCell>
+                  <Button variant="contained">Accept</Button>
+                  <Button>Reject</Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
