@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { getCurrentUserRole } from "./Authentication/authSlice";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CookProfile from "./Cook/CookProfile";
 
 function App() {
   const loggedInUserRole = useSelector(getCurrentUserRole);
@@ -25,6 +26,10 @@ function App() {
         <Route path="/customer/signup">
           {" "}
           <CustomerSignUp />{" "}
+        </Route>
+        <Route path="/cook/profile">
+          {" "}
+          <CookProfile />{" "}
         </Route>
         <Route path="/cook">
           {" "}

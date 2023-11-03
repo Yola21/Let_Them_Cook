@@ -12,16 +12,15 @@ import {
   Typography,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useHistory,
-  useLocation,
-} from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom";
 import {
   createUser,
+  getCookBannerImage,
   getCookBusinessAddress,
   getCookBusinessDocument,
   getCookBusinessName,
   getCookProfilePicture,
+  setCookBannerImage,
   setCookBusinessAddress,
   setCookBusinessDocument,
   setCookBusinessName,
@@ -41,6 +40,7 @@ function CookSignUp() {
   const businessName = useSelector(getCookBusinessName);
   const address = useSelector(getCookBusinessAddress);
   const profilePicture = useSelector(getCookProfilePicture);
+  const bannerImage = useSelector(getCookBannerImage);
   const businessDocument = useSelector(getCookBusinessDocument);
 
   const userRole = location.pathname.split("/")[1];
@@ -77,6 +77,10 @@ function CookSignUp() {
     dispatch(setCookProfilePicture(e.target.files));
   };
 
+  const onBannerImageFileChange = (e) => {
+    dispatch(setCookBannerImage(e.target.files));
+  };
+
   const onBusinessDocumentFileChange = (e) => {
     dispatch(setCookBusinessDocument(e.target.files));
   };
@@ -90,7 +94,8 @@ function CookSignUp() {
       businessName &&
       address &&
       businessDocument &&
-      profilePicture;
+      profilePicture &&
+      bannerImage;
 
     if (enableRegistration) {
       if (password === confirmPassword) {
@@ -234,6 +239,14 @@ function CookSignUp() {
                 <Input
                   value={profilePicture?.[1]}
                   onChange={onProfilePictureFileChange}
+                  type="file"
+                  disableUnderline="true"
+                  sx={{ marginBottom: "1rem" }}
+                />
+                <Typography>Upload Your Banner Image: </Typography>
+                <Input
+                  value={bannerImage?.[1]}
+                  onChange={onBannerImageFileChange}
                   type="file"
                   disableUnderline="true"
                   sx={{ marginBottom: "1rem" }}
