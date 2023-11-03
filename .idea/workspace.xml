@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14b9caff-2873-4eab-a4ae-83775d8ed8e9" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/letscook/letscook/src/main/java/com/letscook/cook/controller/CookController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/letscook/letscook/src/main/java/com/letscook/cook/controller/CookController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/letscook/letscook/src/main/java/com/letscook/cook/model/Cook.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/letscook/letscook/src/main/java/com/letscook/cook/model/Cook.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/letscook/letscook/src/main/java/com/letscook/cook/model/CreateCookProfileInput.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/letscook/letscook/src/main/java/com/letscook/cook/model/CreateCookProfileInput.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/letscook/letscook/src/main/java/com/letscook/cook/service/CookService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/letscook/letscook/src/main/java/com/letscook/cook/service/CookService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/letscook/letscook/src/main/java/com/letscook/security/JwtSecurityConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/letscook/letscook/src/main/java/com/letscook/security/JwtSecurityConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/letscook/letscook/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/letscook/letscook/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
