@@ -1,7 +1,6 @@
 package com.letscook.menu.service;
 
 import com.letscook.cook.model.Cook;
-import com.letscook.cook.model.CreateCookProfileInput;
 import com.letscook.cook.repository.CookRepository;
 import com.letscook.menu.model.*;
 import com.letscook.menu.repository.MealRepository;
@@ -15,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -120,6 +120,51 @@ public class MenuService {
         meal.setMenu(dish);
         Meal createdMeal = mealRepository.save(meal);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdMeal);
+    }
+
+    public ResponseEntity<Meal> updateDishToMeal(UpdateDishToMealInput updateDishToMealInput) {
+        Meal updateToMeal = mealRepository.findById(updateDishToMealInput.getId()).orElseThrow();
+        if (updateDishToMealInput.getMenuId() != null) {
+            Menu dish = menuRepository.findById(updateDishToMealInput.getMenuId()).orElseThrow();
+            updateToMeal.setMenu(dish);
+        }
+        if (updateDishToMealInput.getMealDate() != null) {
+            updateToMeal.setMealDate(updateDishToMealInput.getMealDate());
+        }
+        if (updateDishToMealInput.getSlot() != null) {
+            updateToMeal.setSlot(updateDishToMealInput.getSlot());
+        }
+        if (updateDishToMealInput.getMaxOrderLimit() != null) {
+            updateToMeal.setMaxOrderLimit(updateDishToMealInput.getMaxOrderLimit());
+        }
+        if (updateDishToMealInput.getOrderDeadline() != null) {
+            updateToMeal.setOrderDeadline(updateDishToMealInput.getOrderDeadline());
+        }
+        Meal updatedMeal = mealRepository.save(updateToMeal);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedMeal);
+    }
+
+    public Meal getMealById(Long id) {
+        return mealRepository.findById(id).orElse(null);
+    }
+
+    public List<Meal> getMealsByCookId(Long cookId) {
+        return mealRepository.findMealsByMenu_Cook_Id(cookId);
+    }
+
+    public Meal deleteMealById(Long id) {
+        Meal mealToDelete = mealRepository.findById(id).orElseThrow();
+        mealRepository.deleteById(id);
+        return mealToDelete;
+    }
+
+    public byte[] getDishImage(Long id) throws IOException {
+
+        Menu dish = menuRepository.findById(id).orElse(null);
+        String path = dish.getImage();
+        File destFile = new File(path);
+        byte[] res = Files.readAllBytes(destFile.toPath());
+        return res;
     }
 }
 
