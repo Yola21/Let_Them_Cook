@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.http.MediaType;
 
 @RestController
 @RequestMapping("/cooks")
@@ -22,7 +23,7 @@ public class CookController {
     private CookService cookService;
 
     @GetMapping()
-    public List<Cook> getCook() {
+    public List<Cook> getCooks() {
         return cookService.getCooks();
     }
 
@@ -44,5 +45,15 @@ public class CookController {
     @PostMapping("/updateProfile")
     public ResponseEntity<Cook> updateCookProfile(@ModelAttribute() UpdateCookProfileInput updateCookProfileInput) throws IOException {
         return cookService.updateCookProfile(updateCookProfileInput);
+    }
+
+    @GetMapping("/profilephoto/{id}")
+    public ResponseEntity<byte[]> getCookProfile(@PathVariable() Long id) throws IOException {
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(cookService.getProfilePhoto(id));
+    }
+
+    @GetMapping("/bannerimage/{id}")
+    public ResponseEntity<byte[]> getCookBanner(@PathVariable() Long id) throws IOException {
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(cookService.getBannerPhoto(id));
     }
 }

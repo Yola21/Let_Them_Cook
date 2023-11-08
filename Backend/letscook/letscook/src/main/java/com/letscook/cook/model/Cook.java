@@ -11,15 +11,8 @@ import jakarta.persistence.*;
 @Table(name = "cooks")
 public class Cook {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
-    @Column(name = "email", unique = true, nullable = false)
-    private String email;
-
-    @Column(name = "password", nullable = false)
-    private String password;
 
     @Column(name = "business_name", nullable = true)
     private String businessName;
@@ -35,6 +28,9 @@ public class Cook {
 
     @Column(name = "profile_photo", nullable = true)
     private String profilePhoto;
+
+    @Column(name = "banner_image", nullable = true)
+    private String bannerImage;
 
     @Column(name = "business_document", nullable = true)
     private String businessDocument;
