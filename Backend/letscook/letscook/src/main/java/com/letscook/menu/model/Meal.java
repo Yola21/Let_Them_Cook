@@ -6,7 +6,11 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Getter
@@ -26,7 +30,7 @@ public class Meal {
     private String slot;
 
     @Column(name = "order_deadline", nullable = false)
-    private Date orderDeadline;
+    private LocalDateTime orderDeadline;
 
     @Column(name = "current_order_count", nullable = true)
     private Long currentOrderCount;
