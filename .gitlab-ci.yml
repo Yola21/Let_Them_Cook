@@ -41,7 +41,7 @@ deploy:
     - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p 8073:8073 --name my-app docker.io/notabot1102/test:$CI_COMMIT_SHORT_SHA"
   environment:
     name: production
-    url: http://172.17.0.176:8073
+    url: http://csci5308vm17.research.cs.dal.ca
   only:
     - main
     - development
