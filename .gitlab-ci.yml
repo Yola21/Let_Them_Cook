@@ -44,4 +44,5 @@ deploy:
     url: http://172.17.0.176:8073
   only:
     - main
+    - development
 
