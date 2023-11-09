@@ -1,0 +1,47 @@
+stages:          # List of stages for jobs, and their order of execution
+  - publish
+  - deploy
+
+publish:
+  image: docker:latest
+  stage: publish
+  tags: 
+    - deployment
+  variables:
+    # these values may need to be different if using TLS, k8s, etc.
+    # You can alternatively set defaults in your runner config
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: "tcp://docker:2375"
+  services:
+    - docker:dind
+
+ 
+  script:
+    - pwd 
+    - echo $SERVER_IP
+    - docker --version
+    - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io
+    - docker build -t docker.io/notabot1102/test:$CI_COMMIT_SHORT_SHA .
+    - docker push docker.io/notabot1102/test:$CI_COMMIT_SHORT_SHA
+  only:
+    - main
+
+
+deploy:
+  image: alpine:latest
+  stage: deploy
+  tags:
+    - deployment
+  script:
+    - chmod og= $ID_RSA
+    - apk update && apk add openssh-client
+    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io"
+    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull docker.io/sanjanaanand01/test:$CI_COMMIT_SHORT_SHA"
+    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker container rm -f my-app || true"
+    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p 8073:8073 --name my-app docker.io/notabot1102/test:$CI_COMMIT_SHORT_SHA"
+  environment:
+    name: production
+    url: http://172.17.0.176:8073
+  only:
+    - main
+
