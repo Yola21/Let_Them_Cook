@@ -21,8 +21,8 @@ publish:
     - echo $SERVER_IP
     - docker --version
     - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io
-    - docker build -t docker.io/notabot1102/test:$CI_COMMIT_SHORT_SHA .
-    - docker push docker.io/notabot1102/test:$CI_COMMIT_SHORT_SHA
+    - docker build -t docker.io/sanjanaanad01/test:$CI_COMMIT_SHORT_SHA .
+    - docker push docker.io/sanjanaanad01/test:$CI_COMMIT_SHORT_SHA
   only:
     - main
 
