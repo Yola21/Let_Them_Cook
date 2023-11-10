@@ -1,14 +1,24 @@
 # Use an official OpenJDK runtime as a parent image
-FROM amazoncorretto:17-al2023-jdk
+FROM openjdk:11-jre-slim
 
-# Set the working directory inside the container
+# Set the working directory to /app
 WORKDIR /app
 
-# Copy the compiled JAR file from your target directory into the container
-COPY build/libs/letscook-0.0.1-SNAPSHOT.jar /app/app.jar
+# Copy only the necessary files to cache dependencies and build the project
+COPY build.gradle settings.gradle gradlew gradlew.bat /app/
+COPY gradle /app/gradle
 
-# Expose the port on which your Spring Boot application will run (adjust as needed)
+# Download dependencies
+RUN ./gradlew --version
+
+# Copy the entire project
+COPY . .
+
+# Build the project
+RUN ./gradlew build
+
+# Expose port 8080 (adjust as needed)
 EXPOSE 8080
 
-# Define the command to run your Spring Boot application when the container starts
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Command to run your application
+CMD ["java", "-jar", "build/libs/letscook-0.0.1-SNAPSHOT.jar"]
