@@ -7,23 +7,23 @@ WORKDIR /app
 RUN ls
 
 # Copy only the necessary files to cache dependencies and build the project
-COPY Backend/letscook/letscook/build.gradle Backend/letscook/letscook/settings.gradle Backend/letscook/letscook/gradlew Backend/letscook/letscook/gradlew.bat /app/
+# COPY Backend/letscook/letscook/build.gradle Backend/letscook/letscook/settings.gradle Backend/letscook/letscook/gradlew Backend/letscook/letscook/gradlew.bat /app/
 
-COPY Backend/letscook/letscook/gradle /app/gradle
+# COPY Backend/letscook/letscook/gradle /app/gradle
 
-RUN chmod 777 ./gradlew
+RUN chmod 777 Backend/letscook/letscook/gradlew
 
 # Download dependencies
-RUN ./gradlew --version
+RUN Backend/letscook/letscook/gradlew --version
 
 # Copy the entire project
 COPY . .
 
 # Build the project
-RUN ./gradlew build
+RUN Backend/letscook/letscook/gradlew build
 
 # Expose port 8080 (adjust as needed)
 EXPOSE 8080
 
 # Command to run your application
-CMD ["sleep", "infinity"]
+CMD ["java", "-jar", "Backend/letscook/letscook/build/libs/letscook-0.0.1-SNAPSHOT.jar"]

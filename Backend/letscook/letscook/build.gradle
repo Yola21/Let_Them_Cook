@@ -40,8 +40,3 @@ tasks.named('test') {
 bootJar {
 	mainClass  = 'com.letscook.LetscookApplication'
 }
-
-tasks.jar {
-	enabled = true
-	manifest.attributes["Main-Class"] = "com.letscook.LetscookApplication"
-}
