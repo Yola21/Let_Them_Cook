@@ -11,13 +11,14 @@ COPY Backend/letscook/letscook/build.gradle Backend/letscook/letscook/settings.g
 
 COPY Backend/letscook/letscook/gradle /app/gradle
 
+RUN chmod 777 ./gradlew
+
 # Download dependencies
 RUN ./gradlew --version
 
 # Copy the entire project
 COPY . .
 
-RUN chmod 777 ./gradlew
 # Build the project
 RUN ./gradlew build
 
