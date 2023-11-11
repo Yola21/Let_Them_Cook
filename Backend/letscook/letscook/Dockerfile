@@ -6,6 +6,8 @@ WORKDIR /app
 
 RUN chmod 777 gradlew
 
+RUN ls
+
 # Copy only the necessary files to cache dependencies and build the project
 COPY build.gradle settings.gradle gradlew gradlew.bat /app/
 COPY gradle /app/gradle
