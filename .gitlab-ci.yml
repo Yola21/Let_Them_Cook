@@ -13,7 +13,7 @@ publish:
     DOCKER_TLS_CERTDIR: ""
     DOCKER_HOST: "tcp://docker:2375"
   services:
-    - docker:dind
+    - docker: dind
 
   script:
     - pwd 
