@@ -17,6 +17,7 @@ RUN ./gradlew --version
 # Copy the entire project
 COPY . .
 
+RUN chmod 777 ./gradlew
 # Build the project
 RUN ./gradlew build
 
