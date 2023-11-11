@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -129,7 +131,7 @@ public class MenuService {
             updateToMeal.setMenu(dish);
         }
         if (updateDishToMealInput.getMealDate() != null) {
-            updateToMeal.setMealDate(updateDishToMealInput.getMealDate());
+            updateToMeal.setMealDate(new Date());
         }
         if (updateDishToMealInput.getSlot() != null) {
             updateToMeal.setSlot(updateDishToMealInput.getSlot());
@@ -138,7 +140,7 @@ public class MenuService {
             updateToMeal.setMaxOrderLimit(updateDishToMealInput.getMaxOrderLimit());
         }
         if (updateDishToMealInput.getOrderDeadline() != null) {
-            updateToMeal.setOrderDeadline(updateDishToMealInput.getOrderDeadline());
+            updateToMeal.setOrderDeadline(new Date());
         }
         Meal updatedMeal = mealRepository.save(updateToMeal);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedMeal);

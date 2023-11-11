@@ -47,7 +47,7 @@ public class MenuController {
         return menuService.addDishToMeal(addDishToMealInput);
     }
 
-    @PostMapping("/addDishToMeal")
+    @PostMapping("/updateDishToMeal")
     public ResponseEntity<Meal> updateMealToDish(@RequestBody() UpdateDishToMealInput updateDishToMealInput) throws IOException {
         return menuService.updateDishToMeal(updateDishToMealInput);
     }
