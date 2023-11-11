@@ -9,8 +9,9 @@ RUN chmod 777 gradlew
 RUN ls
 
 # Copy only the necessary files to cache dependencies and build the project
-COPY build.gradle settings.gradle gradlew gradlew.bat /app/
-COPY gradle /app/gradle
+COPY Backend/letscook/letscook/build.gradle Backend/letscook/letscook/settings.gradle Backend/letscook/letscook/gradlew Backend/letscook/letscook/gradlew.bat /app/
+
+COPY Backend/letscook/letscook/gradle /app/gradle
 
 # Download dependencies
 RUN ./gradlew --version
