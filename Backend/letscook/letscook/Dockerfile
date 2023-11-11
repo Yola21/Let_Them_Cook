@@ -4,7 +4,7 @@ FROM openjdk:11-jre-slim
 # Set the working directory to /app
 WORKDIR /app
 
-chmod +x gradlew
+chmod 777 gradlew
 
 # Copy only the necessary files to cache dependencies and build the project
 COPY build.gradle settings.gradle gradlew gradlew.bat /app/
