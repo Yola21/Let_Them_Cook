@@ -1,6 +1,36 @@
 stages:
+  - npm test
+  - npm build
+  - npm deploy
   - publish
   - deploy
+
+test project:
+  stage: npm test
+  image: node:18
+  script:
+    - cd Frontend/let-them-cook
+    - npm install
+    - npm test
+
+build project:
+  stage: npm build
+  image: node:18
+  script:
+    - cd Frontend/let-them-cook
+    - npm install
+    - CI=false npm run build
+  artifacts:
+    paths:
+      - Frontend/let-them-cook/build/
+
+deploy project: 
+  stage: npm deploy
+  image: node:18
+  script:
+    - cd Frontend/let-them-cook
+    - npm install -g netlify-cli@latest
+    - netlify deploy --dir=build --prod
 
 publish:
   image: docker:latest
@@ -26,6 +56,7 @@ publish:
   only:
     - main
     - development
+    - feature/LTC-49/CICD-for-project
 
 deploy:
   image: alpine:latest
@@ -50,4 +81,5 @@ deploy:
   only:
     - main
     - development
+    - feature/LTC-49/CICD-for-project
 

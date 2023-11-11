@@ -25,4 +25,4 @@ RUN ./gradlew build
 EXPOSE 8080
 
 # Command to run your application
-CMD ["sleep", "infinity"]
+CMD ["java", "-jar", "build/libs/letscook-0.0.1-SNAPSHOT.jar"]
