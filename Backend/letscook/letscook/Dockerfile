@@ -10,6 +10,7 @@ RUN ls
 # COPY Backend/letscook/letscook/build.gradle Backend/letscook/letscook/settings.gradle Backend/letscook/letscook/gradlew Backend/letscook/letscook/gradlew.bat /app/
 
 # COPY Backend/letscook/letscook/gradle /app/gradle
+COPY . .
 
 RUN chmod 777 Backend/letscook/letscook/gradlew
 
@@ -17,7 +18,7 @@ RUN chmod 777 Backend/letscook/letscook/gradlew
 RUN Backend/letscook/letscook/gradlew --version
 
 # Copy the entire project
-COPY . .
+
 
 # Build the project
 RUN Backend/letscook/letscook/gradlew build
