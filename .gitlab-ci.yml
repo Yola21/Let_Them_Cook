@@ -33,17 +33,17 @@ deploy project:
     - npm install -g netlify-cli@latest
     - netlify deploy --dir=build --prod
   
-  quality gate:
-    stage: test
-    include: 
-      - template: Code-Quality.gitlab-ci.yml
+quality gate:
+  stage: test
+  include: 
+    - template: Code-Quality.gitlab-ci.yml
 
-    code_quality_html:
-      extends: code_quality
-      variables:
-        REPORT_FORMAT: html
-      artifacts:
-        paths: [gl-code-quality-report.html]
+  code_quality_html:
+    extends: code_quality
+    variables:
+      REPORT_FORMAT: html
+    artifacts:
+      paths: [gl-code-quality-report.html]
 
 publish:
   image: docker:latest
