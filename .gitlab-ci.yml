@@ -2,10 +2,14 @@ stages:
   - npm test
   - npm build
   - npm deploy
+  - test
   - publish
   - deploy
 
-test project:
+include: 
+  - template: Code-Quality.gitlab-ci.yml
+
+npm test:
   stage: npm test
   image: node:18
   script:
@@ -13,7 +17,7 @@ test project:
     - npm install
     - npm test
 
-build project:
+npm build:
   stage: npm build
   image: node:18
   script:
@@ -24,7 +28,7 @@ build project:
     paths:
       - Frontend/let-them-cook/build/
 
-deploy project: 
+npm deploy: 
   stage: npm deploy
   image: node:18
   script:
@@ -57,6 +61,14 @@ publish:
     - main
     - development
     - feature/LTC-49/CICD-for-project
+    - feature/LTC-50/code-quality-CICD
+
+code_quality:
+  stage: test
+  variables:
+    CODE_QUALITY_IMAGE: registry.gitlab.com/gitlab-org/ci-cd/codequality:latest
+  artifacts:
+    paths: [gl-code-quality-report.json]
 
 deploy:
   image: alpine:latest
@@ -82,4 +94,5 @@ deploy:
     - main
     - development
     - feature/LTC-49/CICD-for-project
+    - feature/LTC-50/code-quality-CICD
 
