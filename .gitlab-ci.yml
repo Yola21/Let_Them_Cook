@@ -65,6 +65,11 @@ publish:
 
 code_quality:
   stage: test
+  script: 
+    - cd Backend/letscook/letscook
+    - ./gradlew assemble
+    - ./gradlew check
+
   variables:
     CODE_QUALITY_IMAGE: registry.gitlab.com/gitlab-org/ci-cd/codequality:latest
   artifacts:
