@@ -35,8 +35,9 @@ deploy project:
   
 quality gate:
   stage: test
-  include: 
-    - template: Code-Quality.gitlab-ci.yml
+  trigger:
+    include: 
+      - template: Code-Quality.gitlab-ci.yml
 
 publish:
   image: docker:latest
