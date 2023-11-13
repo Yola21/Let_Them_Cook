@@ -68,7 +68,7 @@ code_quality:
   services:
     - docker:20.10.16-dind
   tags:
-    - cq-sans-dind
+    - deployment
   variables:
     CODE_QUALITY_IMAGE: registry.gitlab.com/gitlab-org/ci-cd/codequality:latest
     DOCKER_DRIVER: overlay2
