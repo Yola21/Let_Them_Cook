@@ -89,4 +89,5 @@ deploy:
     - main
     - development
     - feature/LTC-49/CICD-for-project
+    - feature/LTC-50/code-quality-CICD
 
