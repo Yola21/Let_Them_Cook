@@ -6,6 +6,9 @@ stages:
   - publish
   - deploy
 
+include: 
+  - template: Code-Quality.gitlab-ci.yml
+
 test project:
   stage: npm test
   image: node:18
@@ -32,15 +35,6 @@ deploy project:
     - cd Frontend/let-them-cook
     - npm install -g netlify-cli@latest
     - netlify deploy --dir=build --prod
-  
-quality gate:
-  stage: test
-  trigger:
-    include: 
-      - template: Code-Quality.gitlab-ci.yml
-  variables:
-    CODE_QUALITY_IMAGE: registry.gitlab.com/gitlab-org/ci-cd/codequality:latest
-
 
 publish:
   image: docker:latest
@@ -68,6 +62,13 @@ publish:
     - development
     - feature/LTC-49/CICD-for-project
     - feature/LTC-50/code-quality-CICD
+
+code_quality:
+  stage: test
+  variables:
+    CODE_QUALITY_IMAGE: registry.gitlab.com/gitlab-org/ci-cd/codequality:latest
+  artifacts:
+    paths: [gl-code-quality-report.json]
 
 deploy:
   image: alpine:latest
