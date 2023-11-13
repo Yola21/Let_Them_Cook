@@ -63,7 +63,7 @@ publish:
     - feature/LTC-49/CICD-for-project
     - feature/LTC-50/code-quality-CICD
 
-quality gates:
+code_quality:
   stage: test
   variables:
     CODE_QUALITY_IMAGE: registry.gitlab.com/gitlab-org/ci-cd/codequality:latest
