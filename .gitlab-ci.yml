@@ -9,7 +9,7 @@ stages:
 include: 
   - template: Code-Quality.gitlab-ci.yml
 
-test project:
+npm test:
   stage: npm test
   image: node:18
   script:
@@ -17,7 +17,7 @@ test project:
     - npm install
     - npm test
 
-build project:
+npm build:
   stage: npm build
   image: node:18
   script:
@@ -28,7 +28,7 @@ build project:
     paths:
       - Frontend/let-them-cook/build/
 
-deploy project: 
+npm deploy: 
   stage: npm deploy
   image: node:18
   script:
@@ -63,7 +63,7 @@ publish:
     - feature/LTC-49/CICD-for-project
     - feature/LTC-50/code-quality-CICD
 
-code_quality:
+quality gates:
   stage: test
   variables:
     CODE_QUALITY_IMAGE: registry.gitlab.com/gitlab-org/ci-cd/codequality:latest
