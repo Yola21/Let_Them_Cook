@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import cooking from "../Authentication/images/cooking.jpg";
 import {
   Avatar,
   Box,
@@ -23,7 +22,7 @@ import {
   updateCookProfile,
 } from "../Authentication/authSlice";
 import { toast } from "react-toastify";
-import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom";
+import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom";
 
 function CookProfile() {
   const userInfo = useSelector(getCurrentUserInfo);
@@ -31,14 +30,11 @@ function CookProfile() {
   const p1 = useSelector(photo1);
   const p2 = useSelector(photo2);
   const dispatch = useDispatch();
-  // const [address, setAddress] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [bannerImage, setBannerImage] = useState(null);
-  // const [image, setImage] = useState(null);
   const address = useSelector(getCookBusinessAddress);
   const history = useHistory();
-  console.log(userInfo, cook);
-  console.log("p1", p1);
+  const { id } = useParams();
 
   const handleUpdateProfile = () => {
     const token = localStorage.getItem("token");
@@ -62,20 +58,20 @@ function CookProfile() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    dispatch(fetchCookById({ id: userInfo?.id, token }));
+    dispatch(fetchCookById({ id, token }));
     dispatch(
       fetchCookProfilePhotoById({
-        id: userInfo?.id,
+        id,
         token,
       })
     );
     dispatch(
       fetchCookBannerPhotoById({
-        id: userInfo?.id,
+        id,
         token,
       })
     );
-  }, [dispatch, userInfo]);
+  }, [dispatch, id]);
 
   return (
     <div>
@@ -84,7 +80,8 @@ function CookProfile() {
           display: "flex",
           flexDirection: "column",
           position: "relative",
-        }}>
+        }}
+      >
         <img style={{ width: "100vw", height: "50vh" }} src={p2} alt="Banner" />
         <Avatar
           sx={{ width: "12rem", height: "12rem" }}
@@ -102,7 +99,8 @@ function CookProfile() {
             flexDirection: "column",
             justifyContent: "center",
             marginLeft: "13rem",
-          }}>
+          }}
+        >
           <Typography variant="h4">{userInfo?.name}</Typography>
           <Typography variant="h6">{userInfo?.email}</Typography>
         </div>
@@ -114,7 +112,8 @@ function CookProfile() {
       <div
         style={{
           padding: "1rem 10rem",
-        }}>
+        }}
+      >
         <Box className="register">
           <Typography style={{ marginBottom: "1rem" }}>
             Business Name: {cook.businessName}
