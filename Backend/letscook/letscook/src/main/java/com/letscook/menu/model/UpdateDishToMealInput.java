@@ -11,6 +11,6 @@ public class UpdateDishToMealInput {
     private String name;
     private String description;
     private String type;
-    private MultipartFile image;
+    private String image;
     private Long mealId;
 }

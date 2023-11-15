@@ -1,6 +1,5 @@
 package com.letscook.menu.model;
 
-import com.letscook.cook.model.Cook;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
@@ -41,8 +40,14 @@ public class Meal {
     @OneToMany(mappedBy = "meal_id")
     private List<Dish> dishes;
 
+    @Column(name = "image", nullable = true)
+    private String image;
+
+    @Column(name = "price", nullable = false)
+    private Double price;
+
     @ManyToOne
-    @JoinColumn(name = "menu_id", nullable = false)
+    @JoinColumn(name = "schedule_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Menu menu;
+    private Schedule schedule;
 }

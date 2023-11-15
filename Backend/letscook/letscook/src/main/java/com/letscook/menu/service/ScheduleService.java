@@ -5,7 +5,7 @@ import com.letscook.cook.repository.CookRepository;
 import com.letscook.menu.model.*;
 import com.letscook.menu.repository.DishRepository;
 import com.letscook.menu.repository.MealRepository;
-import com.letscook.menu.repository.MenuRepository;
+import com.letscook.menu.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -17,14 +17,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.List;
 
 @Service
-public class MenuService {
+public class ScheduleService {
 
     @Autowired
-    private MenuRepository menuRepository;
+    private ScheduleRepository scheduleRepository;
 
     @Autowired
     private CookRepository cookRepository;
@@ -35,38 +34,32 @@ public class MenuService {
     @Autowired
     private DishRepository dishRepository;
 
-    @Value("letscook/uploadedDocuments/menus")
-    private String uploadMenuImageDirectory;
+    @Value("letscook/uploadedDocuments/schedules")
+    private String uploadScheduleImageDirectory;
 
     @Value("letscook/uploadedDocuments/dishes")
     private String uploadDishImageDirectory;
 
-    public ResponseEntity<Menu> createMenu(CreateMenuInput createMenuInput) throws IOException {
-        Cook cook = cookRepository.findById(createMenuInput.getCookId()).orElseThrow(() -> new Error("Cook does not exists"));
+    public ResponseEntity<Schedule> createSchedule(CreateScheduleInput createScheduleInput) throws IOException {
+        Cook cook = cookRepository.findById(createScheduleInput.getCookId()).orElseThrow(() -> new Error("Cook does not exists"));
 
-        Menu menuToCreate = new Menu();
-        menuToCreate.setName(createMenuInput.getName());
-        menuToCreate.setPrice(createMenuInput.getPrice());
-        menuToCreate.setLabel(createMenuInput.getLabel());
-        menuToCreate.setCook(cook);
+        Schedule scheduleToCreate = new Schedule();
+        scheduleToCreate.setName(createScheduleInput.getName());
+        scheduleToCreate.setStart_date(createScheduleInput.getStart_date());
+        scheduleToCreate.setCook(cook);
 
-        Menu createMenu = menuRepository.save(menuToCreate);
-
-    if (createMenuInput.getImage() != null) {
-            uploadMenuImage(createMenu, createMenuInput.getImage());
-        }
-        Menu createdMenu = menuRepository.save(createMenu);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdMenu);
+        Schedule createdSchedule = scheduleRepository.save(scheduleToCreate);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdSchedule);
     }
 
-    private void uploadMenuImage(Menu createMenuInput, MultipartFile image) throws IOException {
+    private void uploadMenuImage(Schedule createScheduleInput, MultipartFile image) throws IOException {
         try {
-            String fileName = createMenuInput.getId().toString() + "_" + createMenuInput.getName() + "_menuImage" + "." + getFileExtension(image.getOriginalFilename());
-            String filePath = getFilePath(fileName, uploadMenuImageDirectory);
+            String fileName = createScheduleInput.getId().toString() + "_" + createScheduleInput.getName() + "_menuImage" + "." + getFileExtension(image.getOriginalFilename());
+            String filePath = getFilePath(fileName, uploadScheduleImageDirectory);
             File destFile = new File(filePath);
             destFile.getParentFile().mkdirs();
             image.transferTo(destFile);
-            createMenuInput.setImage(filePath);
+            //createScheduleInput.setImage(filePath);
         } catch (IOException error) {
             throw new IOException(error);
         }
@@ -85,72 +78,74 @@ public class MenuService {
         return fileNameParts[fileNameParts.length - 1];
     }
 
-    public Menu getMenuById(Long id) {
-        return menuRepository.findById(id).orElse(null);
+    public Schedule getScheduleById(Long id) {
+        return scheduleRepository.findById(id).orElse(null);
     }
 
-    public Menu deleteMenuById(Long id) {
-        Menu menuToDelete = menuRepository.findById(id).orElseThrow();
-        menuRepository.deleteById(id);
-        return menuToDelete;
+    public Schedule deleteScheduleById(Long id) {
+        Schedule scheduleToDelete = scheduleRepository.findById(id).orElseThrow();
+        scheduleRepository.deleteById(id);
+        return scheduleToDelete;
     }
 
-    public List<Menu> getMenusByCook(Long cookId) {
-        return menuRepository.findAllByCook_Id(cookId);
+    public List<Schedule> getSchedulesByCook(Long cookId) {
+        return scheduleRepository.findAllByCook_Id(cookId);
     }
 
-    public ResponseEntity<Menu> updateMenu(UpdateMenuInput updateMenuInput) throws IOException {
+    public ResponseEntity<Schedule> updateSchedule(UpdateScheduleInput updateScheduleInput) throws IOException {
 
-        Menu menuToUpdate = menuRepository.findById(updateMenuInput.getId()).orElseThrow();
-        if(updateMenuInput.getName() != null){
-            menuToUpdate.setName(updateMenuInput.getName());
+        Schedule scheduleToUpdate = scheduleRepository.findById(updateScheduleInput.getId()).orElseThrow();
+        if (updateScheduleInput.getName() != null) {
+            scheduleToUpdate.setName(updateScheduleInput.getName());
         }
-        if(updateMenuInput.getPrice() != null){
-            menuToUpdate.setPrice(updateMenuInput.getPrice());
+        if (updateScheduleInput.getStart_date() != null) {
+            scheduleToUpdate.setStart_date(updateScheduleInput.getStart_date());
         }
-        if(updateMenuInput.getLabel() != null) {
-            menuToUpdate.setLabel(updateMenuInput.getLabel());
-        }
-        if (updateMenuInput.getImage() != null) {
-            uploadMenuImage(menuToUpdate, updateMenuInput.getImage());
-        }
-        Menu updatedMenu = menuRepository.save(menuToUpdate);
-        return ResponseEntity.status(HttpStatus.CREATED).body(updatedMenu);
+        Schedule updatedSchedule = scheduleRepository.save(scheduleToUpdate);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedSchedule);
     }
 
-    public ResponseEntity<Meal> addMealToMenu(AddMealToMenuInput addMealToMenuInput) {
-        Menu menu = menuRepository.findById(addMealToMenuInput.getMenuId()).orElseThrow();
+    public ResponseEntity<Meal> addMealToSchedule(AddMealToScheduleInput addMealToScheduleInput) {
+        Schedule schedule = scheduleRepository.findById(addMealToScheduleInput.getScheduleId()).orElseThrow();
         Meal meal = new Meal();
-        meal.setName(addMealToMenuInput.getName());
-        meal.setMealDate(addMealToMenuInput.getMealDate());
-        meal.setSlot(addMealToMenuInput.getSlot());
-        meal.setMaxOrderLimit(addMealToMenuInput.getMaxOrderLimit());
-        meal.setOrderDeadline(addMealToMenuInput.getOrderDeadline());
-        meal.setMenu(menu);
+        meal.setName(addMealToScheduleInput.getName());
+        meal.setMealDate(addMealToScheduleInput.getMealDate());
+        meal.setSlot(addMealToScheduleInput.getSlot());
+        meal.setMaxOrderLimit(addMealToScheduleInput.getMaxOrderLimit());
+        meal.setOrderDeadline(addMealToScheduleInput.getOrderDeadline());
+        meal.setImage(addMealToScheduleInput.getImage());
+        meal.setPrice(addMealToScheduleInput.getPrice());
+        meal.setSchedule(schedule);
         Meal createdMeal = mealRepository.save(meal);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdMeal);
     }
 
-    public ResponseEntity<Meal> updateMealToMenu(UpdateMealToMenuInput updateMealToMenuInput) {
-        Meal updateToMeal = mealRepository.findById(updateMealToMenuInput.getId()).orElseThrow();
-        if (updateMealToMenuInput.getMenuId() != null) {
-            Menu menu = menuRepository.findById(updateMealToMenuInput.getMenuId()).orElseThrow();
-            updateToMeal.setMenu(menu);
+    public ResponseEntity<Meal> updateMealToSchedule(UpdateMealToScheduleInput updateMealToScheduleInput) {
+        Meal updateToMeal = mealRepository.findById(updateMealToScheduleInput.getId()).orElseThrow();
+        if (updateMealToScheduleInput.getScheduleId() != null) {
+            Schedule schedule = scheduleRepository.findById(updateMealToScheduleInput.getScheduleId()).orElseThrow();
+            updateToMeal.setSchedule(schedule);
         }
-        if(updateMealToMenuInput.getName() != null) {
-            updateToMeal.setName(updateMealToMenuInput.getName());
+        if (updateMealToScheduleInput.getName() != null) {
+            updateToMeal.setName(updateMealToScheduleInput.getName());
         }
-        if (updateMealToMenuInput.getMealDate() != null) {
-            updateToMeal.setMealDate(updateMealToMenuInput.getMealDate());
+        if (updateMealToScheduleInput.getMealDate() != null) {
+            updateToMeal.setMealDate(updateMealToScheduleInput.getMealDate());
         }
-        if (updateMealToMenuInput.getSlot() != null) {
-            updateToMeal.setSlot(updateMealToMenuInput.getSlot());
+        if (updateMealToScheduleInput.getSlot() != null) {
+            updateToMeal.setSlot(updateMealToScheduleInput.getSlot());
         }
-        if (updateMealToMenuInput.getMaxOrderLimit() != null) {
-            updateToMeal.setMaxOrderLimit(updateMealToMenuInput.getMaxOrderLimit());
+        if (updateMealToScheduleInput.getMaxOrderLimit() != null) {
+            updateToMeal.setMaxOrderLimit(updateMealToScheduleInput.getMaxOrderLimit());
         }
-        if (updateMealToMenuInput.getOrderDeadline() != null) {
-            updateToMeal.setOrderDeadline(updateMealToMenuInput.getOrderDeadline());
+        if (updateMealToScheduleInput.getOrderDeadline() != null) {
+            updateToMeal.setOrderDeadline(updateMealToScheduleInput.getOrderDeadline());
+        }
+        if (updateMealToScheduleInput.getImage() != null) {
+            updateToMeal.setImage(updateMealToScheduleInput.getImage());
+        }
+        if (updateMealToScheduleInput.getPrice() != null) {
+            updateToMeal.setPrice(updateMealToScheduleInput.getPrice());
         }
         Meal updatedMeal = mealRepository.save(updateToMeal);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedMeal);
@@ -161,7 +156,7 @@ public class MenuService {
     }
 
     public List<Meal> getMealsByCookId(Long cookId) {
-        return mealRepository.findMealsByMenu_Cook_Id(cookId);
+        return mealRepository.findMealsBySchedule_Cook_Id(cookId);
     }
 
     public Meal deleteMealById(Long id) {
@@ -170,14 +165,14 @@ public class MenuService {
         return mealToDelete;
     }
 
-    public byte[] getMenuImage(Long id) throws IOException {
-
-        Menu menu = menuRepository.findById(id).orElse(null);
-        String path = menu.getImage();
-        File destFile = new File(path);
-        byte[] res = Files.readAllBytes(destFile.toPath());
-        return res;
-    }
+//    public byte[] getMenuImage(Long id) throws IOException {
+//
+//        Schedule schedule = scheduleRepository.findById(id).orElse(null);
+//        String path = schedule.getImage();
+//        File destFile = new File(path);
+//        byte[] res = Files.readAllBytes(destFile.toPath());
+//        return res;
+//    }
 
     public ResponseEntity<Dish> addDishToMeal(AddDishToMealInput addDishToMealInput) throws IOException {
         Meal meal = mealRepository.findById(addDishToMealInput.getMealId()).orElseThrow();
@@ -186,14 +181,10 @@ public class MenuService {
         dish.setType(addDishToMealInput.getType());
         dish.setDescription(addDishToMealInput.getDescription());
         dish.setMeal_id(meal);
+        dish.setImage(addDishToMealInput.getImage());
 
-        Dish createDish = dishRepository.save(dish);
+        Dish createdDish = dishRepository.save(dish);
 
-        if (addDishToMealInput.getImage() != null) {
-            uploadDishImage(createDish, addDishToMealInput.getImage());
-        }
-
-        Dish createdDish = dishRepository.save(createDish);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdDish);
     }
 
@@ -217,7 +208,7 @@ public class MenuService {
             dishToUpdate.setType(updateDishToMealInput.getType());
         }
         if (updateDishToMealInput.getImage() != null) {
-            uploadDishImage(dishToUpdate, updateDishToMealInput.getImage());
+            dishToUpdate.setImage(updateDishToMealInput.getImage());
         }
         Dish updatedDish = dishRepository.save(dishToUpdate);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedDish);
@@ -254,12 +245,12 @@ public class MenuService {
     }
 
     public List<Meal> getMealsByCookAddress(String address) {
-        return mealRepository.findMealsByMenu_Cook_Address(address);
+        return mealRepository.findMealsBySchedule_Cook_Address(address);
     }
 
     public List<Meal> getMealsByCookDateRange(CookDateRangeInput cookDateRangeInput) {
-        return mealRepository.findAllByMealDateBetweenAndMenu_Cook_Id(cookDateRangeInput.getStartDate(),
-                cookDateRangeInput.getEndDate(),cookDateRangeInput.getId());
+        return mealRepository.findAllByMealDateBetweenAndSchedule_Cook_Id(cookDateRangeInput.getStartDate(),
+                cookDateRangeInput.getEndDate(), cookDateRangeInput.getId());
     }
 }
 

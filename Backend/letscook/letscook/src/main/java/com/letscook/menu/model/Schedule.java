@@ -8,27 +8,23 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @Entity
-@Table(name = "menus")
-public class Menu {
+@Table(name = "schedule")
+public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", nullable = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "image", nullable = true)
-    private String image;
-
-    @Column(name = "price", nullable = true)
-    private Long price;
-
-    @Column(name = "label", nullable = true)
-    private String label;
+    @Column(name = "start_date", nullable = false)
+    private Date start_date;
 
     @ManyToOne
     @JoinColumn(name = "cook_id", nullable = false)

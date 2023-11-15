@@ -7,10 +7,10 @@ import java.util.Date;
 import java.util.List;
 
 public interface MealRepository extends JpaRepository<Meal, Long> {
-    List<Meal> findMealsByMenu_Cook_Id(Long id);
-    List<Meal> findMealsByMenu_Cook_Address(String address);
+    List<Meal> findMealsBySchedule_Cook_Id(Long id);
+    List<Meal> findMealsBySchedule_Cook_Address(String address);
 
-    List<Meal> findAllByMealDateBetweenAndMenu_Cook_Id(
+    List<Meal> findAllByMealDateBetweenAndSchedule_Cook_Id(
             Date mealDateStart,
             Date mealDateEnd,Long id);
 }
