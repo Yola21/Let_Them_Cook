@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-public class UpdateDishInput {
+public class UpdateMenuInput {
     private Long id;
     private String name;
     private MultipartFile image;

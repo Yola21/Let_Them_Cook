@@ -1,0 +1,33 @@
+package com.letscook.menu.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "dish")
+public class Dish {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "name", nullable = true)
+    private String name;
+
+    @Column(name = "image", nullable = true)
+    private String image;
+
+    @Column(name = "description", nullable = true)
+    private String description;
+
+    @Column(name = "type", nullable = true)
+    private String type;
+
+    @ManyToOne
+    @JsonIgnore
+    private Meal meal_id;
+}

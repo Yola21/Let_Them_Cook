@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,6 +19,9 @@ public class Meal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "max_order_limit", nullable = false)
     private Long maxOrderLimit;
@@ -33,6 +37,9 @@ public class Meal {
 
     @Column(name = "meal_date", nullable = false)
     private Date mealDate;
+
+    @OneToMany(mappedBy = "meal_id")
+    private List<Dish> dishes;
 
     @ManyToOne
     @JoinColumn(name = "menu_id", nullable = false)

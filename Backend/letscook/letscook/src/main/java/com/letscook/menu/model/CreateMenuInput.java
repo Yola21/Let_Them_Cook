@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-public class CreateDishInput {
+public class CreateMenuInput {
     private String name;
     private MultipartFile image;
     private Long price;
