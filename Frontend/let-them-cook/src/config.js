@@ -1,5 +1,10 @@
+const API_BASE_PATH =
+  process.env.NODE_ENV === "production"
+    ? process.env.REACT_APP_PROD_API_BASE_PATH
+    : process.env.REACT_APP_DEV_API_BASE_PATH;
+
 export const config = {
-  BASE_PATH: process.env.REACT_APP_DEV_API_BASE_PATH,
+  BASE_PATH: API_BASE_PATH,
   USER_REGISTER: process.env.REACT_APP_DEV_API_AUTH_USER_REGISTER,
   USER_LOGIN: process.env.REACT_APP_DEV_API_AUTH_USER_LOGIN,
   COOKS: process.env.REACT_APP_DEV_API_COOK_GET_ALL_COOKS,
