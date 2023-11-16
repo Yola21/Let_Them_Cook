@@ -65,7 +65,8 @@ publish:
 code_quality:
   stage: test
   script: 
-    - JAVA_HOME="/usr/lib/jvm/jre-1.8.0-openjdk"
+    - EXPORT JAVA_HOME="/usr/lib/jvm/jre-1.8.0-openjdk"
+    - EXPORT PATH=$JAVA_HOME/bin:$PATH
     - cd Backend/letscook/letscook
     - chmod +x gradlew 
     - ./gradlew clean
