@@ -3,6 +3,7 @@ package com.letscook.menu.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
