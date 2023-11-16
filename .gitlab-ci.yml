@@ -36,7 +36,8 @@ npm deploy:
   script:
     - cp .env Frontend/let-them-cook/
     - cd Frontend/let-them-cook
-    - ls
+    - ls -la
+    - cat .env
     - npm install -g netlify-cli@latest
     - netlify deploy --dir=build --prod
 
