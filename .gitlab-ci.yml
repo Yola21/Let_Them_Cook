@@ -66,21 +66,11 @@ publish:
 gradle test:
   stage: gradle test
   image: gradle:jdk11
-  before_script:
+  script:
     - cd Backend/letscook/letscook
     - export GRADLE_USER_HOME=`pwd`/.gradle
-  cache:
-    paths:
-      - .gradle/wrapper
-      - .gradle/caches
-  package:
-    stage: build
-    script:
-      - ./gradlew assemble
-  test:
-    stage: test
-    script:
-      - ./gradlew check    
+    - ./gradlew assemble
+    - ./gradlew check    
 
 code_quality:
   stage: test
