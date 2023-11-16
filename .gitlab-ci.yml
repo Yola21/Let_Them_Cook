@@ -20,8 +20,6 @@ npm test:
 npm build:
   stage: npm build
   image: node:18
-  before_script:
-    - cat ${FRONTEND_ENVIRONMENT_VARIABLES} >> .env
   script:
     - cd Frontend/let-them-cook
     - npm install
@@ -36,6 +34,7 @@ npm deploy:
   script:
     - cat ${FRONTEND_ENVIRONMENT_VARIABLES} >> Frontend/let-them-cook/.env
     - cd Frontend/let-them-cook
+    - ls
     - npm install -g netlify-cli@latest
     - netlify deploy --dir=build --prod
 
