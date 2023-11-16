@@ -37,8 +37,8 @@ public class Meal {
     @Column(name = "meal_date", nullable = false)
     private Date mealDate;
 
-    @OneToMany(mappedBy = "meal_id")
-    private List<Dish> dishes;
+//    @OneToMany(mappedBy = "meal_id")
+//    private List<Dish> dishes;
 
     @Column(name = "image", nullable = true)
     private String image;

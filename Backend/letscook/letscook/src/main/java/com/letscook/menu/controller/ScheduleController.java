@@ -3,7 +3,6 @@ package com.letscook.menu.controller;
 import com.letscook.menu.model.*;
 import com.letscook.menu.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,9 +71,9 @@ public class ScheduleController {
 //        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(scheduleService.getMenuImage(id));
 //    }
 
-    @PostMapping("/addDishToMeal")
-    public ResponseEntity<Dish> addDishToMeal(@RequestBody AddDishToMealInput addDishToMealInput) throws IOException {
-        return scheduleService.addDishToMeal(addDishToMealInput);
+    @PostMapping("/createDish")
+    public ResponseEntity<Dish> createDish(@RequestBody CreateDish createDish) throws IOException {
+        return scheduleService.createDish(createDish);
     }
 
     @GetMapping("/dish/{id}")
@@ -87,9 +86,9 @@ public class ScheduleController {
 //        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(scheduleService.getDishImage(id));
 //    }
 
-    @PostMapping("/updateDishToMeal")
-    public ResponseEntity<Dish> updateDishToMeal(@RequestBody UpdateDishToMealInput updateDishToMealInput) throws IOException {
-        return scheduleService.updateDishToMeal(updateDishToMealInput);
+    @PostMapping("/updateDish")
+    public ResponseEntity<Dish> updateDish(@RequestBody UpdateDish updateDish) throws IOException {
+        return scheduleService.updateDish(updateDish);
     }
 
     @DeleteMapping("/deleteDish/{id}")
@@ -105,5 +104,15 @@ public class ScheduleController {
     @PostMapping("/meal/cookdaterange")
     public List<Meal> getMealsByCookDateRange(@RequestBody() CookDateRangeInput cookDateRangeInput){
         return scheduleService.getMealsByCookDateRange(cookDateRangeInput);
+    }
+
+    @PostMapping("/addDishToMeal")
+    public ResponseEntity<DishToMealMap> addDishToMeal(@RequestBody AddDishToMealInput addDishToMealInput) throws IOException {
+        return scheduleService.addDishToMeal(addDishToMealInput);
+    }
+
+    @GetMapping("/getDishesByMeal/{id}")
+    public List<Dish> getDishesByMeal(@PathVariable() Long id){
+        return scheduleService.getDishesByMealId(id);
     }
 }

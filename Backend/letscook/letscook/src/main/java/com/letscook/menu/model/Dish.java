@@ -1,9 +1,12 @@
 package com.letscook.menu.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.letscook.cook.model.Cook;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Setter
@@ -29,5 +32,5 @@ public class Dish {
 
     @ManyToOne
     @JsonIgnore
-    private Meal meal_id;
+    private Cook cook;
 }

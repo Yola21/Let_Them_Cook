@@ -2,15 +2,13 @@ package com.letscook.menu.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-public class UpdateDishToMealInput {
+public class UpdateDish {
     private Long id;
     private String name;
     private String description;
     private String type;
     private String image;
-    private Long mealId;
 }

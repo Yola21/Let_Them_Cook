@@ -5,6 +5,9 @@ import com.letscook.cook.model.CreateCookProfileInput;
 import com.letscook.cook.model.UpdateCookProfileInput;
 import com.letscook.cook.repository.CookRepository;
 import com.letscook.enums.CookStatus;
+import com.letscook.menu.model.CookDateRangeInput;
+import com.letscook.menu.model.Dish;
+import com.letscook.menu.model.Meal;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -162,5 +165,10 @@ public class CookService {
         File destFile = new File(path);
         byte[] res = Files.readAllBytes(destFile.toPath());
         return res;
+    }
+    public List<Dish> getDishesByCookId(Long id) {
+        Cook cook = cookRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Cook not found with ID: " + id));
+        return cook.getDishes();
     }
 }

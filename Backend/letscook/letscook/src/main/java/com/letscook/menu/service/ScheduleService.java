@@ -4,6 +4,7 @@ import com.letscook.cook.model.Cook;
 import com.letscook.cook.repository.CookRepository;
 import com.letscook.menu.model.*;
 import com.letscook.menu.repository.DishRepository;
+import com.letscook.menu.repository.DishToMealRepository;
 import com.letscook.menu.repository.MealRepository;
 import com.letscook.menu.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,6 +35,9 @@ public class ScheduleService {
 
     @Autowired
     private DishRepository dishRepository;
+
+    @Autowired
+    private DishToMealRepository dishToMealRepository;
 
     @Value("letscook/uploadedDocuments/schedules")
     private String uploadScheduleImageDirectory;
@@ -174,15 +179,15 @@ public class ScheduleService {
 //        return res;
 //    }
 
-    public ResponseEntity<Dish> addDishToMeal(AddDishToMealInput addDishToMealInput) throws IOException {
-        Meal meal = mealRepository.findById(addDishToMealInput.getMealId()).orElseThrow();
+    public ResponseEntity<Dish> createDish(CreateDish createDish) throws IOException {
+        Cook cook = cookRepository.findById(createDish.getCookId()).orElseThrow();
         Dish dish = new Dish();
-        dish.setName(addDishToMealInput.getName());
-        dish.setType(addDishToMealInput.getType());
-        dish.setDescription(addDishToMealInput.getDescription());
-        dish.setMeal_id(meal);
-        dish.setImage(addDishToMealInput.getImage());
-
+        dish.setName(createDish.getName());
+        dish.setType(createDish.getType());
+        dish.setDescription(createDish.getDescription());
+//        dish.setMeal_id(meal);
+        dish.setImage(createDish.getImage());
+        dish.setCook(cook);
         Dish createdDish = dishRepository.save(dish);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdDish);
@@ -192,23 +197,23 @@ public class ScheduleService {
         return dishRepository.findById(id).orElse(null);
     }
 
-    public ResponseEntity<Dish> updateDishToMeal(UpdateDishToMealInput updateDishToMealInput) throws IOException {
-        Dish dishToUpdate = dishRepository.findById(updateDishToMealInput.getId()).orElseThrow();
-        if (updateDishToMealInput.getMealId() != null) {
-            Meal meal = mealRepository.findById(updateDishToMealInput.getMealId()).orElseThrow();
-            dishToUpdate.setMeal_id(meal);
+    public ResponseEntity<Dish> updateDish(UpdateDish updateDish) throws IOException {
+        Dish dishToUpdate = dishRepository.findById(updateDish.getId()).orElseThrow();
+//        if (updateDishToMealInput.getMealId() != null) {
+//            Meal meal = mealRepository.findById(updateDishToMealInput.getMealId()).orElseThrow();
+//            dishToUpdate.setMeal_id(meal);
+//        }
+        if (updateDish.getName() != null) {
+            dishToUpdate.setName(updateDish.getName());
         }
-        if (updateDishToMealInput.getName() != null) {
-            dishToUpdate.setName(updateDishToMealInput.getName());
+        if (updateDish.getDescription() != null) {
+            dishToUpdate.setDescription(updateDish.getDescription());
         }
-        if (updateDishToMealInput.getDescription() != null) {
-            dishToUpdate.setDescription(updateDishToMealInput.getDescription());
+        if (updateDish.getType() != null) {
+            dishToUpdate.setType(updateDish.getType());
         }
-        if (updateDishToMealInput.getType() != null) {
-            dishToUpdate.setType(updateDishToMealInput.getType());
-        }
-        if (updateDishToMealInput.getImage() != null) {
-            dishToUpdate.setImage(updateDishToMealInput.getImage());
+        if (updateDish.getImage() != null) {
+            dishToUpdate.setImage(updateDish.getImage());
         }
         Dish updatedDish = dishRepository.save(dishToUpdate);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedDish);
@@ -251,6 +256,28 @@ public class ScheduleService {
     public List<Meal> getMealsByCookDateRange(CookDateRangeInput cookDateRangeInput) {
         return mealRepository.findAllByMealDateBetweenAndSchedule_Cook_Id(cookDateRangeInput.getStartDate(),
                 cookDateRangeInput.getEndDate(), cookDateRangeInput.getId());
+    }
+
+    public ResponseEntity<DishToMealMap> addDishToMeal(AddDishToMealInput addDishToMealInput) throws IOException {
+        Meal meal = mealRepository.findById(addDishToMealInput.getMeal_id()).orElseThrow();
+        Dish dish = dishRepository.findById(addDishToMealInput.getDish_id()).orElseThrow();
+        DishToMealMap dishToMealMap = new DishToMealMap();
+        DishToMealId dishToMealId = new DishToMealId();
+        dishToMealId.setMealId(meal.getId());
+        dishToMealId.setDishId(dish.getId());
+        dishToMealMap.setId(dishToMealId);
+        DishToMealMap createdDishToMealMap = dishToMealRepository.save(dishToMealMap);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdDishToMealMap);
+    }
+
+    public List<Dish> getDishesByMealId(Long mealId) {
+        List<DishToMealMap> dishToMealMaps = dishToMealRepository.findByIdMealId(mealId);
+        List<Dish> dishes = new ArrayList<>();
+        for(DishToMealMap dishToMealMap:dishToMealMaps){
+            dishes.add(dishRepository.findById(dishToMealMap.getId().getDishId()).orElseThrow());
+        }
+        return dishes;
     }
 }
 
