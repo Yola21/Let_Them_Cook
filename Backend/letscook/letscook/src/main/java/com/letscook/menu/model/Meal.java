@@ -30,7 +30,7 @@ public class Meal {
     private String slot;
 
     @Column(name = "order_deadline", nullable = false)
-    private LocalDateTime orderDeadline;
+    private Date orderDeadline;
 
     @Column(name = "current_order_count", nullable = true)
     private Long currentOrderCount;

@@ -8,14 +8,12 @@ import com.letscook.order.model.CreateOrderInput;
 import com.letscook.order.model.Order;
 import com.letscook.order.repository.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -39,7 +37,7 @@ public class OrderService {
         Meal meal = mealRepository.findById(createOrderInput.getMealId()).orElseThrow(() -> new EntityNotFoundException("Meal not found with ID: " + createOrderInput.getMealId()));
         if (meal.getCurrentOrderCount() >= meal.getMaxOrderLimit()) {
             throw new RuntimeException("Max order limit has been reached");
-        } else if (LocalDateTime.now().isAfter(meal.getOrderDeadline())) {
+        } else if (new Date().after(meal.getOrderDeadline())) {
             throw new RuntimeException("Cannot order after deadline");
         } else {
             meal.setCurrentOrderCount(meal.getCurrentOrderCount()+1);
@@ -54,23 +52,23 @@ public class OrderService {
     }
 
     public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+        return orderRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
     public List<Order> getOrdersByCustomer(Long customerId) {
-        return orderRepository.findAllByCustomer_Id(customerId);
+        return orderRepository.findAllByCustomer_IdOrderByCreatedAtDesc(customerId);
     }
 
     public List<Order> getOrdersByCook(Long cookId) {
-        return orderRepository.findAllByMeal_Menu_Cook_Id(cookId);
+        return orderRepository.findAllByMeal_Menu_Cook_IdOrderByCreatedAtDesc(cookId);
     }
 
     public List<Order> getOrdersByMenu(Long menuId) {
-        return orderRepository.findAllByMeal_Menu_Id(menuId);
+        return orderRepository.findAllByMeal_Menu_IdOrderByCreatedAtDesc(menuId);
     }
 
     public List<Order> getOrdersByStatusAndCook(Long cookId, OrderStatus status) {
-        return orderRepository.findAllByStatusAndAndCustomer_Id(status, cookId);
+        return orderRepository.findAllByStatusAndAndCustomer_IdOrderByCreatedAtDesc(status, cookId);
     }
 
     public ResponseEntity<Order> updateOrderStatus(Long id, OrderStatus status) {
