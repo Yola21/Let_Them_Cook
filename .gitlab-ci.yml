@@ -20,8 +20,6 @@ npm test:
 npm build:
   stage: npm build
   image: node:18
-  before_script:
-    - cat ${FRONTEND_ENVIRONMENT_VARIABLES} >> .env
   script:
     - cd Frontend/let-them-cook
     - npm install
