@@ -65,7 +65,7 @@ publish:
 
 gradle test:
   stage: gradle test
-  image: gradle:7.1.0-jdk11 
+  image: gradle:jdk11 
   script:
     - cd Backend/letscook/letscook
     - gradle clean test   
