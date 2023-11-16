@@ -72,14 +72,6 @@ gradle test:
 
 code_quality:
   stage: test
-  script: 
-    - EXPORT JAVA_HOME="/usr/lib/jvm/jre-1.8.0-openjdk"
-    - EXPORT PATH=$JAVA_HOME/bin:$PATH
-    - cd Backend/letscook/letscook
-    - chmod +x gradlew 
-    - ./gradlew clean
-    - ./gradlew assemble
-    - ./gradlew check
   image: docker:20.10.16
   services:
     - docker:20.10.16-dind
