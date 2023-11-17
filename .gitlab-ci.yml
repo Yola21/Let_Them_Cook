@@ -4,6 +4,7 @@ stages:
   - npm deploy
   - test
   - publish
+  - gradle test
   - deploy
 
 include: 
@@ -67,6 +68,15 @@ publish:
     - development
     - feature/LTC-49/CICD-for-project
 
+gradle test:
+  stage: gradle test
+  image: gradle:jdk17
+  before_script:
+    - cd Backend/letscook/letscook
+    - echo "distributionUrl=https\://services.gradle.org/distributions/gradle-7.2-all.zip" > gradle/wrapper/gradle-wrapper.properties
+  script:
+    - gradle clean test   
+    
 code_quality:
   stage: test
   image: docker:20.10.16
