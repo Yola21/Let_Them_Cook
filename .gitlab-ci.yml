@@ -20,8 +20,13 @@ npm test:
 npm build:
   stage: npm build
   image: node:18
+  before_script:
+    - cat ${FRONTEND_ENVIRONMENT_VARIABLES} >> .env
   script:
+    - cp .env Frontend/let-them-cook/
     - cd Frontend/let-them-cook
+    - ls -la
+    - cat .env
     - npm install
     - CI=false npm run build
   artifacts:
@@ -31,13 +36,8 @@ npm build:
 npm deploy: 
   stage: npm deploy
   image: node:18
-  before_script:
-    - cat ${FRONTEND_ENVIRONMENT_VARIABLES} >> .env
   script:
-    - cp .env Frontend/let-them-cook/
     - cd Frontend/let-them-cook
-    - ls -la
-    - cat .env
     - npm install -g netlify-cli@latest
     - netlify deploy --dir=build --prod
 
