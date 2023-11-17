@@ -1,16 +1,11 @@
 package com.letscook.menu.model;
 
-import com.letscook.cook.model.Cook;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import jakarta.persistence.*;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Getter
@@ -22,6 +17,9 @@ public class Meal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "max_order_limit", nullable = false)
     private Long maxOrderLimit;
@@ -38,8 +36,14 @@ public class Meal {
     @Column(name = "meal_date", nullable = false)
     private Date mealDate;
 
+    @Column(name = "image", nullable = true)
+    private String image;
+
+    @Column(name = "price", nullable = false)
+    private Double price;
+
     @ManyToOne
-    @JoinColumn(name = "menu_id", nullable = false)
+    @JoinColumn(name = "schedule_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Menu menu;
+    private Schedule schedule;
 }
