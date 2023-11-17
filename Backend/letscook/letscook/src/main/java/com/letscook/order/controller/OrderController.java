@@ -37,19 +37,19 @@ public class OrderController {
         return orderService.getOrdersByCustomer(customerId);
     }
 
-    @GetMapping("/cook")
-    public List<Order> getOrdersByCook(@RequestParam Long cookId) {
-        return orderService.getOrdersByCook(cookId);
-    }
+//    @GetMapping("/cook")
+//    public List<Order> getOrdersByCook(@RequestParam Long cookId) {
+//        return orderService.getOrdersByCook(cookId);
+//    }
 
-    @GetMapping("/menu")
-    public List<Order> getOrdersByMenu(@RequestParam Long menuId) {
-        return orderService.getOrdersByMenu(menuId);
-    }
+//    @GetMapping("/menu")
+//    public List<Order> getOrdersByMenu(@RequestParam Long menuId) {
+//        return orderService.getOrdersByMenu(menuId);
+//    }
 
     @GetMapping("/cook/status")
     public List<Order> getOrdersByCookAndStatus(@RequestParam Long cookId, @RequestParam OrderStatus status) {
-        return orderService.getOrdersByStatusAndCook(cookId,status);
+        return orderService.getOrdersByStatusAndCook(cookId, status);
     }
 
     @PostMapping("/updateStatus")

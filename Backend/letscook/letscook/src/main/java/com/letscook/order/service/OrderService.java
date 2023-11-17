@@ -40,7 +40,7 @@ public class OrderService {
         } else if (new Date().after(meal.getOrderDeadline())) {
             throw new RuntimeException("Cannot order after deadline");
         } else {
-            meal.setCurrentOrderCount(meal.getCurrentOrderCount()+1);
+            meal.setCurrentOrderCount(meal.getCurrentOrderCount() + 1);
         }
         orderToCreate.setMeal(meal);
         Order orderCreated = orderRepository.save(orderToCreate);
@@ -59,13 +59,13 @@ public class OrderService {
         return orderRepository.findAllByCustomer_IdOrderByCreatedAtDesc(customerId);
     }
 
-    public List<Order> getOrdersByCook(Long cookId) {
-        return orderRepository.findAllByMeal_Menu_Cook_IdOrderByCreatedAtDesc(cookId);
-    }
+//    public List<Order> getOrdersByCook(Long cookId) {
+//        return orderRepository.findAllByMeal_Menu_Cook_IdOrderByCreatedAtDesc(cookId);
+//    }
 
-    public List<Order> getOrdersByMenu(Long menuId) {
-        return orderRepository.findAllByMeal_Menu_IdOrderByCreatedAtDesc(menuId);
-    }
+//    public List<Order> getOrdersByMenu(Long menuId) {
+//        return orderRepository.findAllByMeal_Menu_IdOrderByCreatedAtDesc(menuId);
+//    }
 
     public List<Order> getOrdersByStatusAndCook(Long cookId, OrderStatus status) {
         return orderRepository.findAllByStatusAndAndCustomer_IdOrderByCreatedAtDesc(status, cookId);

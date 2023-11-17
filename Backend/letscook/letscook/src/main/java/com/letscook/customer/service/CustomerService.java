@@ -1,12 +1,8 @@
 package com.letscook.customer.service;
 
-import com.letscook.cook.model.Cook;
-import com.letscook.cook.model.CreateCookProfileInput;
 import com.letscook.customer.model.CreateCustomerProfileInput;
 import com.letscook.customer.model.Customer;
 import com.letscook.customer.repository.CustomerRepository;
-import com.letscook.enums.CookStatus;
-import com.letscook.menu.model.Menu;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

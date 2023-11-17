@@ -1,11 +1,13 @@
 package com.letscook.letscook;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.util.*;
-
 import com.letscook.customer.model.Customer;
+import com.letscook.customer.repository.CustomerRepository;
+import com.letscook.enums.OrderStatus;
+import com.letscook.menu.model.Meal;
+import com.letscook.menu.repository.MealRepository;
+import com.letscook.order.model.CreateOrderInput;
+import com.letscook.order.model.Order;
+import com.letscook.order.repository.OrderRepository;
 import com.letscook.order.service.OrderService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,13 +18,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.letscook.customer.repository.CustomerRepository;
-import com.letscook.enums.OrderStatus;
-import com.letscook.menu.model.Meal;
-import com.letscook.menu.repository.MealRepository;
-import com.letscook.order.model.CreateOrderInput;
-import com.letscook.order.model.Order;
-import com.letscook.order.repository.OrderRepository;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTests {
@@ -137,37 +136,37 @@ public class OrderServiceTests {
         assertSame(mockOrders, result);
     }
 
-    @Test
-    public void testGetOrdersByCook() {
-        // Arrange
-        Long cookId = 1L;
-        List<Order> mockOrders = new ArrayList<>();
-        when(orderRepository.findAllByMeal_Menu_Cook_IdOrderByCreatedAtDesc(cookId))
-                .thenReturn(mockOrders);
+//    @Test
+//    public void testGetOrdersByCook() {
+//        // Arrange
+//        Long cookId = 1L;
+//        List<Order> mockOrders = new ArrayList<>();
+//        when(orderRepository.findAllByMeal_Menu_Cook_IdOrderByCreatedAtDesc(cookId))
+//                .thenReturn(mockOrders);
+//
+//        // Act
+//        List<Order> result = orderService.getOrdersByCook(cookId);
+//
+//        // Assert
+//        assertNotNull(result);
+//        assertSame(mockOrders, result);
+//    }
 
-        // Act
-        List<Order> result = orderService.getOrdersByCook(cookId);
-
-        // Assert
-        assertNotNull(result);
-        assertSame(mockOrders, result);
-    }
-
-    @Test
-    public void testGetOrdersByMenu() {
-        // Arrange
-        Long menuId = 1L;
-        List<Order> mockOrders = new ArrayList<>();
-        when(orderRepository.findAllByMeal_Menu_IdOrderByCreatedAtDesc(menuId))
-                .thenReturn(mockOrders);
-
-        // Act
-        List<Order> result = orderService.getOrdersByMenu(menuId);
-
-        // Assert
-        assertNotNull(result);
-        assertSame(mockOrders, result);
-    }
+//    @Test
+//    public void testGetOrdersByMenu() {
+//        // Arrange
+//        Long menuId = 1L;
+//        List<Order> mockOrders = new ArrayList<>();
+//        when(orderRepository.findAllByMeal_Menu_IdOrderByCreatedAtDesc(menuId))
+//                .thenReturn(mockOrders);
+//
+//        // Act
+//        List<Order> result = orderService.getOrdersByMenu(menuId);
+//
+//        // Assert
+//        assertNotNull(result);
+//        assertSame(mockOrders, result);
+//    }
 
     @Test
     public void testGetOrdersByStatusAndCook() {
@@ -185,6 +184,7 @@ public class OrderServiceTests {
         assertNotNull(result);
         assertSame(mockOrders, result);
     }
+
     @Test
     public void testCreateOrder_OrderLimitReached() {
         // Arrange
