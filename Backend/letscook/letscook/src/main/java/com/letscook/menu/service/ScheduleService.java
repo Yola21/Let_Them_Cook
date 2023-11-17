@@ -164,6 +164,10 @@ public class ScheduleService {
         return mealRepository.findMealsBySchedule_Cook_Id(cookId);
     }
 
+    public List<Meal> getMealsByScheduleId(Long scheduleId) {
+        return mealRepository.findMealsBySchedule_Id(scheduleId);
+    }
+
     public Meal deleteMealById(Long id) {
         Meal mealToDelete = mealRepository.findById(id).orElseThrow();
         mealRepository.deleteById(id);

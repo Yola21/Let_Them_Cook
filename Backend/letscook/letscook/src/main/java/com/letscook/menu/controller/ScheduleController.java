@@ -115,4 +115,9 @@ public class ScheduleController {
     public List<Dish> getDishesByMeal(@PathVariable() Long id){
         return scheduleService.getDishesByMealId(id);
     }
+
+    @GetMapping("/getMealsBySchedule/{id}")
+    public List<Meal> getMealsBySchedule(@PathVariable() Long id){
+        return scheduleService.getMealsByScheduleId(id);
+    }
 }
