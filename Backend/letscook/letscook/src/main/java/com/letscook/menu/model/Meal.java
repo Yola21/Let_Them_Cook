@@ -7,7 +7,6 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import jakarta.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
@@ -36,9 +35,6 @@ public class Meal {
 
     @Column(name = "meal_date", nullable = false)
     private Date mealDate;
-
-//    @OneToMany(mappedBy = "meal_id")
-//    private List<Dish> dishes;
 
     @Column(name = "image", nullable = true)
     private String image;

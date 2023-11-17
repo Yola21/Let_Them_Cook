@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,6 +53,7 @@ public class CookService {
         cookToUpdate.setBusinessName(createCookProfileInput.getBusinessName());
         cookToUpdate.setStatus(String.valueOf(CookStatus.PENDING));
         if (createCookProfileInput.getProfilePhoto() != null) {
+            cookToUpdate.setProfilePhoto(Arrays.toString(createCookProfileInput.getProfilePhoto().getBytes()));
             uploadCookProfilePhoto(cookToUpdate, createCookProfileInput.getProfilePhoto());
         }
         if (createCookProfileInput.getBannerImage() != null) {
@@ -121,7 +123,9 @@ public class CookService {
     private void uploadCookProfilePhoto(Cook cookToUpdate, MultipartFile profilePhoto) throws IOException {
         try {
             String fileName = cookToUpdate.getId().toString() + "_" + cookToUpdate.getBusinessName() + "_profilePhoto" + "." + getFileExtension(profilePhoto.getOriginalFilename());
+            System.out.println(uploadCookProfileDirectory);
             String filePath = getFilePath(fileName, uploadCookProfileDirectory);
+            System.out.println(fileName + " " + filePath);
             File destFile = new File(filePath);
             destFile.getParentFile().mkdirs();
             profilePhoto.transferTo(destFile);
@@ -146,6 +150,7 @@ public class CookService {
 
 
     private String getFilePath(String fileName, String uploadCookDirectory) {
+        System.out.println(uploadCookDirectory);
         return Paths.get(uploadCookDirectory, fileName).toAbsolutePath().normalize().toString();
     }
 

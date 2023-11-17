@@ -1,11 +1,11 @@
 package com.letscook.userdetails.service;
 
 
-import com.letscook.userdetails.controller.UserDetailsController;
 import com.letscook.userdetails.model.JwtResponse;
 import com.letscook.userdetails.model.UserInfo;
 import com.letscook.userdetails.model.UserInput;
 import com.letscook.userdetails.repository.UserDetailsRepository;
+import com.letscook.util.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,28 +21,36 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
+
     @Autowired
     private UserDetailsRepository userDetailsRepository;
-
     @Autowired
     private JwtEncoder jwtEncoder;
+    @Autowired
+    private EmailSenderService senderService;
 
     public ResponseEntity<UserInfo> register(UserInfo userDetails) throws Exception {
-        List<UserInfo> userDetailList = userDetailsRepository.findByEmail(userDetails.getEmail());
+        List<UserInfo> userDetailList = userDetailsRepository.
+                findByEmail(userDetails.getEmail());
         if (!userDetailList.isEmpty()) {
-            throw new Exception("user already exists");
+            throw new Exception("User already exists!!");
         } else {
             userDetails.setPassword(passwordEncoder().encode(userDetails.getPassword()));
             UserInfo createdUser = userDetailsRepository.save(userDetails);
+//            senderService.sendSimpleEmail(userDetails.getEmail(),
+//                    "Successfully registered",
+//                    "Hey you have been successfully registered");
+
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         }
-
     }
 
     public ResponseEntity<JwtResponse> login(UserInput userInput) throws Exception {
-        List<UserInfo> userDetailList = userDetailsRepository.findByEmail(userInput.getEmail());
+        List<UserInfo> userDetailList = userDetailsRepository.
+                findByEmail(userInput.getEmail());
         if (!userDetailList.isEmpty()) {
-            if (passwordEncoder().matches(userInput.getPassword(), userDetailList.get(0).getPassword())) {
+            if (passwordEncoder().matches(userInput.getPassword(),
+                    userDetailList.get(0).getPassword())) {
                 UserInfo userInfo = userDetailList.get(0);
                 String token = createToken(userInfo);
                 JwtResponse jwtResponse = new JwtResponse(userInfo, token);
@@ -63,7 +71,6 @@ public class UserService {
                 .subject(userInfo.getName())
                 .claim("scope", createScope(userInfo))
                 .build();
-
         return jwtEncoder.encode(JwtEncoderParameters.from(claims))
                 .getTokenValue();
     }
