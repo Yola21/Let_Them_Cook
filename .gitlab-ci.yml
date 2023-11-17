@@ -1,6 +1,46 @@
 stages:
+  - npm test
+  - npm build
+  - npm deploy
+  - test
   - publish
+  - gradle test
   - deploy
+
+include: 
+  - template: Code-Quality.gitlab-ci.yml
+
+npm test:
+  stage: npm test
+  image: node:18
+  script:
+    - cd Frontend/let-them-cook
+    - npm install
+    - npm test
+
+npm build:
+  stage: npm build
+  image: node:18
+  before_script:
+    - cat ${FRONTEND_ENVIRONMENT_VARIABLES} >> .env
+  script:
+    - cp .env Frontend/let-them-cook/
+    - cd Frontend/let-them-cook
+    - ls -la
+    - cat .env
+    - npm install
+    - CI=false npm run build
+  artifacts:
+    paths:
+      - Frontend/let-them-cook/build/
+
+npm deploy: 
+  stage: npm deploy
+  image: node:18
+  script:
+    - cd Frontend/let-them-cook
+    - npm install -g netlify-cli@latest
+    - netlify deploy --dir=build --prod
 
 publish:
   image: docker:latest
@@ -13,7 +53,7 @@ publish:
     DOCKER_TLS_CERTDIR: ""
     DOCKER_HOST: "tcp://docker:2375"
   services:
-    - docker:dind
+    - name: docker:dind
 
   script:
     - pwd 
@@ -26,6 +66,32 @@ publish:
   only:
     - main
     - development
+    - feature/LTC-49/CICD-for-project
+
+gradle test:
+  stage: gradle test
+  image: gradle:jdk17
+  before_script:
+    - cd Backend/letscook/letscook
+    - echo "distributionUrl=https\://services.gradle.org/distributions/gradle-7.2-all.zip" > gradle/wrapper/gradle-wrapper.properties
+  script:
+    - gradle clean test   
+    
+code_quality:
+  stage: test
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  tags:
+    - deployment
+  variables:
+    CODE_QUALITY_IMAGE: registry.gitlab.com/gitlab-org/ci-cd/codequality:latest
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    REPORT_FORMAT: html
+  artifacts:
+    paths: [gl-code-quality-report.html]
 
 deploy:
   image: alpine:latest
@@ -41,8 +107,7 @@ deploy:
     - ssh -i "${ID_RSA}" -o StrictHostKeyChecking=no "${SERVER_USER}@${SERVER_IP}" "docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PWD} docker.io"
     - ssh -i "${ID_RSA}" -o StrictHostKeyChecking=no "${SERVER_USER}@${SERVER_IP}" "docker pull docker.io/group17/test:${CI_COMMIT_SHORT_SHA}"
     - ssh -i "${ID_RSA}" -o StrictHostKeyChecking=no "${SERVER_USER}@${SERVER_IP}" "docker container rm -f my-app || true"
-    - ssh -i "${ID_RSA}" -o StrictHostKeyChecking=no "${SERVER_USER}@${SERVER_IP}" "docker run -d -p 8073:8073 --name my-app docker.io/group17/test:${CI_COMMIT_SHORT_SHA}"
-
+    - ssh -i "${ID_RSA}" -o StrictHostKeyChecking=no "${SERVER_USER}@${SERVER_IP}" "docker run -d -p 8080:8080 --name my-app docker.io/group17/test:${CI_COMMIT_SHORT_SHA}"
 
   environment:
     name: production
@@ -50,4 +115,5 @@ deploy:
   only:
     - main
     - development
+    - feature/LTC-49/CICD-for-project
 

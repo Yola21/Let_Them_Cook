@@ -1,20 +1,22 @@
 # Use an official OpenJDK runtime as a parent image
-FROM openjdk:11-jre-slim
+FROM openjdk:17.0.1-jdk-slim
 
 # Set the working directory to /app
 WORKDIR /app
 
-chmod +x gradlew
+RUN ls
 
 # Copy only the necessary files to cache dependencies and build the project
-COPY build.gradle settings.gradle gradlew gradlew.bat /app/
-COPY gradle /app/gradle
+# COPY Backend/letscook/letscook/build.gradle Backend/letscook/letscook/settings.gradle Backend/letscook/letscook/gradlew Backend/letscook/letscook/gradlew.bat /app/
+
+# COPY Backend/letscook/letscook/gradle /app/gradle
+
+COPY Backend/letscook/letscook/ /app/
+
+RUN chmod 777 ./gradlew
 
 # Download dependencies
 RUN ./gradlew --version
-
-# Copy the entire project
-COPY . .
 
 # Build the project
 RUN ./gradlew build

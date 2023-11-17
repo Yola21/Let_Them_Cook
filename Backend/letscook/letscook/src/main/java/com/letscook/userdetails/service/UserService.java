@@ -37,9 +37,10 @@ public class UserService {
         } else {
             userDetails.setPassword(passwordEncoder().encode(userDetails.getPassword()));
             UserInfo createdUser = userDetailsRepository.save(userDetails);
-            senderService.sendSimpleEmail(userDetails.getEmail(),
-                    "Successfully registered",
-                    "Hey you have been successfully registered!");
+//            senderService.sendSimpleEmail(userDetails.getEmail(),
+//                    "Successfully registered",
+//                    "Hey you have been successfully registered");
+
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         }
     }
