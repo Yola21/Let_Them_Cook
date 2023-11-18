@@ -43,6 +43,7 @@ public class OrderService {
             meal.setCurrentOrderCount(meal.getCurrentOrderCount() + 1);
         }
         orderToCreate.setMeal(meal);
+        orderToCreate.setPaymentStatus(createOrderInput.getPaymentStatus());
         Order orderCreated = orderRepository.save(orderToCreate);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderCreated);
     }

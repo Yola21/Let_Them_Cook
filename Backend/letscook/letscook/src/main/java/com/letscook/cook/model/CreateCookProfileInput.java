@@ -10,7 +10,7 @@ public class CreateCookProfileInput {
     private Long userId;
     private String businessName;
     private String address;
-    private MultipartFile profilePhoto;
-    private MultipartFile bannerImage;
-    private MultipartFile businessDocument;
+    private String profilePhoto;
+    private String bannerImage;
+    private String businessDocument;
 }

@@ -9,8 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class UpdateCookProfileInput {
     private Long id;
     private String address;
-    private MultipartFile profilePhoto;
-    private MultipartFile bannerImage;
-    private MultipartFile businessDocument;
+    private String profilePhoto;
+    private String bannerImage;
+    private String businessDocument;
 }
 

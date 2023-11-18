@@ -1,6 +1,7 @@
 package com.letscook.order.model;
 
 import com.letscook.enums.OrderStatus;
+import com.letscook.enums.PaymentStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,4 +12,5 @@ public class CreateOrderInput {
     private OrderStatus status;
     private Long customerId;
     private Long mealId;
+    private PaymentStatus paymentStatus;
 }

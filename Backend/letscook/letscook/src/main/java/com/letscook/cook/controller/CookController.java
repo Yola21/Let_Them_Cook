@@ -49,15 +49,6 @@ public class CookController {
         return cookService.updateCookProfile(updateCookProfileInput);
     }
 
-    @GetMapping("/profilephoto/{id}")
-    public ResponseEntity<byte[]> getCookProfile(@PathVariable() Long id) throws IOException {
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(cookService.getProfilePhoto(id));
-    }
-
-    @GetMapping("/bannerimage/{id}")
-    public ResponseEntity<byte[]> getCookBanner(@PathVariable() Long id) throws IOException {
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(cookService.getBannerPhoto(id));
-    }
     @GetMapping("/getDishes/{id}")
     public List<Dish> getDishesByCookId(@PathVariable() Long id){
         return cookService.getDishesByCookId(id);

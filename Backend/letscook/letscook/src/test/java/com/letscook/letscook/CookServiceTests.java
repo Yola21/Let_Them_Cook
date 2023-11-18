@@ -22,10 +22,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CookTests {
+public class CookServiceTests {
 
     @Mock
     private CookRepository cookRepository;
@@ -41,11 +41,11 @@ public class CookTests {
             mockCook.setId(1L);
             mockCook.setBusinessName("Mock Business");
             mockCook.setPhoneNumber("Mock Phone");
-            mockCook.setStatus("Mock Status");
+            mockCook.setStatus(String.valueOf(CookStatus.ACCEPTED));
             mockCook.setAddress("Mock Address");
-//            mockCook.setProfilePhoto("Mock Profile Photo");
-//            mockCook.setBannerImage("Mock Banner Image");
-//            mockCook.setBusinessDocument("Mock Business Document");
+            mockCook.setProfilePhoto("Mock Profile Photo");
+            mockCook.setBannerImage("Mock Banner Image");
+            mockCook.setBusinessDocument("Mock Business Document");
             return mockCook;
         }
     }
@@ -72,7 +72,27 @@ public class CookTests {
     }
 
     @Test
-    void createCookProfile() throws IOException {
+    void createCookProfileWithAllInputData() throws IOException {
+        CreateCookProfileInput input = new CreateCookProfileInput();
+        input.setUserId(1L);
+        input.setAddress("Test Address");
+        input.setBusinessName("Test Business");
+        input.setProfilePhoto("Test Image");
+        input.setBannerImage("Test Image");
+        input.setBusinessDocument("Test Image");
+        // Set other input parameters
+
+        Cook mockCook = MockDataGenerator.createMockCook();
+        when(cookRepository.save(any(Cook.class))).thenReturn(mockCook);
+
+        ResponseEntity<Cook> result = cookService.createCookProfile(input);
+
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
+        assertEquals(mockCook, result.getBody());
+    }
+
+    @Test
+    void createCookProfileWithoutAllInputData() throws IOException {
         CreateCookProfileInput input = new CreateCookProfileInput();
         input.setUserId(1L);
         input.setAddress("Test Address");
@@ -88,28 +108,59 @@ public class CookTests {
         assertEquals(mockCook, result.getBody());
     }
 
-//    @Test
-//    void updateCookProfile() throws IOException {
-//        UpdateCookProfileInput input = new UpdateCookProfileInput();
-//        input.setId(1L);
-//        input.setAddress("new Address");
-//        MultipartFile file = new MockMultipartFile("file","test.jpeg", String.valueOf(MediaType.IMAGE_JPEG), "test".getBytes());
-//        input.setProfilePhoto(file);
-//        input.setBannerImage(file);
-//        input.setBusinessDocument(file);
-//
-////        when(Files.readAllBytes(any())).thenReturn("New Data".getBytes());
-//        // Set other input parameters
-//
-//        Cook mockCook = MockDataGenerator.createMockCook();
-//        when(cookRepository.findById(input.getId())).thenReturn(Optional.of(mockCook));
-//        when(cookRepository.save(any(Cook.class))).thenReturn(mockCook);
-//
-//        ResponseEntity<Cook> result = cookService.updateCookProfile(input);
-//
-//        assertEquals(HttpStatus.CREATED, result.getStatusCode());
-//        assertEquals(mockCook, result.getBody());
-//    }
+    @Test
+    void updateCookProfileWithAllData() throws IOException {
+        UpdateCookProfileInput input = new UpdateCookProfileInput();
+        input.setId(1L);
+        input.setAddress("new Address");
+        input.setProfilePhoto("New Image");
+        input.setBannerImage("New Image");
+
+        Cook mockCook = MockDataGenerator.createMockCook();
+        when(cookRepository.findById(input.getId())).thenReturn(Optional.of(mockCook));
+        when(cookRepository.save(any(Cook.class))).thenReturn(mockCook);
+
+        ResponseEntity<Cook> result = cookService.updateCookProfile(input);
+
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
+        assertEquals(mockCook, result.getBody());
+    }
+
+    @Test
+    void updateCookProfileBusinessDocumentWithoutStatusRejected() throws IOException {
+        UpdateCookProfileInput input = new UpdateCookProfileInput();
+        input.setId(1L);
+        input.setAddress("new Address");
+        input.setProfilePhoto("New Image");
+        input.setBannerImage("New Image");
+        input.setBusinessDocument("New Image");
+
+        Cook mockCook = MockDataGenerator.createMockCook();
+        mockCook.setStatus(String.valueOf(CookStatus.PENDING));
+        when(cookRepository.findById(input.getId())).thenReturn(Optional.of(mockCook));
+
+        Error exception = assertThrows(Error.class, () -> {
+            cookService.updateCookProfile(input);
+        });
+        mockCook.setStatus(String.valueOf(CookStatus.ACCEPTED));
+        assertEquals("Not allowed to change business document", exception.getMessage());
+        verify(cookRepository, never()).save(any());
+    }
+
+    @Test
+    void updateCookProfileWithoutAllData() throws IOException {
+        UpdateCookProfileInput input = new UpdateCookProfileInput();
+        input.setId(1L);
+
+        Cook mockCook = MockDataGenerator.createMockCook();
+        when(cookRepository.findById(input.getId())).thenReturn(Optional.of(mockCook));
+        when(cookRepository.save(any(Cook.class))).thenReturn(mockCook);
+
+        ResponseEntity<Cook> result = cookService.updateCookProfile(input);
+
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
+        assertEquals(mockCook, result.getBody());
+    }
 
     @Test
     void updateCookProfile_EntityNotFoundException() {
@@ -130,36 +181,4 @@ public class CookTests {
 
         assertEquals(mockPendingCooks, result);
     }
-
-    // Add more tests for other methods...
-
-//    @Test
-//    void getProfilePhoto() throws IOException {
-//        Long cookId = 1L;
-//        Cook mockCook = MockDataGenerator.createMockCook();
-//        when(cookRepository.findById(cookId)).thenReturn(Optional.of(mockCook));
-//
-//        byte[] mockPhotoData = "Mock Photo Data".getBytes();
-//
-//        // Use ArgumentMatchers.eq for the specific argument
-//        when(Files.readAllBytes(argThat(argument -> argument.endsWith(mockCook.getProfilePhoto())))).thenReturn(mockPhotoData);
-//
-//        byte[] result = cookService.getProfilePhoto(cookId);
-//
-//        assertArrayEquals(mockPhotoData, result);
-//    }
-//
-//    @Test
-//    void getBannerPhoto() throws IOException {
-//        Long cookId = 1L;
-//        Cook mockCook = MockDataGenerator.createMockCook();
-//        when(cookRepository.findById(cookId)).thenReturn(Optional.of(mockCook));
-//
-//        byte[] mockPhotoData = "Mock Photo Data".getBytes();
-//        when(Files.readAllBytes(any())).thenReturn(mockPhotoData);
-//
-//        byte[] result = cookService.getBannerPhoto(cookId);
-//
-//        assertArrayEquals(mockPhotoData, result);
-//    }
 }
