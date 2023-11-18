@@ -1,9 +1,12 @@
 package com.letscook.cook.model;
 
+import com.letscook.menu.model.Dish;
 import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,5 +37,8 @@ public class Cook {
 
     @Column(name = "business_document", nullable = true)
     private String businessDocument;
+
+    @OneToMany(mappedBy = "cook")
+    private List<Dish> dishes;
 
 }

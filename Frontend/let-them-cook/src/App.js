@@ -8,13 +8,17 @@ import Customer from "./Customer/Customer";
 import Admin from "./Admin/Admin";
 import { Redirect } from "react-router-dom/cjs/react-router-dom";
 import { useSelector } from "react-redux";
-import { getCurrentUserRole } from "./Authentication/authSlice";
+import {
+  getCurrentUserInfo,
+  getCurrentUserRole,
+} from "./Authentication/authSlice";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CookProfile from "./Cook/CookProfile";
 
 function App() {
   const loggedInUserRole = useSelector(getCurrentUserRole);
+  const loggedInUserInfo = useSelector(getCurrentUserInfo);
 
   return (
     <Router>
@@ -27,11 +31,11 @@ function App() {
           {" "}
           <CustomerSignUp />{" "}
         </Route>
-        <Route path="/cook/profile">
+        <Route path="/cook/:id/profile">
           {" "}
           <CookProfile />{" "}
         </Route>
-        <Route path="/cook">
+        <Route path="/cook/:id">
           {" "}
           <Cook />{" "}
         </Route>
@@ -50,7 +54,7 @@ function App() {
               loggedInUserRole === "admin"
                 ? "/admin"
                 : loggedInUserRole === "cook"
-                ? "/cook"
+                ? `/cook/${loggedInUserInfo.id}`
                 : "/customer"
             }
           />
