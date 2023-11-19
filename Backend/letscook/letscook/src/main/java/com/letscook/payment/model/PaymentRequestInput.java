@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class PaymentRequestInput {
     private Long amount;
-    private String token;
+    private Token token;
 }

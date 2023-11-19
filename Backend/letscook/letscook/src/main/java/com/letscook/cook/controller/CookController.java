@@ -35,7 +35,7 @@ public class CookController {
     }
 
     @PostMapping("/createProfile")
-    public ResponseEntity<Cook> createCookProfile(@ModelAttribute() CreateCookProfileInput createCookProfileInput) throws IOException {
+    public ResponseEntity<Cook> createCookProfile(@RequestBody() CreateCookProfileInput createCookProfileInput) throws IOException {
         return cookService.createCookProfile(createCookProfileInput);
     }
 
@@ -45,7 +45,7 @@ public class CookController {
     }
 
     @PostMapping("/updateProfile")
-    public ResponseEntity<Cook> updateCookProfile(@ModelAttribute() UpdateCookProfileInput updateCookProfileInput) throws IOException {
+    public ResponseEntity<Cook> updateCookProfile(@RequestBody() UpdateCookProfileInput updateCookProfileInput) throws IOException {
         return cookService.updateCookProfile(updateCookProfileInput);
     }
 

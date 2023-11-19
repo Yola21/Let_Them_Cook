@@ -27,7 +27,7 @@ public class PaymentService {
         Map<String, Object> chargeParams = new HashMap<>();
         chargeParams.put("amount", paymentRequestInput.getAmount());
         chargeParams.put("currency", "CAD");
-        chargeParams.put("source", paymentRequestInput.getToken());
+        chargeParams.put("source", paymentRequestInput.getToken().getId());
 
         Charge charge = Charge.create(chargeParams);
         return charge.getId();

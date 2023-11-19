@@ -15,6 +15,7 @@ import {
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CookProfile from "./Cook/CookProfile";
+import StripeButton from "./Customer/Payment";
 
 function App() {
   const loggedInUserRole = useSelector(getCurrentUserRole);
@@ -59,6 +60,9 @@ function App() {
             }
           />
         )}
+        <Route path = "/payment">
+          <StripeButton />
+        </Route>
         <Route path="/">
           <Login />
         </Route>

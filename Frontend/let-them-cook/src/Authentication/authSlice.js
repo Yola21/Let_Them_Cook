@@ -14,7 +14,7 @@ export const createUser = createAsyncThunk(
 
     // const endpoint = `${config.BASE_PATH}${config.USER_REGISTER}`;
     const response = await fetch(
-      "http://csci5308vm17.research.cs.dal.ca:8080/register",
+      `${config.BASE_PATH}/register`,
       {
         method: "POST",
         headers: {
@@ -47,7 +47,7 @@ export const userLogin = createAsyncThunk("auth/userLogin", async (args) => {
 
   // const endpoint = `${config.BASE_PATH}${config.USER_LOGIN}`;
   const response = await fetch(
-    "http://csci5308vm17.research.cs.dal.ca:8080/login",
+    `${config.BASE_PATH}/login`,
     {
       method: "POST",
       headers: {
@@ -80,7 +80,7 @@ export const createCookProfile = createAsyncThunk(
 
     // const endpoint = `${config.BASE_PATH}${config.COOKS}${config.COOK_CREATE_PROFILE}`;
     const response = await fetch(
-      "http://csci5308vm17.research.cs.dal.ca:8080/cooks/createProfile",
+      `${config.BASE_PATH}/cooks/createProfile`,
       {
         method: "POST",
         body: formData,
