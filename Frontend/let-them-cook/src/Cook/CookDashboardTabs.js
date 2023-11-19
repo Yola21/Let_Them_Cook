@@ -4,6 +4,8 @@ import Tab from "@mui/material/Tab";
 import CookDishesView from "./CookDishesView";
 import CookMealSchedule from "./CookMealSchedule";
 import { Box, Typography } from "@mui/material";
+import MealScheduleView from "./MealScheduleView";
+import MealsView from "./MealsView";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -36,13 +38,18 @@ export default function CookDashboardTabs() {
     <>
       <Tabs value={value} onChange={handleChange}>
         <Tab label="Dishes" id="tab-0" />
-        <Tab label="Meal Schedule" id="tab-1" />
+        <Tab label="Meals" id="tab-1" />
+        <Tab label="Meal Schedule" id="tab-2" />
       </Tabs>
       <CustomTabPanel value={value} index={0}>
         <CookDishesView />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <CookMealSchedule />
+        <MealsView />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={2}>
+        {/* <CookMealSchedule /> */}
+        <MealScheduleView />
       </CustomTabPanel>
     </>
   );

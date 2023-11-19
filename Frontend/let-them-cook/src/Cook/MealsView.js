@@ -35,7 +35,7 @@ import {
 } from "./cookSlice";
 import AddDishToMealForm from "./AddDishToMealForm";
 
-export default function CookDishesView() {
+export default function MealsView() {
   const dishes = useSelector(dishesByCook);
   const meals = useSelector(getMeals);
   const dispatch = useDispatch();
@@ -93,6 +93,9 @@ export default function CookDishesView() {
     setOpenDeleteDialog(false);
   };
 
+  const handleOnClick = () => {
+    // dispatch(fetchDishe)
+  };
   return (
     <div style={{ padding: "3rem" }}>
       <div
@@ -102,7 +105,7 @@ export default function CookDishesView() {
           marginBottom: "3rem",
         }}
       >
-        <Typography variant="h4">Dishes Created</Typography>
+        {/* <Typography variant="h4">Dishes Created</Typography>
         <Divider style={{ marginBottom: "1rem" }} />
         <Box
           style={{
@@ -132,9 +135,9 @@ export default function CookDishesView() {
               </CardActions>
             </Card>
           ))}
-        </Box>
+        </Box> */}
 
-        {/* <Typography variant="h4">Meals Created</Typography>
+        <Typography variant="h4">Meals Created</Typography>
         <Divider style={{ marginBottom: "1rem" }} />
         <Box
           style={{
@@ -150,11 +153,18 @@ export default function CookDishesView() {
                 marginBottom: "1rem",
                 width: "40%",
               }}
+              onClick={handleOnClick}
             >
               <CardContent>
                 <Typography variant="h5">{dish.name}</Typography>
               </CardContent>
               <CardActions>
+                {/* <Button
+                  variant="contained"
+                  onClick={(e) => onAddToMealClick(e, dish.id)}
+                >
+                  Add to Meal
+                </Button> */}
                 <IconButton onClick={(e) => onUpdateMealClick(e, dish.id)}>
                   <Edit style={{ color: "green" }} />
                 </IconButton>
@@ -164,7 +174,7 @@ export default function CookDishesView() {
               </CardActions>
             </Card>
           ))}
-        </Box> */}
+        </Box>
       </div>
       <Dialog open={openDeleteDIalog} onClose={handleCloseDeleteDialog}>
         <DialogTitle>Delete</DialogTitle>

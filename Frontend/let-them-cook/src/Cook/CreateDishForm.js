@@ -16,30 +16,42 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
 import {
   createDish,
+  dishId,
   dishImage,
   dishLabel,
   dishName,
   dishPrice,
+  getDishDescription,
+  getUpdateDish,
   openCreateDishForm,
   resetCreateDishFormValues,
+  setDishDescription,
   setDishImage,
   setDishLabel,
   setDishName,
   setDishPrice,
   toggleCreateDishForm,
+  updateDish,
 } from "./cookSlice";
 
 export default function CreateDishForm() {
   const open = useSelector(openCreateDishForm);
   const name = useSelector(dishName);
+  const description = useSelector(getDishDescription);
   const label = useSelector(dishLabel);
   const price = useSelector(dishPrice);
   const image = useSelector(dishImage);
+  const editDish = useSelector(getUpdateDish);
+  const menuId = useSelector(dishId);
   const dispatch = useDispatch();
   const { id } = useParams();
 
   const handleDishName = (e) => {
     dispatch(setDishName(e.target.value));
+  };
+
+  const handleDishDescription = (e) => {
+    dispatch(setDishDescription(e.target.value));
   };
 
   const handleDishLabel = (e) => {
@@ -60,13 +72,19 @@ export default function CreateDishForm() {
     dispatch(resetCreateDishFormValues());
   };
 
+  const handleUpdateDish = () => {
+    dispatch(updateDish({ id: menuId, cookId: id }));
+    dispatch(toggleCreateDishForm(false));
+    dispatch(resetCreateDishFormValues());
+  };
+
   const handleDialogClose = () => {
     dispatch(toggleCreateDishForm(false));
   };
 
   return (
     <Dialog open={open} onClose={handleDialogClose}>
-      <DialogTitle>Create a Dish</DialogTitle>
+      <DialogTitle>{editDish ? "Update Dish" : "Create a Dish"}</DialogTitle>
       <DialogContent style={{ display: "flex", flexDirection: "column" }}>
         <TextField
           value={name}
@@ -78,6 +96,15 @@ export default function CreateDishForm() {
           variant="standard"
         />
         <TextField
+          value={description}
+          onChange={handleDishDescription}
+          margin="dense"
+          id="description"
+          label="Description"
+          fullWidth
+          variant="standard"
+        />
+        {/* <TextField
           value={price}
           onChange={handleDishPrice}
           margin="dense"
@@ -86,7 +113,7 @@ export default function CreateDishForm() {
           fullWidth
           variant="standard"
           style={{ marginTop: "1rem" }}
-        />
+        /> */}
         <InputLabel id="label" style={{ marginTop: "1rem" }}>
           Dish Type
         </InputLabel>
@@ -111,7 +138,12 @@ export default function CreateDishForm() {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCreateDish}>Create</Button>
+        {editDish ? (
+          <Button onClick={handleUpdateDish}>Update</Button>
+        ) : (
+          <Button onClick={handleCreateDish}>Create</Button>
+        )}
+        {/* <Button onClick={handleCreateDish}>Create</Button> */}
       </DialogActions>
     </Dialog>
   );
