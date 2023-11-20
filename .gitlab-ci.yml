@@ -57,7 +57,7 @@ build-smell-jar:
       - $CI_PROJECT_DIR
 
 issue-job:
-  stage: issueß
+  stage: issue
   dependencies:
     - build-job
   image: "python:3.10"
