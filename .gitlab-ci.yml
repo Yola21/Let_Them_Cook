@@ -44,7 +44,7 @@ npm deploy:
     - npm install -g netlify-cli@latest
     - netlify deploy --dir=build --prod
 
-build-smell-jar:
+build-smell-job:
   stage: build
   image: openjdk:11
   script:
@@ -59,7 +59,7 @@ build-smell-jar:
 issue-job:
   stage: issue
   dependencies:
-    - build-job
+    - build-smell-job
   image: "python:3.10"
   script:
     - ls -a smells/
