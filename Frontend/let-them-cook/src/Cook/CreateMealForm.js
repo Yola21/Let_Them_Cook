@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addDishToMeal,
   addMealToSchedule,
   getMealDate,
   getMealImage,
@@ -27,7 +26,6 @@ import {
   getOpenAddDishToMealForm,
   getSchedules,
   getUpdateMeal,
-  openCreateDishForm,
   setMealDate,
   setMealImage,
   setMealMaxOrderLimit,
@@ -37,7 +35,6 @@ import {
   setMealSchedule,
   setMealSlot,
   toggleAddDishToMealForm,
-  toggleCreateDishForm,
   updateMealToSchedule,
 } from "./cookSlice";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
@@ -73,9 +70,7 @@ export default function CreateMealForm() {
   };
 
   const getFullDate = (date) => {
-    const fullDate = `${date.getFullYear()}-${
-      date.getMonth() + 1
-    }-${date.getDate()}`;
+    const fullDate = moment(date).format("YYYY-MM-DD");
     return fullDate;
   };
 
@@ -96,12 +91,10 @@ export default function CreateMealForm() {
   };
 
   const handleMealOrderDeadlineChange = (e) => {
-    console.log(e.target.value);
     dispatch(setMealOrderDeadline(e.target.value));
   };
 
   const handleMealDateChange = (e) => {
-    console.log(e.target.value);
     dispatch(setMealDate(e.target.value));
   };
 
@@ -115,24 +108,14 @@ export default function CreateMealForm() {
 
   const getWeekDate = (scheduleStartDate) => {
     const date = new Date(scheduleStartDate);
-    const startDate = `${date.getUTCFullYear()}/${
-      date.getUTCMonth() + 1
-    }/${date.getUTCDate()}`;
-    const endDate = `${date.getUTCFullYear()}/${date.getUTCMonth() + 1}/${
-      date.getUTCDate() + 6
-    }`;
+    const startDate = moment.utc(date).format("YYYY/MM/DD");
+    const endDate = moment.utc(date).add(6, "d").format("YYYY/MM/DD");
     return `${startDate} - ${endDate}`;
   };
 
   const getFormattedDate = (formatDate) => {
     const date = new Date(formatDate);
-    // const formattedDate =
-    //   [date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate()].join(
-    //     "-"
-    //   ) +
-    //   " " +
-    //   [date.getHours(), date.getUTCMinutes(), date.getUTCSeconds()].join(":");
-    const formattedDate = moment(date).format("YYYY-MM-DD HH:MM:SS");
+    const formattedDate = moment.utc(date).format("YYYY-MM-DD h:mm:ss");
     return formattedDate;
   };
 
@@ -141,7 +124,6 @@ export default function CreateMealForm() {
       (schedule) => schedule.name === mealSchedule
     );
 
-    console.log({ mealSchedule }, { selectedSchedule });
     dispatch(
       addMealToSchedule({
         mealDate: getFormattedDate(mealDate),
@@ -215,11 +197,8 @@ export default function CreateMealForm() {
                 ? calendarDays[0]
                 : currentDate
             )}
-            // max={getFullDate(calendarDays[6])}
-            // value={new Date(1700424000000)}
             value={mealDate}
             onChange={handleMealDateChange}
-            // width="10rem"
           />
         </div>
         <Typography style={{ marginTop: "1rem" }}>Order Deadline</Typography>
@@ -245,7 +224,7 @@ export default function CreateMealForm() {
           >
             {schedules?.map((schedule) => (
               <MenuItem key={schedule.id} value={schedule.name}>
-                Name: {schedule.name} Week: {getWeekDate(schedule.start_date)}
+                {schedule.name}: {getWeekDate(schedule.start_date)}
               </MenuItem>
             ))}
           </Select>
@@ -276,7 +255,6 @@ export default function CreateMealForm() {
           label="Meal Price"
           fullWidth
           variant="standard"
-          // sx={{ marginTop: "1rem" }}
         />
         <Typography sx={{ marginTop: "1rem" }}>
           Upload an image of the meal

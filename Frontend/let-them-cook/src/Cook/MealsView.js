@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import {
-  Box,
   Button,
   Card,
   CardActions,
   CardContent,
+  CardMedia,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
   IconButton,
   Typography,
 } from "@mui/material";
@@ -21,22 +20,22 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   deleteDish,
   deleteMeal,
-  dishesByCook,
+  fetchDishesByMeal,
+  getDishesByMeal,
+  getMealForDish,
   getMeals,
-  setCurrentDish,
+  getOpenDishesByMealDialog,
   setCurrentMeal,
-  setDishId,
+  setMealForDish,
+  setMealId,
   toggleAddDishToMealForm,
-  toggleCreateDishForm,
   toggleCreateMealForm,
-  toggleUpdateDish,
-  toggleUpdateDishForm,
+  toggleOpenDishesByMealDialog,
   toggleUpdateMeal,
 } from "./cookSlice";
 import AddDishToMealForm from "./AddDishToMealForm";
 
 export default function MealsView() {
-  const dishes = useSelector(dishesByCook);
   const meals = useSelector(getMeals);
   const dispatch = useDispatch();
   const [deleteSelectedDish, setDeleteSelectedDish] = useState(null);
@@ -44,21 +43,8 @@ export default function MealsView() {
   const [removeMeal, setDeleteMeal] = useState(false);
   const { id } = useParams();
 
-  const onUpdateDishClick = (e, id) => {
-    dispatch(toggleUpdateDish(true));
-    dispatch(toggleCreateDishForm(true));
-    const selectedDish = dishes.filter((dish) => dish.id === id);
-    dispatch(setCurrentDish(selectedDish[0]));
-  };
-
-  const onDeleteDishClick = (e, id) => {
-    const dishToBeDeleted = dishes.filter((dish) => dish.id === id);
-    setDeleteSelectedDish(dishToBeDeleted);
-    setDeleteMeal(false);
-    setOpenDeleteDialog(true);
-  };
-
   const onUpdateMealClick = (e, id) => {
+    e.stopPropagation();
     dispatch(toggleUpdateMeal(true));
     dispatch(toggleAddDishToMealForm(true));
     const selectedMeal = meals.filter((dish) => dish.id === id);
@@ -66,18 +52,11 @@ export default function MealsView() {
   };
 
   const onDeleteMealClick = (e, id) => {
+    e.stopPropagation();
     const mealToBeDeleted = meals.filter((dish) => dish.id === id);
     setDeleteSelectedDish(mealToBeDeleted);
     setDeleteMeal(true);
     setOpenDeleteDialog(true);
-  };
-
-  const onAddToMealClick = (e, id) => {
-    dispatch(toggleCreateMealForm(true));
-    dispatch(setDishId(id));
-    // dispatch(toggleAddDishToMealForm(true));
-    // const selectedDish = dishes.filter((dish) => dish.id === id);
-    // dispatch(setCurrentDish(selectedDish[0]));
   };
 
   const handleCloseDeleteDialog = () => {
@@ -93,89 +72,62 @@ export default function MealsView() {
     setOpenDeleteDialog(false);
   };
 
-  const handleOnClick = () => {
-    // dispatch(fetchDishe)
+  const handleOnClick = async (e, meal) => {
+    dispatch(setMealForDish(meal));
+    await dispatch(fetchDishesByMeal({ id: meal.id }));
+    dispatch(toggleOpenDishesByMealDialog(true));
   };
-  return (
-    <div style={{ padding: "3rem" }}>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          marginBottom: "3rem",
-        }}
-      >
-        {/* <Typography variant="h4">Dishes Created</Typography>
-        <Divider style={{ marginBottom: "1rem" }} />
-        <Box
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-          }}
-        >
-          {dishes?.map((dish) => (
-            <Card style={{ backgroundColor: "#f7f5f5", marginBottom: "1rem" }}>
-              <CardContent>
-                <Typography variant="h5">{dish.name}</Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  variant="contained"
-                  onClick={(e) => onAddToMealClick(e, dish.id)}
-                >
-                  Add to Meal
-                </Button>
-                <IconButton onClick={(e) => onUpdateDishClick(e, dish.id)}>
-                  <Edit style={{ color: "green" }} />
-                </IconButton>
-                <IconButton onClick={(e) => onDeleteDishClick(e, dish.id)}>
-                  <Delete style={{ color: "red" }} />
-                </IconButton>
-              </CardActions>
-            </Card>
-          ))}
-        </Box> */}
 
-        <Typography variant="h4">Meals Created</Typography>
-        <Divider style={{ marginBottom: "1rem" }} />
-        <Box
+  const handleAddDishToMeal = (e, id) => {
+    e.stopPropagation();
+    dispatch(toggleCreateMealForm(true));
+    dispatch(setMealId(id));
+  };
+
+  return (
+    <div
+      style={{
+        padding: "1rem",
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+      }}
+    >
+      {meals?.map((dish) => (
+        <Card
           style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
+            marginBottom: "1rem",
+            width: "40%",
+            boxShadow: "5px 5px 10px #000",
           }}
+          onClick={(e) => handleOnClick(e, dish)}
         >
-          {meals?.map((dish) => (
-            <Card
-              style={{
-                backgroundColor: "#eee",
-                marginBottom: "1rem",
-                width: "40%",
-              }}
-              onClick={handleOnClick}
+          <CardMedia sx={{ height: 120 }} image={dish.image} />
+          <CardContent>
+            <Typography variant="h5">{dish.name}</Typography>
+            <Typography>${dish.price}</Typography>
+          </CardContent>
+          <CardActions
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button
+              variant="contained"
+              style={{ backgroundColor: "#000" }}
+              onClick={(e) => handleAddDishToMeal(e, dish.id)}
             >
-              <CardContent>
-                <Typography variant="h5">{dish.name}</Typography>
-              </CardContent>
-              <CardActions>
-                {/* <Button
-                  variant="contained"
-                  onClick={(e) => onAddToMealClick(e, dish.id)}
-                >
-                  Add to Meal
-                </Button> */}
-                <IconButton onClick={(e) => onUpdateMealClick(e, dish.id)}>
-                  <Edit style={{ color: "green" }} />
-                </IconButton>
-                <IconButton onClick={(e) => onDeleteMealClick(e, dish.id)}>
-                  <Delete style={{ color: "red" }} />
-                </IconButton>
-              </CardActions>
-            </Card>
-          ))}
-        </Box>
-      </div>
+              Add Dishes
+            </Button>
+            <div>
+              <IconButton onClick={(e) => onUpdateMealClick(e, dish.id)}>
+                <Edit style={{ color: "green" }} />
+              </IconButton>
+              <IconButton onClick={(e) => onDeleteMealClick(e, dish.id)}>
+                <Delete style={{ color: "red" }} />
+              </IconButton>
+            </div>
+          </CardActions>
+        </Card>
+      ))}
       <Dialog open={openDeleteDIalog} onClose={handleCloseDeleteDialog}>
         <DialogTitle>Delete</DialogTitle>
         <DialogContent>
@@ -190,6 +142,58 @@ export default function MealsView() {
         </DialogActions>
       </Dialog>
       <AddDishToMealForm />
+      <DishesByMeals />
     </div>
+  );
+}
+
+export function DishesByMeals() {
+  const dishes = useSelector(getDishesByMeal);
+  const open = useSelector(getOpenDishesByMealDialog);
+  const meal = useSelector(getMealForDish);
+  const dispatch = useDispatch();
+
+  const onClose = () => {
+    dispatch(toggleOpenDishesByMealDialog(false));
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>{meal?.name}</DialogTitle>
+      <DialogContent style={{ backgroundColor: "#f7f7f7", paddingTop: "1rem" }}>
+        {dishes == null
+          ? "No Dishes Added"
+          : dishes?.map((dish) => (
+              <Card
+                style={{
+                  display: "flex",
+                  marginBottom: "1rem",
+                  boxShadow: "3px #000",
+                }}
+              >
+                <CardMedia
+                  sx={{ width: "6.3rem", height: "6.3rem" }}
+                  image={dish.image}
+                />
+                <CardContent>
+                  <Typography variant="h5">{dish.name}</Typography>
+                  <Typography
+                    style={{
+                      padding: "2px",
+                      borderRadius: "3px",
+                      width:
+                        dish.type.toLowerCase() === "veg" ? "2rem" : "4rem",
+                      color: "#fff",
+                      backgroundColor:
+                        dish.type.toLowerCase() === "veg" ? "#04df04" : "red",
+                    }}
+                  >
+                    {dish.type}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ))}
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -7,7 +7,6 @@ import {
   DialogActions,
   TextField,
   Typography,
-  Input,
 } from "@mui/material";
 import {
   createSchedule,
@@ -20,6 +19,7 @@ import {
 } from "./cookSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
+import moment from "moment";
 
 const currentDate = new Date();
 const calendarDays = Array.from({ length: 7 }, (_, index) => {
@@ -31,9 +31,7 @@ const calendarDays = Array.from({ length: 7 }, (_, index) => {
 });
 
 const getFullDate = (date) => {
-  const fullDate = `${date.getFullYear()}-${
-    date.getMonth() + 1
-  }-${date.getDate()}`;
+  const fullDate = moment.utc(date).format("YYYY-MM-DD");
   return fullDate;
 };
 
@@ -53,13 +51,14 @@ export default function CreateMealScheduleForm() {
   };
 
   const handleScheduleStartDateChange = (e) => {
-    console.log(e);
     dispatch(setScheduleStartDate(e.target.value));
   };
 
   const handleCreateSchedule = () => {
     dispatch(createSchedule({ cookId: id }));
     dispatch(toggleCreateMealScheduleForm(false));
+    dispatch(setScheduleName(null));
+    dispatch(setScheduleStartDate(null));
   };
 
   return (
@@ -78,17 +77,9 @@ export default function CreateMealScheduleForm() {
         <Typography style={{ marginTop: "1rem" }}>
           Select Schedule Week Start Date
         </Typography>
-        {/* <Input
-          type="date"
-          min={getFullDate(calendarDays[0])}
-          value={scheduleStartDate}
-          onChange={handleScheduleStartDateChange}
-        /> */}
         <input
           type="date"
-          // type="datetime-local"
           min={getFullDate(calendarDays[0])}
-          //   max={getFullDate(calendarDays[6])}
           value={scheduleStartDate}
           onChange={handleScheduleStartDateChange}
         />

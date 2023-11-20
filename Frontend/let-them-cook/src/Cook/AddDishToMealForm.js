@@ -12,15 +12,15 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   addDishToMeal,
+  dishesByCook,
   getMealForDish,
-  getMeals,
   getOpenCreateMealForm,
   setMealForDish,
   toggleCreateMealForm,
 } from "./cookSlice";
 
 export default function AddDishToMealForm() {
-  const meals = useSelector(getMeals);
+  const dishes = useSelector(dishesByCook);
   const mealForDish = useSelector(getMealForDish);
   const openCreateMealForm = useSelector(getOpenCreateMealForm);
   const dispatch = useDispatch();
@@ -34,15 +34,17 @@ export default function AddDishToMealForm() {
   };
 
   const handleAddDishToMeal = () => {
-    const mealId = meals.find((meal) => meal.name === mealForDish);
-    dispatch(addDishToMeal({ mealId: mealId?.id }));
+    const dish = dishes.find((meal) => meal.name === mealForDish);
+    dispatch(addDishToMeal({ dishId: dish?.id }));
+    dispatch(toggleCreateMealForm(false));
+    dispatch(setMealForDish(null));
   };
 
   return (
     <Dialog open={openCreateMealForm} onClose={onMealFormClose}>
       <DialogTitle>Add Dish To Meal</DialogTitle>
       <DialogContent>
-        <InputLabel id="meal">Meal</InputLabel>
+        <InputLabel id="meal">Dish</InputLabel>
         <Select
           labelId="meal"
           id="meal"
@@ -50,7 +52,7 @@ export default function AddDishToMealForm() {
           onChange={handleMealChange}
           label="Meal"
         >
-          {meals.map((meal) => (
+          {dishes?.map((meal) => (
             <MenuItem key={meal.id} value={meal.name}>
               {meal.name}
             </MenuItem>

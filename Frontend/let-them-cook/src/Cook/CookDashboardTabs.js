@@ -2,7 +2,6 @@ import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import CookDishesView from "./CookDishesView";
-import CookMealSchedule from "./CookMealSchedule";
 import { Box, Typography } from "@mui/material";
 import MealScheduleView from "./MealScheduleView";
 import MealsView from "./MealsView";
@@ -48,7 +47,6 @@ export default function CookDashboardTabs() {
         <MealsView />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        {/* <CookMealSchedule /> */}
         <MealScheduleView />
       </CustomTabPanel>
     </>

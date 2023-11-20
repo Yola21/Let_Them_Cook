@@ -11,59 +11,17 @@ import {
   Paper,
 } from "@mui/material";
 import "./CookDash.css";
-import cooking from "../Authentication/images/cooking.jpg";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
+  fetchDishesByMeal,
   getMealsByDinnerSchedule,
   getMealsByLunchSchedule,
-  getMealsBySchedule,
   getScheduleCalendarDays,
+  setMealForDish,
+  toggleOpenDishesByMealDialog,
 } from "./cookSlice";
+import { DishesByMeals } from "./MealsView";
 
-const DISHES = [
-  {
-    name: "Pav Bhaji",
-    price: "CAD10",
-    label: "Veg",
-    image: cooking,
-  },
-  {
-    name: "Paneer Butter Masala",
-    price: "CAD18",
-    label: "Veg",
-    image: cooking,
-  },
-  {
-    name: "Butter Chicken",
-    price: "CAD20",
-    label: "Non-Veg",
-    image: cooking,
-  },
-  {
-    name: "Chicken Bhurji",
-    price: "CAD15",
-    label: "Non-Veg",
-    image: cooking,
-  },
-  {
-    name: "Rajma Chawal",
-    price: "CAD15",
-    label: "Veg",
-    image: cooking,
-  },
-  {
-    name: "Poha",
-    price: "CAD5",
-    label: "Veg",
-    image: cooking,
-  },
-  {
-    name: "Aloo Paratha",
-    price: "CAD11",
-    label: "Veg",
-    image: cooking,
-  },
-];
 const daysOfWeek = [
   "Sunday",
   "Monday",
@@ -81,14 +39,6 @@ const getFormattedDate = (date) => {
     day > 3 && day < 21 ? "th" : ["st", "nd", "rd"][(day % 10) - 1] || "th";
   return `${day}${daySuffix}`;
 };
-
-// const calendarDays = Array.from({ length: 7 }, (_, index) => {
-//   const startDate = new Date(currentDate); // Clone the current date
-//   startDate.setDate(currentDate.getDate() - currentDate.getDay()); // Set to the start of the current week
-//   const day = new Date(startDate);
-//   day.setDate(startDate.getDate() + index);
-//   return day;
-// });
 
 export default function CookMealSchedule() {
   const calendarDays = useSelector(getScheduleCalendarDays);
@@ -200,25 +150,35 @@ export default function CookMealSchedule() {
           </TableBody>
         </Table>
       </TableContainer>
+      <DishesByMeals />
     </Paper>
   );
 }
 
 function Meal({ day, meals }) {
+  const dispatch = useDispatch();
+
+  const onClick = async (e, meal) => {
+    dispatch(setMealForDish(meal));
+    await dispatch(fetchDishesByMeal({ id: meal.id }));
+    dispatch(toggleOpenDishesByMealDialog(true));
+  };
+
   return meals[day].map((meal) => (
     <Paper
+      elevation={5}
       key={meal.id}
       style={{
-        backgroundColor: "#eee",
         width: "10rem",
         display: "flex",
         flexDirection: "column",
-        // justifyContent: "space-between",
-        // padding: "1rem",
+        alignItems: "center",
+        paddingTop: "3px",
       }}
+      onClick={(e) => onClick(e, meal)}
     >
       <Avatar src={meal.image} style={{ width: "5rem", height: "5rem" }} />
-      <Typography>{meal.name}</Typography>
+      <Typography style={{ textAlign: "center" }}>{meal.name}</Typography>
     </Paper>
   ));
 }

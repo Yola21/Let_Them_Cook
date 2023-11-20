@@ -17,33 +17,17 @@ import {
 } from "react-router-dom/cjs/react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  createDish,
-  getCurrentDishurrentDish,
-  deleteDish,
-  dishId,
-  dishImage,
-  dishLabel,
-  dishName,
-  dishPrice,
-  dishesByCook,
   fetchDishesByCook,
-  openCreateDishForm,
-  setCurrentDish,
-  setDishImage,
-  setDishLabel,
-  setDishName,
-  setDishPrice,
   toggleCreateDishForm,
-  updateDish,
   toggleAddDishToMealForm,
   resetCreateDishFormValues,
   fetchSchedulesByCook,
   getSchedules,
   toggleCreateMealScheduleForm,
   fetchMealsByCook,
-  toggleAddMeal,
   toggleUpdateDish,
   resetCurrentMeal,
+  toggleUpdateMeal,
 } from "./cookSlice";
 import CreateMealForm from "./CreateMealForm";
 import CreateDishForm from "./CreateDishForm";
@@ -52,7 +36,6 @@ import CreateMealScheduleForm from "./CreateMealScheduleForm";
 
 export default function Cook() {
   const schedules = useSelector(getSchedules);
-  const dishes = useSelector(dishesByCook);
   const history = useHistory();
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -70,6 +53,7 @@ export default function Cook() {
 
   const handleCreateMeal = () => {
     dispatch(resetCurrentMeal());
+    dispatch(toggleUpdateMeal(false));
     dispatch(toggleAddDishToMealForm(true));
   };
 
@@ -86,7 +70,7 @@ export default function Cook() {
   return (
     <div>
       <AppBar
-        style={{ backgroundColor: "#eee", color: "#000" }}
+        style={{ backgroundColor: "#fff", color: "#000" }}
         position="sticky"
       >
         <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
@@ -155,7 +139,6 @@ const NoDishView = () => {
 
   const toggleModal = () => {
     dispatch(toggleCreateMealScheduleForm(true));
-    // dispatch(toggleCreateDishForm(true));
   };
 
   return (

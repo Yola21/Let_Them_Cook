@@ -20,7 +20,6 @@ import {
   dishImage,
   dishLabel,
   dishName,
-  dishPrice,
   getDishDescription,
   getUpdateDish,
   openCreateDishForm,
@@ -29,7 +28,6 @@ import {
   setDishImage,
   setDishLabel,
   setDishName,
-  setDishPrice,
   toggleCreateDishForm,
   updateDish,
 } from "./cookSlice";
@@ -39,7 +37,6 @@ export default function CreateDishForm() {
   const name = useSelector(dishName);
   const description = useSelector(getDishDescription);
   const label = useSelector(dishLabel);
-  const price = useSelector(dishPrice);
   const image = useSelector(dishImage);
   const editDish = useSelector(getUpdateDish);
   const menuId = useSelector(dishId);
@@ -56,10 +53,6 @@ export default function CreateDishForm() {
 
   const handleDishLabel = (e) => {
     dispatch(setDishLabel(e.target.value));
-  };
-
-  const handleDishPrice = (e) => {
-    dispatch(setDishPrice(e.target.value));
   };
 
   const handleDishImage = (e) => {
@@ -104,16 +97,6 @@ export default function CreateDishForm() {
           fullWidth
           variant="standard"
         />
-        {/* <TextField
-          value={price}
-          onChange={handleDishPrice}
-          margin="dense"
-          id="price"
-          label="Price in CAD"
-          fullWidth
-          variant="standard"
-          style={{ marginTop: "1rem" }}
-        /> */}
         <InputLabel id="label" style={{ marginTop: "1rem" }}>
           Dish Type
         </InputLabel>
@@ -143,7 +126,6 @@ export default function CreateDishForm() {
         ) : (
           <Button onClick={handleCreateDish}>Create</Button>
         )}
-        {/* <Button onClick={handleCreateDish}>Create</Button> */}
       </DialogActions>
     </Dialog>
   );

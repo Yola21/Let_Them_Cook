@@ -1,43 +1,31 @@
 import React, { useState } from "react";
 import {
-  Box,
   Button,
   Card,
   CardActions,
   CardContent,
+  CardMedia,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
-  IconButton,
   Typography,
 } from "@mui/material";
-import Delete from "@mui/icons-material/Delete";
-import Edit from "@mui/icons-material/Edit";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteDish,
   deleteMeal,
   dishesByCook,
-  getMeals,
   setCurrentDish,
-  setCurrentMeal,
-  setDishId,
-  toggleAddDishToMealForm,
   toggleCreateDishForm,
-  toggleCreateMealForm,
   toggleUpdateDish,
-  toggleUpdateDishForm,
-  toggleUpdateMeal,
 } from "./cookSlice";
 import AddDishToMealForm from "./AddDishToMealForm";
 
 export default function CookDishesView() {
   const dishes = useSelector(dishesByCook);
-  const meals = useSelector(getMeals);
   const dispatch = useDispatch();
   const [deleteSelectedDish, setDeleteSelectedDish] = useState(null);
   const [openDeleteDIalog, setOpenDeleteDialog] = useState(false);
@@ -58,28 +46,6 @@ export default function CookDishesView() {
     setOpenDeleteDialog(true);
   };
 
-  const onUpdateMealClick = (e, id) => {
-    dispatch(toggleUpdateMeal(true));
-    dispatch(toggleAddDishToMealForm(true));
-    const selectedMeal = meals.filter((dish) => dish.id === id);
-    dispatch(setCurrentMeal(selectedMeal[0]));
-  };
-
-  const onDeleteMealClick = (e, id) => {
-    const mealToBeDeleted = meals.filter((dish) => dish.id === id);
-    setDeleteSelectedDish(mealToBeDeleted);
-    setDeleteMeal(true);
-    setOpenDeleteDialog(true);
-  };
-
-  const onAddToMealClick = (e, id) => {
-    dispatch(toggleCreateMealForm(true));
-    dispatch(setDishId(id));
-    // dispatch(toggleAddDishToMealForm(true));
-    // const selectedDish = dishes.filter((dish) => dish.id === id);
-    // dispatch(setCurrentDish(selectedDish[0]));
-  };
-
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
   };
@@ -94,78 +60,61 @@ export default function CookDishesView() {
   };
 
   return (
-    <div style={{ padding: "3rem" }}>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          marginBottom: "3rem",
-        }}
-      >
-        <Typography variant="h4">Dishes Created</Typography>
-        <Divider style={{ marginBottom: "1rem" }} />
-        <Box
+    <div
+      style={{
+        padding: "1rem",
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+      }}
+    >
+      {dishes?.map((dish) => (
+        <Card
           style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
+            marginBottom: "1rem",
+            marginRight: "1rem",
+            width: "20%",
+            position: "relative",
+            boxShadow: "5px 5px 10px #000",
           }}
         >
-          {dishes?.map((dish) => (
-            <Card style={{ backgroundColor: "#f7f5f5", marginBottom: "1rem" }}>
-              <CardContent>
-                <Typography variant="h5">{dish.name}</Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  variant="contained"
-                  onClick={(e) => onAddToMealClick(e, dish.id)}
-                >
-                  Add to Meal
-                </Button>
-                <IconButton onClick={(e) => onUpdateDishClick(e, dish.id)}>
-                  <Edit style={{ color: "green" }} />
-                </IconButton>
-                <IconButton onClick={(e) => onDeleteDishClick(e, dish.id)}>
-                  <Delete style={{ color: "red" }} />
-                </IconButton>
-              </CardActions>
-            </Card>
-          ))}
-        </Box>
-
-        {/* <Typography variant="h4">Meals Created</Typography>
-        <Divider style={{ marginBottom: "1rem" }} />
-        <Box
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-          }}
-        >
-          {meals?.map((dish) => (
-            <Card
+          <CardMedia sx={{ height: 140 }} image={dish.image} />
+          <CardContent style={{ marginBottom: "3rem" }}>
+            <Typography variant="h5">{dish.name}</Typography>
+            <Typography style={{ overflowWrap: "break-word" }}>
+              {dish.description}
+            </Typography>
+            <Typography
               style={{
-                backgroundColor: "#eee",
-                marginBottom: "1rem",
-                width: "40%",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                backgroundColor:
+                  dish.type.toLowerCase() === "veg" ? "#0efd0e" : "red",
+                color: "#fff",
+                padding: "2px",
               }}
             >
-              <CardContent>
-                <Typography variant="h5">{dish.name}</Typography>
-              </CardContent>
-              <CardActions>
-                <IconButton onClick={(e) => onUpdateMealClick(e, dish.id)}>
-                  <Edit style={{ color: "green" }} />
-                </IconButton>
-                <IconButton onClick={(e) => onDeleteMealClick(e, dish.id)}>
-                  <Delete style={{ color: "red" }} />
-                </IconButton>
-              </CardActions>
-            </Card>
-          ))}
-        </Box> */}
-      </div>
+              {dish.type}
+            </Typography>
+          </CardContent>
+          <CardActions style={{ position: "absolute", bottom: 0 }}>
+            <Button
+              variant="contained"
+              style={{ backgroundColor: "#000" }}
+              onClick={(e) => onUpdateDishClick(e, dish.id)}
+            >
+              Edit
+            </Button>
+            <Button
+              style={{ color: "red" }}
+              onClick={(e) => onDeleteDishClick(e, dish.id)}
+            >
+              Delete
+            </Button>
+          </CardActions>
+        </Card>
+      ))}
       <Dialog open={openDeleteDIalog} onClose={handleCloseDeleteDialog}>
         <DialogTitle>Delete</DialogTitle>
         <DialogContent>

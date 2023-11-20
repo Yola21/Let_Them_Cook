@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import {
   Accordion,
-  AccordionActions,
   AccordionDetails,
   AccordionSummary,
-  Button,
   CircularProgress,
   Typography,
 } from "@mui/material";
@@ -12,7 +10,6 @@ import CookMealSchedule from "./CookMealSchedule";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchMealsBySchedule,
-  getMealsBySchedule,
   getScheduleLoading,
   getSchedules,
   setScheduleCalendarDays,
@@ -24,7 +21,6 @@ export default function MealScheduleView() {
   const [accordianId, setAccordianId] = useState(null);
   const schedules = useSelector(getSchedules);
   const loading = useSelector(getScheduleLoading);
-  const mealsBySchedule = useSelector(getMealsBySchedule);
   const dispatch = useDispatch();
 
   const handleOnChange = (e, schedule) => {
@@ -32,11 +28,9 @@ export default function MealScheduleView() {
     const scheduleStartDate = new Date(schedule.start_date);
     const calendar = calendarDays(scheduleStartDate);
     dispatch(setScheduleCalendarDays(calendar));
-    console.log({ calendar });
     dispatch(fetchMealsBySchedule({ scheduleId: schedule.id }));
   };
 
-  console.log({ mealsBySchedule });
   return schedules.map((schedule) => (
     <Accordion
       key={schedule.id}
@@ -56,14 +50,6 @@ export default function MealScheduleView() {
           <CookMealSchedule />
         )}
       </AccordionDetails>
-      {/* <AccordionActions>
-        <Button variant="contained" style={{ backgroundColor: "#000" }}>
-          Edit
-        </Button>
-        <Button variant="contained" style={{ backgroundColor: "#000" }}>
-          Delete
-        </Button>
-      </AccordionActions> */}
     </Accordion>
   ));
 }
