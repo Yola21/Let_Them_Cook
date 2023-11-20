@@ -3,7 +3,7 @@ package com.letscook.letscook;
 import com.letscook.customer.model.Customer;
 import com.letscook.customer.repository.CustomerRepository;
 import com.letscook.enums.OrderStatus;
-import com.letscook.menu.model.Meal;
+import com.letscook.menu.model.meal.Meal;
 import com.letscook.menu.repository.MealRepository;
 import com.letscook.order.model.CreateOrderInput;
 import com.letscook.order.model.Order;
@@ -38,6 +38,7 @@ public class OrderServiceTests {
     @InjectMocks
     private OrderService orderService;
 
+
     @Test
     public void testCreateOrder() {
         // Arrange
@@ -59,6 +60,8 @@ public class OrderServiceTests {
 
         // Act
         ResponseEntity<Order> response = orderService.createOrder(createOrderInput);
+
+        //ResponseEntity<Order> response1 = ord.createOrder(createOrderInput);
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());

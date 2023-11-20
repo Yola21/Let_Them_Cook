@@ -1,9 +1,8 @@
 package com.letscook.order.model;
 
-import com.letscook.cook.model.Cook;
 import com.letscook.customer.model.Customer;
 import com.letscook.enums.OrderStatus;
-import com.letscook.menu.model.Meal;
+import com.letscook.menu.model.meal.Meal;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,7 +39,7 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Customer customer ;
+    private Customer customer;
 
     @CreatedDate
     @Column(name = "created_at")

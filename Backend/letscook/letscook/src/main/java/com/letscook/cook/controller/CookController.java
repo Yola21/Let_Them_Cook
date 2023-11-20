@@ -3,18 +3,15 @@ package com.letscook.cook.controller;
 import com.letscook.cook.model.Cook;
 import com.letscook.cook.model.CreateCookProfileInput;
 import com.letscook.cook.model.UpdateCookProfileInput;
-import com.letscook.cook.repository.CookRepository;
 import com.letscook.cook.service.CookService;
-import com.letscook.menu.model.Dish;
-import com.letscook.menu.model.Meal;
+import com.letscook.menu.model.dish.Dish;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
+
 import org.springframework.http.MediaType;
 
 @RestController
@@ -30,7 +27,7 @@ public class CookController {
     }
 
     @GetMapping("/{id}")
-    public Cook getCook(@PathVariable() Long id){
+    public Cook getCook(@PathVariable() Long id) {
         return cookService.getCook(id);
     }
 
@@ -40,7 +37,7 @@ public class CookController {
     }
 
     @GetMapping("/pendingCooks")
-    public List<Cook> getAllPendingCooks(){
+    public List<Cook> getAllPendingCooks() {
         return cookService.getAllPendingCook();
     }
 
@@ -58,8 +55,9 @@ public class CookController {
     public ResponseEntity<byte[]> getCookBanner(@PathVariable() Long id) throws IOException {
         return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(cookService.getBannerPhoto(id));
     }
+
     @GetMapping("/getDishes/{id}")
-    public List<Dish> getDishesByCookId(@PathVariable() Long id){
+    public List<Dish> getDishesByCookId(@PathVariable() Long id) {
         return cookService.getDishesByCookId(id);
     }
 }

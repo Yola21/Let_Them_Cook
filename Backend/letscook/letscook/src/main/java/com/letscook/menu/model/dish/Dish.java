@@ -1,4 +1,4 @@
-package com.letscook.menu.model;
+package com.letscook.menu.model.dish;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.letscook.cook.model.Cook;

@@ -2,7 +2,7 @@ package com.letscook.order.service;
 
 import com.letscook.customer.repository.CustomerRepository;
 import com.letscook.enums.OrderStatus;
-import com.letscook.menu.model.Meal;
+import com.letscook.menu.model.meal.Meal;
 import com.letscook.menu.repository.MealRepository;
 import com.letscook.order.model.CreateOrderInput;
 import com.letscook.order.model.Order;

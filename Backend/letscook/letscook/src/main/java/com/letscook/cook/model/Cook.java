@@ -1,6 +1,6 @@
 package com.letscook.cook.model;
 
-import com.letscook.menu.model.Dish;
+import com.letscook.menu.model.dish.Dish;
 import lombok.Getter;
 import lombok.Setter;
 
