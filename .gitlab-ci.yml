@@ -135,7 +135,7 @@ deploy:
 
   environment:
     name: production
-    url: http://csci5308vm17.research.cs.dal.ca
+    url: http://os-vm173.research.cs.dal.ca
   only:
     - main
     - development
