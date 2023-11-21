@@ -9,6 +9,7 @@ import com.letscook.menu.model.input.*;
 import com.letscook.menu.model.meal.Meal;
 import com.letscook.menu.model.meal.Schedule;
 import com.letscook.menu.service.ScheduleService;
+import com.letscook.order.model.Mealorder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -126,5 +127,10 @@ public class ScheduleController {
     @GetMapping("/getMealsBySchedule/{id}")
     public List<Meal> getMealsBySchedule(@PathVariable() Long id) {
         return scheduleService.getMealsByScheduleId(id);
+    }
+
+    @GetMapping("/getMealOrders/{id}")
+    public List<Mealorder> getMealOrdersByMealId(@PathVariable() Long id) {
+        return scheduleService.getMealOrdersByMealId(id);
     }
 }

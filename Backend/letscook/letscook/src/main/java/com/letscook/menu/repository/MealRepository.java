@@ -16,4 +16,6 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
             Date mealDateEnd, Long id);
 
     List<Meal> findMealsBySchedule_Id(Long id);
+
+    List<Meal> findAllByIdIn(List<Long> id);
 }

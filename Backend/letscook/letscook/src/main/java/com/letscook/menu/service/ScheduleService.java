@@ -15,6 +15,8 @@ import com.letscook.menu.repository.DishRepository;
 import com.letscook.menu.repository.DishToMealRepository;
 import com.letscook.menu.repository.MealRepository;
 import com.letscook.menu.repository.ScheduleRepository;
+import com.letscook.order.model.Mealorder;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -286,6 +288,12 @@ public class ScheduleService {
             dishes.add(dishRepository.findById(dishToMealMap.getId().getDishId()).orElseThrow());
         }
         return dishes;
+    }
+
+    public List<Mealorder> getMealOrdersByMealId(Long id) {
+        Meal meal = mealRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Meal not found with ID: " + id));
+        return meal.getMealorders();
     }
 }
 
