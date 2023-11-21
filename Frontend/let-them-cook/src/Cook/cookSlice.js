@@ -1,6 +1,111 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { config } from "../config";
 import { toast } from "react-toastify";
+import { uploadImageToFirebase } from "../utils/config";
+import moment from "moment";
+
+export const fetchSchedulesByCook = createAsyncThunk(
+  "cook/fetchSchedulesByCook",
+  async (args, thunkApi) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${config.BASE_PATH}${config.MENU}${config.COOK}?cookId=${args.cookId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const schedules = await response.json();
+    return schedules;
+  }
+);
+
+export const createSchedule = createAsyncThunk(
+  "cook/createSchedule",
+  async (args, thunkApi) => {
+    const state = thunkApi.getState();
+    const token = localStorage.getItem("token");
+    const name = getScheduleName(state);
+    const start_date = getScheduleStartDate(state);
+
+    const data = {
+      name,
+      start_date: moment.utc(start_date).format("YYYY-MM-DD h:mm:ss"),
+      cookId: args.cookId,
+    };
+
+    const response = await fetch(
+      `${config.BASE_PATH}${config.MENU}${config.MENU_CREATE_SCHEDULE}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const schedule = await response.json();
+    thunkApi.dispatch(fetchSchedulesByCook({ cookId: args.cookId }));
+    return schedule;
+  }
+);
+
+export const updateSchedule = createAsyncThunk(
+  "cook/updateSchedule",
+  async (args, thunkApi) => {
+    const state = thunkApi.getState();
+    const token = localStorage.getItem("token");
+    const name = getScheduleName(state);
+    const start_date = getScheduleStartDate(state);
+
+    const data = {
+      name,
+      start_date: moment.utc(start_date).format("YYYY-MM-DD h:mm:ss"),
+      cookId: args.cookId,
+    };
+
+    const response = await fetch(
+      `${config.BASE_PATH}${config.MENU}${config.MENU_CREATE_SCHEDULE}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const schedule = await response.json();
+    thunkApi.dispatch(fetchSchedulesByCook({ cookId: args.cookId }));
+    return schedule;
+  }
+);
+
+export const deleteSchedule = createAsyncThunk(
+  "cook/deleteSchedule",
+  async (args, thunkApi) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `${config.BASE_PATH}${config.MENU}${config.MENU_DELETE_SCHEDULE}/${args.scheduleId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const schedule = await response.json();
+    thunkApi.dispatch(fetchSchedulesByCook({ cookId: args.cookId }));
+    return schedule;
+  }
+);
 
 export const createDish = createAsyncThunk(
   "cook/createDish",
@@ -8,25 +113,28 @@ export const createDish = createAsyncThunk(
     const state = thunkApi.getState();
     const token = localStorage.getItem("token");
     const name = dishName(state);
-    const label = dishLabel(state);
-    const price = dishPrice(state);
+    const description = getDishDescription(state);
+    const type = dishLabel(state);
     const image = dishImage(state);
+    const imageURL = await uploadImageToFirebase(image[0]);
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("label", label);
-    formData.append("price", price);
-    formData.append("image", image[0]);
-    formData.append("cookId", args.id);
+    const data = {
+      name,
+      description,
+      type,
+      image: imageURL,
+      cookId: args.id,
+    };
 
     const response = await fetch(
       `${config.BASE_PATH}${config.MENU}${config.MENU_CREATE_DISH}`,
       {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: formData,
+        body: JSON.stringify(data),
       }
     );
 
@@ -42,23 +150,25 @@ export const updateDish = createAsyncThunk(
     const state = thunkApi.getState();
     const token = localStorage.getItem("token");
     const name = dishName(state);
-    const label = dishLabel(state);
-    const price = dishPrice(state);
+    const description = getDishDescription(state);
+    const type = dishLabel(state);
 
-    const formData = new FormData();
-    formData.append("id", args.id);
-    formData.append("name", name);
-    formData.append("label", label);
-    formData.append("price", price);
+    const data = {
+      id: args.id,
+      name,
+      description,
+      type,
+    };
 
     const response = await fetch(
       `${config.BASE_PATH}${config.MENU}${config.MENU_UPDATE_DISH}`,
       {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: formData,
+        body: JSON.stringify(data),
       }
     );
 
@@ -95,7 +205,7 @@ export const fetchDishesByCook = createAsyncThunk(
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-      `${config.BASE_PATH}${config.MENU}${config.COOK}/${args.cookId}`,
+      `${config.BASE_PATH}${config.COOKS}${config.MENU_GET_DISHES_BY_COOK}/${args.cookId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -107,19 +217,70 @@ export const fetchDishesByCook = createAsyncThunk(
   }
 );
 
+export const fetchDishesByMeal = createAsyncThunk(
+  "cook/fetchDishesByMeal",
+  async (args, thunkApi) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${config.BASE_PATH}${config.MENU}${config.MENU_GET_DISHES_BY_MEAL}/${args.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const menu = await response.json();
+    return menu;
+  }
+);
+
+export const fetchMealsByCook = createAsyncThunk(
+  "cook/fetchMealsByCook",
+  async (args, thunkApi) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${config.BASE_PATH}${config.MENU}${config.MEAL}${config.COOK}?id=${args.cookId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const meals = await response.json();
+    return meals;
+  }
+);
+
+export const fetchMealsBySchedule = createAsyncThunk(
+  "cook/fetchMealsBySchedule",
+  async (args, thunkApi) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${config.BASE_PATH}${config.MENU}/getMealsBySchedule/${args.scheduleId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const meals = await response.json();
+    return meals;
+  }
+);
+
 export const addDishToMeal = createAsyncThunk(
   "cook/addDishToMeal",
   async (args, thunkApi) => {
     const state = thunkApi.getState();
     const token = localStorage.getItem("token");
-    const menuId = dishId(state);
+    const meal_id = getMealId(state);
 
     const data = {
-      maxOrderLimit: args.mealMaxOrderLimit,
-      slot: args.mealSlot,
-      orderDeadline: args.mealOrderDeadline,
-      mealDate: args.mealDate,
-      menuId,
+      meal_id,
+      dish_id: args.dishId,
     };
 
     const response = await fetch(
@@ -138,27 +299,147 @@ export const addDishToMeal = createAsyncThunk(
   }
 );
 
+export const addMealToSchedule = createAsyncThunk(
+  "cook/addMealToSchedule",
+  async (args, thunkApi) => {
+    const token = localStorage.getItem("token");
+    const imageURL = await uploadImageToFirebase(args.mealImage[0]);
+
+    const data = {
+      maxOrderLimit: args.mealMaxOrderLimit,
+      slot: args.mealSlot,
+      orderDeadline: args.mealOrderDeadline,
+      mealDate: args.mealDate,
+      name: args.mealName,
+      price: args.mealPrice,
+      image: imageURL,
+      scheduleId: args.scheduleId,
+    };
+
+    const response = await fetch(
+      `${config.BASE_PATH}${config.MENU}${config.MENU_ADD_MEAL_TO_SCHEDULE}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    const menu = await response.json();
+    thunkApi.dispatch(fetchMealsByCook({ cookId: args.cookId }));
+    return menu;
+  }
+);
+
+export const updateMealToSchedule = createAsyncThunk(
+  "cook/updateMealToSchedule",
+  async (args, thunkApi) => {
+    const state = thunkApi.getState();
+    const token = localStorage.getItem("token");
+    const mealId = getMealId(state);
+    // const imageURL = await uploadImageToFirebase(args.mealImage[0]);
+
+    const data = {
+      id: mealId,
+      maxOrderLimit: args.mealMaxOrderLimit,
+      slot: args.mealSlot,
+      orderDeadline: args.mealOrderDeadline,
+      mealDate: args.mealDate,
+      name: args.mealName,
+      price: args.mealPrice,
+      // image: imageURL,
+      scheduleId: args.scheduleId,
+    };
+
+    const response = await fetch(
+      `${config.BASE_PATH}${config.MENU}${config.MENU_UPDATE_MEAL_TO_SCHEDULE}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    const menu = await response.json();
+    thunkApi.dispatch(fetchMealsByCook({ cookId: args.cookId }));
+    return menu;
+  }
+);
+
+export const deleteMeal = createAsyncThunk(
+  "cook/deleteMeal",
+  async (args, thunkApi) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${config.BASE_PATH}${config.MENU}${config.MENU_DELETE_MEAL}/${args.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const menu = await response.json();
+    thunkApi.dispatch(fetchMealsByCook({ cookId: args.cookId }));
+    return menu;
+  }
+);
+
 export const cookSlice = createSlice({
   name: "cook",
   initialState: {
-    dishesByCook: null,
+    schedules: [],
+    scheduleName: null,
+    scheduleStartDate: null,
+    meals: [],
+    dishesByCook: [],
+    dishesByMeal: [],
     currentDish: null,
     dishId: null,
     dishName: null,
+    dishDescription: null,
     dishLabel: null,
     dishPrice: null,
     dishImage: null,
     openCreateDishForm: false,
-    openUpdateDishForm: false,
+    openCreateMealForm: false,
     openAddDishToMealForm: false,
+    openCreateMealScheduleForm: false,
+    openCreateMeal: false,
+    mealName: null,
+    mealPrice: null,
+    mealImage: null,
     mealMaxOrderLimit: null,
     mealSlot: null,
     mealDate: null,
     mealOrderDeadline: null,
+    mealSchedule: null,
+    mealsBySchedule: [],
+    mealsByLunchSchedule: [],
+    mealsByDinnerSchedule: [],
+    scheduleLoading: false,
+    scheduleCalendarDays: [],
+    updateDish: false,
+    updateMeal: false,
+    mealForDish: null,
+    mealId: null,
+    openDishesByMealDialog: false,
   },
   reducers: {
+    setMealId(state, action) {
+      state.mealId = action.payload;
+    },
     setDishName(state, action) {
       state.dishName = action.payload;
+    },
+    setDishDescription(state, action) {
+      state.dishDescription = action.payload;
     },
     setDishLabel(state, action) {
       state.dishLabel = action.payload;
@@ -178,17 +459,36 @@ export const cookSlice = createSlice({
     toggleAddDishToMealForm(state, action) {
       state.openAddDishToMealForm = action.payload;
     },
+    toggleCreateMealForm(state, action) {
+      state.openCreateMealForm = action.payload;
+    },
+    toggleCreateMealScheduleForm(state, action) {
+      state.openCreateMealScheduleForm = action.payload;
+    },
     setCurrentDish(state, action) {
       state.dishName = action.payload.name;
-      state.dishLabel = action.payload.label;
+      state.dishLabel = action.payload.type;
       state.dishPrice = action.payload.price;
       state.dishId = action.payload.id;
+      state.dishDescription = action.payload.description;
+    },
+    setDishId(state, action) {
+      state.dishId = action.payload;
     },
     setMealMaxOrderLimit(state, action) {
       state.mealMaxOrderLimit = action.payload;
     },
     setMealSlot(state, action) {
       state.mealSlot = action.payload;
+    },
+    setMealName(state, action) {
+      state.mealName = action.payload;
+    },
+    setMealPrice(state, action) {
+      state.mealPrice = action.payload;
+    },
+    setMealImage(state, action) {
+      state.mealImage = action.payload;
     },
     setMealDate(state, action) {
       state.mealDate = action.payload;
@@ -198,12 +498,172 @@ export const cookSlice = createSlice({
     },
     resetCreateDishFormValues(state, action) {
       state.dishName = null;
+      state.dishDescription = null;
       state.dishLabel = null;
       state.dishPrice = null;
       state.dishImage = null;
     },
+    setScheduleName(state, action) {
+      state.scheduleName = action.payload;
+    },
+    setScheduleStartDate(state, action) {
+      state.scheduleStartDate = action.payload;
+    },
+    toggleAddMeal(state, action) {
+      state.openCreateMeal = action.payload;
+    },
+    setMealSchedule(state, action) {
+      state.mealSchedule = action.payload;
+    },
+    setScheduleCalendarDays(state, action) {
+      state.scheduleCalendarDays = action.payload;
+    },
+    toggleUpdateDish(state, action) {
+      state.updateDish = action.payload;
+    },
+    toggleUpdateMeal(state, action) {
+      state.updateMeal = action.payload;
+    },
+    setCurrentMeal(state, action) {
+      const mealDate = new Date(action.payload.mealDate);
+      const formattedMealDate = moment.utc(mealDate).format("YYYY-MM-DD");
+      const orderDeadline = new Date(action.payload.orderDeadline);
+      const formattedMealOrderDeadline = moment
+        .utc(orderDeadline)
+        .format("YYYY-MM-DDThh:mm:ss");
+      state.mealName = action.payload.name;
+      state.mealMaxOrderLimit = action.payload.maxOrderLimit;
+      state.mealDate = formattedMealDate;
+      state.mealOrderDeadline = formattedMealOrderDeadline;
+      state.mealPrice = action.payload.price;
+      state.mealSchedule = action.payload.schedule.name;
+      state.mealSlot = action.payload.slot;
+      state.mealId = action.payload.id;
+    },
+    resetCurrentMeal(state, action) {
+      state.mealName = null;
+      state.mealMaxOrderLimit = null;
+      state.mealDate = null;
+      state.mealOrderDeadline = null;
+      state.mealPrice = null;
+      state.mealSchedule = null;
+      state.mealSlot = null;
+      state.mealId = null;
+    },
+    setMealForDish(state, action) {
+      state.mealForDish = action.payload;
+    },
+    toggleOpenDishesByMealDialog(state, action) {
+      state.openDishesByMealDialog = action.payload;
+    },
   },
   extraReducers: {
+    // fetchSchedulesByCook
+    [fetchSchedulesByCook.fulfilled]: (state, action) => {
+      console.log("Fulfilled", action.payload);
+      state.schedules = action.payload;
+    },
+    [fetchSchedulesByCook.rejected]: (state, action) => {
+      console.log(action.payload);
+    },
+
+    // fetchMealsByCook
+    [fetchMealsByCook.fulfilled]: (state, action) => {
+      console.log("Fulfilled", action.payload);
+      state.meals = action.payload;
+    },
+    [fetchMealsByCook.rejected]: (state, action) => {
+      console.log(action.payload);
+    },
+
+    // fetchMealsBySchedule
+    [fetchMealsBySchedule.pending]: (state, action) => {
+      state.scheduleLoading = true;
+    },
+    [fetchMealsBySchedule.fulfilled]: (state, action) => {
+      console.log("Fulfilled", action.payload);
+      state.scheduleLoading = false;
+      state.mealsBySchedule = action.payload;
+      const structuredLunchSchedule = {};
+      const structuredDinnerSchedule = {};
+      action.payload.forEach((item) => {
+        const date = new Date(item.mealDate);
+        const weekDate = date.getDate();
+        if (item.slot.toLowerCase() === "lunch") {
+          if (structuredLunchSchedule[weekDate] == null) {
+            structuredLunchSchedule[weekDate] = [item];
+          } else {
+            structuredLunchSchedule[weekDate] = [
+              ...structuredLunchSchedule[weekDate],
+              item,
+            ];
+          }
+        } else if (item.slot.toLowerCase() === "dinner") {
+          if (structuredDinnerSchedule[weekDate] == null) {
+            structuredDinnerSchedule[weekDate] = [item];
+          } else {
+            structuredDinnerSchedule[weekDate] = [
+              ...structuredDinnerSchedule[weekDate],
+              item,
+            ];
+          }
+        }
+      });
+      state.mealsByLunchSchedule = structuredLunchSchedule;
+      state.mealsByDinnerSchedule = structuredDinnerSchedule;
+    },
+    [fetchMealsBySchedule.rejected]: (state, action) => {
+      console.log(action.payload);
+      state.scheduleLoading = false;
+    },
+
+    // createSchedule
+    [createSchedule.fulfilled]: (state, action) => {
+      console.log("Fulfilled", action.payload);
+      toast.success("Schedule Created Successfully!");
+      // state.schedules = action.payload;
+    },
+    [createSchedule.rejected]: (state, action) => {
+      console.log(action.payload);
+    },
+
+    // deleteSchedule
+    [deleteSchedule.fulfilled]: (state, action) => {
+      console.log("Fulfilled", action.payload);
+      toast.success("Schedule Deleted Successfully!");
+      // state.schedules = action.payload;
+    },
+    [deleteSchedule.rejected]: (state, action) => {
+      console.log(action.payload);
+    },
+
+    // addMealToSchedule
+    [addMealToSchedule.fulfilled]: (state, action) => {
+      console.log("Fulfilled", action.payload);
+      toast.success("Meal Created Successfully!");
+    },
+    [addMealToSchedule.rejected]: (state, action) => {
+      console.log(action.payload);
+    },
+
+    // updateMealToSchedule
+    [updateMealToSchedule.fulfilled]: (state, action) => {
+      console.log("Fulfilled", action.payload);
+      toast.success("Meal Updated Successfully!");
+    },
+    [updateMealToSchedule.rejected]: (state, action) => {
+      console.log(action.payload);
+    },
+
+    // deleteMeal
+    [deleteMeal.fulfilled]: (state, action) => {
+      console.log("Fulfilled", action.payload);
+      toast.success("Meal Deleted Successfully!");
+    },
+    [deleteMeal.rejected]: (state, action) => {
+      console.log(action.payload);
+    },
+
     // fetchDishesByCook
     [fetchDishesByCook.fulfilled]: (state, action) => {
       console.log("Fulfilled", action.payload);
@@ -213,9 +673,19 @@ export const cookSlice = createSlice({
       console.log(action.payload);
     },
 
+    // fetchDishesByMeal
+    [fetchDishesByMeal.fulfilled]: (state, action) => {
+      console.log("Fulfilled", action.payload);
+      state.dishesByMeal = action.payload?.length === 0 ? null : action.payload;
+    },
+    [fetchDishesByMeal.rejected]: (state, action) => {
+      console.log(action.payload);
+    },
+
     // createDish
     [createDish.fulfilled]: (state, action) => {
       console.log("Fulfilled", action.payload);
+      toast.success("Dish Created Successfully!");
     },
     [createDish.rejected]: (state, action) => {
       console.log(action.payload);
@@ -233,6 +703,7 @@ export const cookSlice = createSlice({
     // deleteDish
     [deleteDish.fulfilled]: (state, action) => {
       console.log("Fulfilled", action.payload);
+      toast.success("Dish Deleted Successfully!");
     },
     [deleteDish.rejected]: (state, action) => {
       console.log(action.payload);
@@ -241,6 +712,7 @@ export const cookSlice = createSlice({
     // addDishToMeal
     [addDishToMeal.fulfilled]: (state, action) => {
       console.log("Fulfilled", action.payload);
+      toast.success("Dish Added To Meal Successfully!");
     },
     [addDishToMeal.rejected]: (state, action) => {
       console.log("Rejected", action.payload);
@@ -250,6 +722,7 @@ export const cookSlice = createSlice({
 
 export const {
   setDishName,
+  setDishDescription,
   setDishLabel,
   setDishPrice,
   setDishImage,
@@ -262,11 +735,32 @@ export const {
   setMealDate,
   toggleAddDishToMealForm,
   resetCreateDishFormValues,
+  toggleCreateMealScheduleForm,
+  setScheduleName,
+  setScheduleStartDate,
+  toggleAddMeal,
+  setMealImage,
+  setMealName,
+  setMealPrice,
+  setMealSchedule,
+  setScheduleCalendarDays,
+  toggleUpdateDish,
+  toggleUpdateMeal,
+  setCurrentMeal,
+  setMealForDish,
+  toggleCreateMealForm,
+  setDishId,
+  setMealId,
+  resetCurrentMeal,
+  toggleOpenDishesByMealDialog,
 } = cookSlice.actions;
 
+export const getSchedules = (state) => state.cook.schedules;
+export const getMeals = (state) => state.cook.meals;
 export const dishesByCook = (state) => state.cook.dishesByCook;
 export const getCurrentDish = (state) => state.cook.currentDish;
 export const dishName = (state) => state.cook.dishName;
+export const getDishDescription = (state) => state.cook.dishDescription;
 export const dishLabel = (state) => state.cook.dishLabel;
 export const dishPrice = (state) => state.cook.dishPrice;
 export const dishImage = (state) => state.cook.dishImage;
@@ -275,9 +769,33 @@ export const openCreateDishForm = (state) => state.cook.openCreateDishForm;
 export const getOpenUpdateDishForm = (state) => state.cook.openUpdateDishForm;
 export const getOpenAddDishToMealForm = (state) =>
   state.cook.openAddDishToMealForm;
+export const getOpenCreateMealScheduleForm = (state) =>
+  state.cook.openCreateMealScheduleForm;
 export const getMealMaxOrderLimit = (state) => state.cook.mealMaxOrderLimit;
 export const getMealSlot = (state) => state.cook.mealSlot;
 export const getMealOrderDeadline = (state) => state.cook.mealOrderDeadline;
 export const getMealDate = (state) => state.cook.mealDate;
+export const getMealName = (state) => state.cook.mealName;
+export const getMealPrice = (state) => state.cook.mealPrice;
+export const getMealImage = (state) => state.cook.mealImage;
+export const getScheduleName = (state) => state.cook.scheduleName;
+export const getScheduleStartDate = (state) => state.cook.scheduleStartDate;
+export const getOpenCreateMealForm = (state) => state.cook.openCreateMealForm;
+export const getMealSchedule = (state) => state.cook.mealSchedule;
+export const getMealsBySchedule = (state) => state.cook.mealsBySchedule;
+export const getMealsByLunchSchedule = (state) =>
+  state.cook.mealsByLunchSchedule;
+export const getMealsByDinnerSchedule = (state) =>
+  state.cook.mealsByDinnerSchedule;
+export const getScheduleLoading = (state) => state.cook.scheduleLoading;
+export const getScheduleCalendarDays = (state) =>
+  state.cook.scheduleCalendarDays;
+export const getUpdateDish = (state) => state.cook.updateDish;
+export const getUpdateMeal = (state) => state.cook.updateMeal;
+export const getMealForDish = (state) => state.cook.mealForDish;
+export const getMealId = (state) => state.cook.mealId;
+export const getDishesByMeal = (state) => state.cook.dishesByMeal;
+export const getOpenDishesByMealDialog = (state) =>
+  state.cook.openDishesByMealDialog;
 
 export default cookSlice.reducer;
