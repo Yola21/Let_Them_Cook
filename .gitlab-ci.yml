@@ -3,6 +3,8 @@ stages:
   - npm build
   - npm deploy
   - test
+  - build
+  - issue
   - publish
   - gradle test
   - deploy
@@ -41,6 +43,28 @@ npm deploy:
     - cd Frontend/let-them-cook
     - npm install -g netlify-cli@latest
     - netlify deploy --dir=build --prod
+
+build-smell-job:
+  stage: build
+  image: openjdk:11
+  script:
+    - echo "Compiling the project"
+    - mkdir smells/
+    - java -jar $CI_PROJECT_DIR/.gitlab/DesigniteJava.jar -i $CI_PROJECT_DIR -o $CI_PROJECT_DIR/smells/ -d
+  artifacts:
+    paths:
+      - smells/
+      - $CI_PROJECT_DIR
+
+issue-job:
+  stage: issue
+  dependencies:
+    - build-smell-job
+  image: "python:3.10"
+  script:
+    - ls -a smells/
+    - pip install -r $CI_PROJECT_DIR/.gitlab/requirements.txt
+    - python $CI_PROJECT_DIR/.gitlab/issue.py $CI_COMMIT_SHAß
 
 publish:
   image: docker:latest
@@ -111,7 +135,7 @@ deploy:
 
   environment:
     name: production
-    url: http://csci5308vm17.research.cs.dal.ca
+    url: http://os-vm173.research.cs.dal.ca
   only:
     - main
     - development

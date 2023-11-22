@@ -5,24 +5,16 @@ import com.letscook.cook.model.CreateCookProfileInput;
 import com.letscook.cook.model.UpdateCookProfileInput;
 import com.letscook.cook.repository.CookRepository;
 import com.letscook.enums.CookStatus;
-import com.letscook.menu.model.CookDateRangeInput;
 import com.letscook.menu.model.Dish;
-import com.letscook.menu.model.Meal;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class CookService {
@@ -84,7 +76,6 @@ public class CookService {
         }
 
         if (!cookToUpdate.getStatus().equals(String.valueOf(CookStatus.REJECTED)) && updateCookProfileInput.getBusinessDocument() != null) {
-            System.out.println("21321321323");
             throw new Error("Not allowed to change business document");
         }
 

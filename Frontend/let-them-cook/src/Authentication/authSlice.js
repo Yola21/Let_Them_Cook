@@ -12,17 +12,13 @@ export const createUser = createAsyncThunk(
       role: args.role,
     };
 
-    // const endpoint = `${config.BASE_PATH}${config.USER_REGISTER}`;
-    const response = await fetch(
-      `${config.BASE_PATH}/register`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetch(`${config.BASE_PATH}${config.USER_REGISTER}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
     const userInfo = await response.json();
 
     if (userInfo != null && userInfo.role) {
@@ -45,17 +41,13 @@ export const userLogin = createAsyncThunk("auth/userLogin", async (args) => {
     password: args.password,
   };
 
-  // const endpoint = `${config.BASE_PATH}${config.USER_LOGIN}`;
-  const response = await fetch(
-    `${config.BASE_PATH}/login`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }
-  );
+  const response = await fetch(`${config.BASE_PATH}${config.USER_LOGIN}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
   const userInfo = await response.json();
   return userInfo;
 });
@@ -78,9 +70,8 @@ export const createCookProfile = createAsyncThunk(
     formData.append("profilePhoto", profilePicture[0]);
     formData.append("bannerImage", bannerImage[0]);
 
-    // const endpoint = `${config.BASE_PATH}${config.COOKS}${config.COOK_CREATE_PROFILE}`;
     const response = await fetch(
-      `${config.BASE_PATH}/cooks/createProfile`,
+      `${config.BASE_PATH}${config.COOKS}${config.COOK_CREATE_PROFILE}`,
       {
         method: "POST",
         body: formData,
