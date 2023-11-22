@@ -4,7 +4,7 @@ import com.letscook.cook.model.Cook;
 import com.letscook.cook.model.CreateCookProfileInput;
 import com.letscook.cook.model.UpdateCookProfileInput;
 import com.letscook.cook.service.CookService;
-import com.letscook.menu.model.Dish;
+import com.letscook.menu.model.dish.Dish;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

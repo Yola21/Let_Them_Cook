@@ -1,12 +1,14 @@
-package com.letscook.menu.model;
+package com.letscook.menu.model.meal;
 
+import com.letscook.order.model.Mealorder;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -46,4 +48,7 @@ public class Meal {
     @JoinColumn(name = "schedule_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Schedule schedule;
+
+    @OneToMany(mappedBy = "meal")
+    private List<Mealorder> mealorders;
 }

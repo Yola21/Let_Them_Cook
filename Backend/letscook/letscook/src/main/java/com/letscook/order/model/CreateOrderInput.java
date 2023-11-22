@@ -5,6 +5,8 @@ import com.letscook.enums.PaymentStatus;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class CreateOrderInput {
@@ -13,4 +15,5 @@ public class CreateOrderInput {
     private Long customerId;
     private Long mealId;
     private PaymentStatus paymentStatus;
+    private List<MealorderInput> mealorderInputs;
 }

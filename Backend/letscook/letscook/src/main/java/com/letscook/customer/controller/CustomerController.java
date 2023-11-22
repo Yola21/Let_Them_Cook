@@ -1,15 +1,9 @@
 package com.letscook.customer.controller;
 
-import com.letscook.cook.model.Cook;
-import com.letscook.cook.model.CreateCookProfileInput;
-import com.letscook.cook.model.UpdateCookProfileInput;
-import com.letscook.cook.service.CookService;
 import com.letscook.customer.model.CreateCustomerProfileInput;
 import com.letscook.customer.model.Customer;
 import com.letscook.customer.service.CustomerService;
-import com.letscook.menu.model.Meal;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +23,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public Customer getCustomerById(@PathVariable() Long id){
+    public Customer getCustomerById(@PathVariable() Long id) {
         return customerService.getCustomerById(id);
     }
 
@@ -44,7 +38,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/deleteCustomer/{id}")
-    public Customer deleteCustomer(@PathVariable() Long id){
+    public Customer deleteCustomer(@PathVariable() Long id) {
         return customerService.deleteCustomerById(id);
     }
 }

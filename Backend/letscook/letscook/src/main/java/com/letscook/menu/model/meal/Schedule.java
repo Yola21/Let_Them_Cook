@@ -1,12 +1,11 @@
-package com.letscook.menu.model;
+package com.letscook.menu.model.meal;
 
 import com.letscook.cook.model.Cook;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import jakarta.persistence.*;
 
 import java.util.Date;
 

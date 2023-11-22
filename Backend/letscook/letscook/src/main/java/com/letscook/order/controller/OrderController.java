@@ -1,6 +1,5 @@
 package com.letscook.order.controller;
 
-import com.letscook.enums.OrderStatus;
 import com.letscook.order.model.CreateOrderInput;
 import com.letscook.order.model.Order;
 import com.letscook.order.service.OrderService;
@@ -27,33 +26,34 @@ public class OrderController {
         return orderService.getOrderById(id);
     }
 
-    @GetMapping()
-    public List<Order> getOrders() {
-        return orderService.getAllOrders();
-    }
-
+    //
+//    @GetMapping()
+//    public List<Order> getOrders() {
+//        return orderService.getAllOrders();
+//    }
+//
     @GetMapping("/customer")
     public List<Order> getOrdersByCustomer(@RequestParam Long customerId) {
         return orderService.getOrdersByCustomer(customerId);
     }
 
-//    @GetMapping("/cook")
-//    public List<Order> getOrdersByCook(@RequestParam Long cookId) {
-//        return orderService.getOrdersByCook(cookId);
-//    }
+    @GetMapping("/meal/{id}")
+    public List<Order> getOrdersByMeal(@PathVariable Long id) {
+        return orderService.getOrdersByMeal(id);
+    }
 
 //    @GetMapping("/menu")
 //    public List<Order> getOrdersByMenu(@RequestParam Long menuId) {
 //        return orderService.getOrdersByMenu(menuId);
 //    }
 
-    @GetMapping("/cook/status")
-    public List<Order> getOrdersByCookAndStatus(@RequestParam Long cookId, @RequestParam OrderStatus status) {
-        return orderService.getOrdersByStatusAndCook(cookId, status);
-    }
-
-    @PostMapping("/updateStatus")
-    public ResponseEntity<Order> updateOrderStatus(@RequestParam Long id, @RequestParam OrderStatus status) {
-        return orderService.updateOrderStatus(id, status);
-    }
+//    @GetMapping("/cook/status")
+//    public List<Order> getOrdersByCookAndStatus(@RequestParam Long cookId, @RequestParam OrderStatus status) {
+//        return orderService.getOrdersByStatusAndCook(cookId, status);
+//    }
+//
+//    @PostMapping("/updateStatus")
+//    public ResponseEntity<Order> updateOrderStatus(@RequestParam Long id, @RequestParam OrderStatus status) {
+//        return orderService.updateOrderStatus(id, status);
+//    }
 }
