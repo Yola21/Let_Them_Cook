@@ -16,10 +16,14 @@ public class PaymentController {
     PaymentService paymentService;
 
     @PostMapping
-    public ResponseEntity<String> completePayment(@RequestBody PaymentRequestInput paymentRequestInput) throws StripeException {
-        String chargeId= paymentService.chargeCustomer(paymentRequestInput);
-        return chargeId!=null? new ResponseEntity<String>(chargeId, HttpStatus.OK):
-                new ResponseEntity<String>("Please check the credit card details entered",HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> completePayment(@RequestBody PaymentRequestInput paymentRequestInput)
+            throws StripeException {
+        String chargeId = paymentService.chargeCustomer(paymentRequestInput);
+        if (chargeId != null) {
+            return new ResponseEntity<>(chargeId, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Please check the credit card details entered",
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler

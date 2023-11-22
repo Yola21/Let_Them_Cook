@@ -9,6 +9,7 @@ import com.letscook.util.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -29,6 +30,8 @@ public class UserService {
     @Autowired
     private EmailSenderService senderService;
 
+    private static final int EXPIRE_AFTER_SECONDS = 1800;
+
     public ResponseEntity<UserInfo> register(UserInfo userDetails) throws Exception {
         List<UserInfo> userDetailList = userDetailsRepository.
                 findByEmail(userDetails.getEmail());
@@ -37,10 +40,6 @@ public class UserService {
         } else {
             userDetails.setPassword(passwordEncoder().encode(userDetails.getPassword()));
             UserInfo createdUser = userDetailsRepository.save(userDetails);
-//            senderService.sendSimpleEmail(userDetails.getEmail(),
-//                    "Successfully registered",
-//                    "Hey you have been successfully registered");
-
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         }
     }
@@ -64,20 +63,20 @@ public class UserService {
     }
 
     private String createToken(UserInfo userInfo) {
-        var claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(Instant.now())
-                .expiresAt(Instant.now().plusSeconds(60 * 30))
-                .subject(userInfo.getName())
-                .claim("scope", createScope(userInfo))
-                .build();
+        JwtClaimsSet.Builder jwtClaimsSetBuilder = JwtClaimsSet.builder();
+        jwtClaimsSetBuilder.issuer("self");
+        jwtClaimsSetBuilder.issuedAt(Instant.now());
+        jwtClaimsSetBuilder.expiresAt(Instant.now().plusSeconds(EXPIRE_AFTER_SECONDS));
+        jwtClaimsSetBuilder.subject(userInfo.getName());
+        jwtClaimsSetBuilder.claim("scope",createScope(userInfo));
+        var claims  = jwtClaimsSetBuilder.build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims))
                 .getTokenValue();
     }
 
     private String createScope(UserInfo userInfo) {
         return userInfo.getAuthorities().stream()
-                .map(a -> a.getAuthority())
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
     }
 

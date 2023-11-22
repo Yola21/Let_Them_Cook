@@ -33,11 +33,9 @@ public class OrderService {
     @Autowired
     private MealorderRepository mealorderRepository;
 
-    public ResponseEntity<Order> createOrder(CreateOrderInput createOrderInput) {
-        Order orderToCreate = new Order();
-        orderToCreate.setType(createOrderInput.getType());
-        orderToCreate.setStatus(createOrderInput.getStatus());
-        orderToCreate.setCustomer(customerRepository.findById(createOrderInput.getCustomerId()).orElseThrow(() -> new EntityNotFoundException("Customer not found with ID: " + createOrderInput.getCustomerId())));
+    public ResponseEntity<Order> createOrder(CreateOrderInput createOrderInput)
+            throws EntityNotFoundException {
+        Order orderToCreate = createOrderModel(createOrderInput);
         List<Long> mealIds = new ArrayList<>();
         for (MealorderInput mealorderInput : createOrderInput.getMealorderInputs()) {
             mealIds.add(mealorderInput.getMealId());
@@ -50,8 +48,28 @@ public class OrderService {
         for (Meal meal : meals) {
             mealMap.put(meal.getId(), meal);
         }
-        orderToCreate.setPaymentStatus(createOrderInput.getPaymentStatus());
         double amount = 0;
+        amount = computeOrderToCreateAmount(createOrderInput, mealMap, amount);
+        orderToCreate.setAmount(amount);
+        Order orderCreated = orderRepository.save(orderToCreate);
+        createMealOrder(createOrderInput, mealMap, orderCreated);
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderCreated);
+    }
+
+    public Order getOrderById(Long id) {
+        return orderRepository.findById(id).orElse(null);
+    }
+
+    public List<Order> getOrdersByCustomer(Long customerId) {
+        return orderRepository.findAllByCustomer_IdOrderByCreatedAtDesc(customerId);
+    }
+
+    public List<Order> getOrdersByMeal(Long mealId) {
+        return orderRepository.findAllByMealorders_Meal_Id(mealId);
+    }
+
+    private static double computeOrderToCreateAmount(CreateOrderInput createOrderInput,
+                                                     HashMap<Long, Meal> mealMap, double amount) {
         for (MealorderInput mealorderInput : createOrderInput.getMealorderInputs()) {
             Meal meal = mealMap.get(mealorderInput.getMealId());
             Long currentOrderCount = Objects.requireNonNullElse(meal.getCurrentOrderCount(), 0L);
@@ -62,8 +80,11 @@ public class OrderService {
             }
             amount += meal.getPrice() * mealorderInput.getQuantity();
         }
-        orderToCreate.setAmount(amount);
-        Order orderCreated = orderRepository.save(orderToCreate);
+        return amount;
+    }
+
+    private void createMealOrder(CreateOrderInput createOrderInput, HashMap<Long, Meal> mealMap,
+                                 Order orderCreated) {
         for (MealorderInput mealorderInput : createOrderInput.getMealorderInputs()) {
             Meal meal = mealMap.get(mealorderInput.getMealId());
             Long currentOrderCount = Objects.requireNonNullElse(meal.getCurrentOrderCount(), 0L);
@@ -77,37 +98,18 @@ public class OrderService {
             mealorder.setAmount(meal.getPrice() * mealorderInput.getQuantity());
             mealorderRepository.save(mealorder);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderCreated);
     }
 
-    public Order getOrderById(Long id) {
-        return orderRepository.findById(id).orElse(null);
+    private Order createOrderModel(CreateOrderInput createOrderInput) throws EntityNotFoundException {
+        Order orderToCreate = new Order();
+        orderToCreate.setType(createOrderInput.getType());
+        orderToCreate.setStatus(createOrderInput.getStatus());
+        orderToCreate.setCustomer(
+                customerRepository.findById(createOrderInput.getCustomerId()).orElse(null));
+        orderToCreate.setPaymentStatus(createOrderInput.getPaymentStatus());
+        if (orderToCreate.getCustomer() == null) {
+            throw new EntityNotFoundException("Customer not found for: " + createOrderInput.getCustomerId());
+        }
+        return orderToCreate;
     }
-
-    //    public List<Order> getAllOrders() {
-//        return orderRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
-//    }
-//
-    public List<Order> getOrdersByCustomer(Long customerId) {
-        return orderRepository.findAllByCustomer_IdOrderByCreatedAtDesc(customerId);
-    }
-
-    public List<Order> getOrdersByMeal(Long mealId) {
-        return orderRepository.findAllByMealorders_Meal_Id(mealId);
-    }
-
-//    public List<Order> getOrdersByMenu(Long menuId) {
-//        return orderRepository.findAllByMeal_Menu_IdOrderByCreatedAtDesc(menuId);
-//    }
-
-//    public List<Order> getOrdersByStatusAndCook(Long cookId, OrderStatus status) {
-//        return orderRepository.findAllByStatusAndAndCustomer_IdOrderByCreatedAtDesc(status, cookId);
-//    }
-//
-//    public ResponseEntity<Order> updateOrderStatus(Long id, OrderStatus status) {
-//        Order orderToUpdate = orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + id));
-//        orderToUpdate.setStatus(status);
-//        Order updatedOrder = orderRepository.save(orderToUpdate);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(updatedOrder);
-//    }
 }
