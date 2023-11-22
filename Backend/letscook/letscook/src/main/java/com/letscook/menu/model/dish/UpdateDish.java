@@ -1,4 +1,4 @@
-package com.letscook.menu.model;
+package com.letscook.menu.model.dish;
 
 import lombok.Getter;
 import lombok.Setter;

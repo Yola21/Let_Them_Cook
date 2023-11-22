@@ -5,7 +5,7 @@ import com.letscook.cook.model.CreateCookProfileInput;
 import com.letscook.cook.model.UpdateCookProfileInput;
 import com.letscook.cook.repository.CookRepository;
 import com.letscook.enums.CookStatus;
-import com.letscook.menu.model.Dish;
+import com.letscook.menu.model.dish.Dish;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,67 +98,6 @@ public class CookService {
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedCook);
     }
 
-//    private void uploadBusinessDocument(Cook cookToUpdate, MultipartFile businessDocument) throws IOException {
-//        try {
-//            String fileName = cookToUpdate.getId().toString() + "_" + cookToUpdate.getBusinessName() + "_businessDocument" + "." + getFileExtension(businessDocument.getOriginalFilename());
-//            String filePath = getFilePath(fileName, uploadCookBusinessDocumentDirectory);
-//            File destFile = new File(filePath);
-//            destFile.getParentFile().mkdirs();
-//            businessDocument.transferTo(destFile);
-//            cookToUpdate.setBusinessDocument(filePath);
-//        } catch (IOException error) {
-//            throw new IOException(error);
-//        }
-//    }
-
-//    private void uploadCookProfilePhoto(Cook cookToUpdate, MultipartFile profilePhoto) throws IOException {
-//        try {
-//            String fileName = cookToUpdate.getId().toString() + "_" + cookToUpdate.getBusinessName() + "_profilePhoto" + "." + getFileExtension(profilePhoto.getOriginalFilename());
-//            String filePath = getFilePath(fileName, uploadCookProfileDirectory);
-//            File destFile = new File(filePath);
-//            destFile.getParentFile().mkdirs();
-//            profilePhoto.transferTo(destFile);
-//            cookToUpdate.setProfilePhoto(filePath);
-//        } catch (IOException error) {
-//            throw new IOException(error);
-//        }
-//    }
-
-//    private void uploadCookBannerImage(Cook cookToUpdate, MultipartFile bannerImage) throws IOException {
-//        try {
-//            String fileName = cookToUpdate.getId().toString() + "_" + cookToUpdate.getBusinessName() + "_bannerImage" + "." + getFileExtension(bannerImage.getOriginalFilename());
-//            String filePath = getFilePath(fileName, uploadCookBannerImageDirectory);
-//            File destFile = new File(filePath);
-//            destFile.getParentFile().mkdirs();
-//            bannerImage.transferTo(destFile);
-//            cookToUpdate.setBannerImage(filePath);
-//        } catch (IOException error) {
-//            throw new IOException(error);
-//        }
-//    }
-
-
-//    private String getFilePath(String fileName, String uploadCookDirectory) {
-//        return Paths.get(uploadCookDirectory, fileName).toAbsolutePath().normalize().toString();
-//    }
-
-//    public byte[] getProfilePhoto(Long id) throws IOException {
-//
-//        Cook cookProfile = cookRepository.findById(id).orElse(null);
-//        String path = cookProfile.getProfilePhoto();
-//        File destFile = new File(path);
-//        byte[] res = Files.readAllBytes(destFile.toPath());
-//        return res;
-//    }
-
-    //    public byte[] getBannerPhoto(Long id) throws IOException {
-//
-//        Cook cookProfile = cookRepository.findById(id).orElse(null);
-//        String path = cookProfile.getBannerImage();
-//        File destFile = new File(path);
-//        byte[] res = Files.readAllBytes(destFile.toPath());
-//        return res;
-//    }
     public List<Dish> getDishesByCookId(Long id) {
         Cook cook = cookRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Cook not found with ID: " + id));

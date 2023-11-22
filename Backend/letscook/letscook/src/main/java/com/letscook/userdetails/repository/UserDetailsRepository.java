@@ -1,7 +1,6 @@
 package com.letscook.userdetails.repository;
 
 import com.letscook.userdetails.model.UserInfo;
-import com.letscook.userdetails.model.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -4,7 +4,7 @@ import com.letscook.cook.model.Cook;
 import com.letscook.cook.model.CreateCookProfileInput;
 import com.letscook.cook.model.UpdateCookProfileInput;
 import com.letscook.cook.service.CookService;
-import com.letscook.menu.model.Dish;
+import com.letscook.menu.model.dish.Dish;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,15 +44,6 @@ public class CookController {
         return cookService.updateCookProfile(updateCookProfileInput);
     }
 
-    //    @GetMapping("/profilephoto/{id}")
-//    public ResponseEntity<byte[]> getCookProfile(@PathVariable() Long id) throws IOException {
-//        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(cookService.getProfilePhoto(id));
-//    }
-//
-//    @GetMapping("/bannerimage/{id}")
-//    public ResponseEntity<byte[]> getCookBanner(@PathVariable() Long id) throws IOException {
-//        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(cookService.getBannerPhoto(id));
-//    }
     @GetMapping("/getDishes/{id}")
     public List<Dish> getDishesByCookId(@PathVariable() Long id) {
         return cookService.getDishesByCookId(id);
