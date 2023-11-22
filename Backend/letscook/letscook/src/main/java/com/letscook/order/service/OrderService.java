@@ -70,7 +70,7 @@ public class OrderService {
             meal.setCurrentOrderCount(currentOrderCount + mealorderInput.getQuantity());
             mealRepository.save(meal);
             Mealorder mealorder = new Mealorder();
-            mealorder.setMeal(mealMap.get(mealorderInput.getMealId()));
+            mealorder.setMeal(meal);
             mealorder.setOrder(orderCreated);
             mealorder.setQuantity(mealorderInput.getQuantity());
             mealorder.setStatus(String.valueOf(OrderStatus.PENDING));
