@@ -13,7 +13,6 @@ public class CreateOrderInput {
     private String type;
     private OrderStatus status;
     private Long customerId;
-    private Long mealId;
     private PaymentStatus paymentStatus;
     private List<MealorderInput> mealorderInputs;
 }

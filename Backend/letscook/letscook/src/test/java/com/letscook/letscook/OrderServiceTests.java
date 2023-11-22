@@ -128,7 +128,6 @@ public class OrderServiceTests {
         createOrderInput.setType("Subscription");
         createOrderInput.setStatus(OrderStatus.PENDING);
         createOrderInput.setCustomerId(1L);
-        createOrderInput.setMealId(2L);
 
         MealorderInput input = new MealorderInput();
         input.setMealId(2L);
@@ -168,7 +167,6 @@ public class OrderServiceTests {
         createOrderInput.setType("Subscription");
         createOrderInput.setStatus(OrderStatus.PENDING);
         createOrderInput.setCustomerId(1L);
-        createOrderInput.setMealId(2L);
 
         MealorderInput input = new MealorderInput();
         input.setMealId(3L);
@@ -192,7 +190,6 @@ public class OrderServiceTests {
         createOrderInput.setType("Subscription");
         createOrderInput.setStatus(OrderStatus.PENDING);
         createOrderInput.setCustomerId(1L);
-        createOrderInput.setMealId(2L);
 
         MealorderInput input = new MealorderInput();
         input.setMealId(4L);
@@ -216,7 +213,6 @@ public class OrderServiceTests {
         createOrderInput.setType("Subscription");
         createOrderInput.setStatus(OrderStatus.PENDING);
         createOrderInput.setCustomerId(1L);
-        createOrderInput.setMealId(2L);
 
         MealorderInput input = new MealorderInput();
         input.setMealId(5L);
