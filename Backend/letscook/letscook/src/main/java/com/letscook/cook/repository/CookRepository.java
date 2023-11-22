@@ -8,4 +8,5 @@ import java.util.List;
 public interface CookRepository extends JpaRepository<Cook, Long> {
 
     List<Cook> findAllByStatusIs(String status);
+    List<Cook> findAllByBusinessNameIsLikeIgnoreCase(String businessName);
 }

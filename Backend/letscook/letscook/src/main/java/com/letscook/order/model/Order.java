@@ -2,6 +2,7 @@ package com.letscook.order.model;
 
 import com.letscook.customer.model.Customer;
 import com.letscook.enums.OrderStatus;
+import com.letscook.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,6 +41,9 @@ public class Order {
     @JoinColumn(name = "customer_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Customer customer;
+
+    @Column(name = "payment_status")
+    private PaymentStatus paymentStatus;
 
     @CreatedDate
     @Column(name = "created_at")

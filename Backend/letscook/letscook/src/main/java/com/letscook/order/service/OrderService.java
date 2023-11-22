@@ -50,6 +50,7 @@ public class OrderService {
         for (Meal meal : meals) {
             mealMap.put(meal.getId(), meal);
         }
+        orderToCreate.setPaymentStatus(createOrderInput.getPaymentStatus());
         double amount = 0;
         for (MealorderInput mealorderInput : createOrderInput.getMealorderInputs()) {
             Meal meal = mealMap.get(mealorderInput.getMealId());

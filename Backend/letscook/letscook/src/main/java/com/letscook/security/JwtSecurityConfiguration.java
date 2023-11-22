@@ -41,6 +41,7 @@ public class JwtSecurityConfiguration {
                     requestMatchers(HttpMethod.POST, "/login").permitAll().
                     requestMatchers(HttpMethod.POST, "/cooks/createProfile").permitAll()//.hasAuthority("SCOPE_cook")
                     .requestMatchers(HttpMethod.GET, "/hello").hasAuthority("SCOPE_cook")
+                    .requestMatchers(HttpMethod.POST, "/payment").permitAll()
                     .anyRequest().authenticated();
         });
 

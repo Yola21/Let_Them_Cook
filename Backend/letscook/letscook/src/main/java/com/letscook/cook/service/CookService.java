@@ -21,21 +21,17 @@ public class CookService {
     @Autowired
     private CookRepository cookRepository;
 
-    @Value("${cook.profile.photo.upload.directory}")
-    private String uploadCookProfileDirectory;
-
-    @Value("${cook.banner.image.upload.directory}")
-    private String uploadCookBannerImageDirectory;
-
-    @Value("${cook.business.document.upload.directory}")
-    private String uploadCookBusinessDocumentDirectory;
-
     public Cook getCook(Long id) {
         return cookRepository.findById(id).orElse(null);
     }
 
     public List<Cook> getCooks() {
         return cookRepository.findAll();
+    }
+
+    public List<Cook> getCooksByName(String businessName) {
+        String search = "%" + businessName + "%";
+        return cookRepository.findAllByBusinessNameIsLikeIgnoreCase(search);
     }
 
     public ResponseEntity<Cook> createCookProfile(CreateCookProfileInput createCookProfileInput) throws IOException {
@@ -61,15 +57,6 @@ public class CookService {
         return cookRepository.findAllByStatusIs(String.valueOf(CookStatus.PENDING));
     }
 
-    private String getFileExtension(String fileName) {
-        if (fileName == null) {
-            return null;
-        }
-        String[] fileNameParts = fileName.split("\\.");
-
-        return fileNameParts[fileNameParts.length - 1];
-    }
-
     public ResponseEntity<Cook> updateCookProfile(UpdateCookProfileInput updateCookProfileInput) throws IOException {
 
         Cook cookToUpdate = cookRepository.findById(updateCookProfileInput.getId()).orElseThrow(() -> new EntityNotFoundException("Cook not found with ID: " + updateCookProfileInput.getId()));
@@ -81,18 +68,16 @@ public class CookService {
         if (updateCookProfileInput.getProfilePhoto() != null) {
             cookToUpdate.setProfilePhoto(updateCookProfileInput.getProfilePhoto());
         }
-
         if (updateCookProfileInput.getBannerImage() != null) {
             cookToUpdate.setBannerImage(updateCookProfileInput.getBannerImage());
         }
-
-        if (cookToUpdate.getStatus().equals(String.valueOf(CookStatus.REJECTED)) && updateCookProfileInput.getBusinessDocument() != null) {
+        if (updateCookProfileInput.getBusinessDocument() != null) {
             cookToUpdate.setBusinessDocument(updateCookProfileInput.getBusinessDocument());
         }
 
-//        if (cookToUpdate.getStatus().equals(String.valueOf(CookStatus.REJECTED)) && updateCookProfileInput.getBusinessDocument() != null) {
-//            throw new Error("Not allowed to change business document");
-//        }
+        if (!cookToUpdate.getStatus().equals(String.valueOf(CookStatus.REJECTED)) && updateCookProfileInput.getBusinessDocument() != null) {
+            throw new Error("Not allowed to change business document");
+        }
 
         Cook updatedCook = cookRepository.save(cookToUpdate);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedCook);

@@ -24,13 +24,18 @@ public class CookController {
         return cookService.getCooks();
     }
 
+    @GetMapping("/cookSearch")
+    public List<Cook> getCooksByBusinessName(@RequestParam String businessName) {
+        return cookService.getCooksByName(businessName);
+    }
+
     @GetMapping("/{id}")
     public Cook getCook(@PathVariable() Long id) {
         return cookService.getCook(id);
     }
 
     @PostMapping("/createProfile")
-    public ResponseEntity<Cook> createCookProfile(@RequestBody CreateCookProfileInput createCookProfileInput) throws IOException {
+    public ResponseEntity<Cook> createCookProfile(@RequestBody() CreateCookProfileInput createCookProfileInput) throws IOException {
         return cookService.createCookProfile(createCookProfileInput);
     }
 
@@ -40,7 +45,7 @@ public class CookController {
     }
 
     @PostMapping("/updateProfile")
-    public ResponseEntity<Cook> updateCookProfile(@RequestBody UpdateCookProfileInput updateCookProfileInput) throws IOException {
+    public ResponseEntity<Cook> updateCookProfile(@RequestBody() UpdateCookProfileInput updateCookProfileInput) throws IOException {
         return cookService.updateCookProfile(updateCookProfileInput);
     }
 
