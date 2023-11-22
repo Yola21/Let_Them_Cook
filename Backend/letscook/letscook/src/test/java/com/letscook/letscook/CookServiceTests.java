@@ -72,6 +72,23 @@ public class CookServiceTests {
     }
 
     @Test
+    void getCooksByName() {
+        // Mocking
+        String businessName = "Mock";
+        String search = "%" + businessName + "%";
+        List<Cook> mockCooks = List.of(MockDataGenerator.createMockCook(), MockDataGenerator.createMockCook());
+
+        when(cookRepository.findAllByBusinessNameIsLikeIgnoreCase(search)).thenReturn(mockCooks);
+
+        // Test the method
+        List<Cook> result = cookService.getCooksByName(businessName);
+
+        // Assertions
+        assertEquals(mockCooks.size(), result.size());
+        assertEquals(mockCooks, result);
+    }
+
+    @Test
     void createCookProfileWithAllInputData() throws IOException {
         CreateCookProfileInput input = new CreateCookProfileInput();
         input.setUserId(1L);

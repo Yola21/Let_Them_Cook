@@ -37,6 +37,11 @@ public class CookService {
         return cookRepository.findAll();
     }
 
+    public List<Cook> getCooksByName(String businessName) {
+        String search = "%" + businessName + "%";
+        return cookRepository.findAllByBusinessNameIsLikeIgnoreCase(search);
+    }
+
     public ResponseEntity<Cook> createCookProfile(CreateCookProfileInput createCookProfileInput) throws IOException {
         Cook cookToUpdate = new Cook();
         cookToUpdate.setId(createCookProfileInput.getUserId());

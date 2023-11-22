@@ -29,6 +29,11 @@ public class CookController {
         return cookService.getCooks();
     }
 
+    @GetMapping("/cookSearch")
+    public List<Cook> getCooksByBusinessName(@RequestParam String businessName) {
+        return cookService.getCooksByName(businessName);
+    }
+
     @GetMapping("/{id}")
     public Cook getCook(@PathVariable() Long id){
         return cookService.getCook(id);
