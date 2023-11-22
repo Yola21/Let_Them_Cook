@@ -3,6 +3,8 @@ package com.letscook.letscook;
 import com.letscook.cook.model.Cook;
 import com.letscook.cook.repository.CookRepository;
 import com.letscook.menu.model.CreateDish;
+import com.letscook.menu.model.DishToMealId;
+import com.letscook.menu.model.DishToMealMap;
 import com.letscook.menu.model.dish.AddDishToMealInput;
 import com.letscook.menu.model.dish.Dish;
 import com.letscook.menu.model.dish.UpdateDish;
@@ -14,6 +16,7 @@ import com.letscook.menu.repository.DishToMealRepository;
 import com.letscook.menu.repository.MealRepository;
 import com.letscook.menu.repository.ScheduleRepository;
 import com.letscook.menu.service.ScheduleService;
+import com.letscook.order.model.Mealorder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -25,10 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -360,15 +360,51 @@ public class MenuServiceTests {
         addDishToMealInput.setDish_id(1L);
         addDishToMealInput.setMeal_id(1L);
 
-        when(cookRepository.findById(1L)).thenReturn(Optional.of(cook));
-        when(dishRepository.save(any(Dish.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(mealRepository.findById(1L)).thenReturn(Optional.of(meal));
+        when(dishRepository.findById(1L)).thenReturn(Optional.of(dish));
+        when(dishToMealRepository.save(any(DishToMealMap.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
-        ResponseEntity<Dish> response = scheduleService.createDish(null);
+        ResponseEntity<DishToMealMap> response = scheduleService.addDishToMeal(addDishToMealInput);
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("Bhaji", response.getBody().getName());
+    }
+
+    @Test
+    public void getDishesByMealIdTest() throws IOException {
+        // Arrange
+
+        DishToMealMap dishToMealMap = new DishToMealMap();
+        DishToMealId id = new DishToMealId();
+        id.setDishId(1L);
+        id.setMealId(2L);
+        dishToMealMap.setId(id);
+
+        when(dishToMealRepository.findByIdMealId(2L)).thenReturn(Arrays.asList(dishToMealMap));
+        when(dishRepository.findById(1L)).thenReturn(Optional.of(dish));
+
+        // Act
+        List<Dish> dishList = scheduleService.getDishesByMealId(2L);
+        // Assert
+        assertEquals(dishList.get(0).getId(), dish.getId());
+    }
+
+    @Test
+    public void getMealOrdersByMealIdTest() throws IOException {
+        // Arrange
+
+        List<Mealorder> mealorderList = new ArrayList<>();
+        Mealorder mealorder = new Mealorder();
+        mealorder.setId(1L);
+        mealorderList.add(mealorder);
+        meal.setMealorders(mealorderList);
+
+        when(mealRepository.findById(1L)).thenReturn(Optional.of(meal));
+
+        // Act
+        List<Mealorder> mealorders = scheduleService.getMealOrdersByMealId(1L);
+        // Assert
+        assertEquals(mealorders.size(), mealorderList.size());
     }
 
 

@@ -16,9 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class OrderService {
@@ -45,32 +43,40 @@ public class OrderService {
             mealIds.add(mealorderInput.getMealId());
         }
         List<Meal> meals = mealRepository.findAllByIdIn(mealIds);
+        if (mealIds.size() > meals.size()) {
+            throw new EntityNotFoundException("Didn't find all meals in db");
+        }
         HashMap<Long, Meal> mealMap = new HashMap<>();
         for (Meal meal : meals) {
             mealMap.put(meal.getId(), meal);
         }
-        double amount = 100;
+        double amount = 0;
+        for (MealorderInput mealorderInput : createOrderInput.getMealorderInputs()) {
+            Meal meal = mealMap.get(mealorderInput.getMealId());
+            Long currentOrderCount = Objects.requireNonNullElse(meal.getCurrentOrderCount(), 0L);
+            if ((currentOrderCount + mealorderInput.getQuantity()) > meal.getMaxOrderLimit()) {
+                throw new RuntimeException("Max order limit has been reached");
+            } else if (new Date().after(meal.getOrderDeadline())) {
+                throw new RuntimeException("Cannot order after deadline");
+            }
+            amount += meal.getPrice() * mealorderInput.getQuantity();
+        }
         orderToCreate.setAmount(amount);
-//        Meal meal = mealRepository.findById(createOrderInput.getMealId()).orElseThrow(() -> new EntityNotFoundException("Meal not found with ID: " + createOrderInput.getMealId()));
-//        if (meal.getCurrentOrderCount() >= meal.getMaxOrderLimit()) {
-//            throw new RuntimeException("Max order limit has been reached");
-//        } else if (new Date().after(meal.getOrderDeadline())) {
-//            throw new RuntimeException("Cannot order after deadline");
-//        } else {
-//            meal.setCurrentOrderCount(meal.getCurrentOrderCount() + 1);
-//        }
-//        orderToCreate.setMeal(meal);
         Order orderCreated = orderRepository.save(orderToCreate);
         for (MealorderInput mealorderInput : createOrderInput.getMealorderInputs()) {
+            Meal meal = mealMap.get(mealorderInput.getMealId());
+            Long currentOrderCount = Objects.requireNonNullElse(meal.getCurrentOrderCount(), 0L);
+            meal.setCurrentOrderCount(currentOrderCount + mealorderInput.getQuantity());
+            mealRepository.save(meal);
             Mealorder mealorder = new Mealorder();
             mealorder.setMeal(mealMap.get(mealorderInput.getMealId()));
             mealorder.setOrder(orderCreated);
             mealorder.setQuantity(mealorderInput.getQuantity());
             mealorder.setStatus(String.valueOf(OrderStatus.PENDING));
+            mealorder.setAmount(meal.getPrice() * mealorderInput.getQuantity());
             mealorderRepository.save(mealorder);
         }
-        Order updatedOrder = getOrderById(orderCreated.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(updatedOrder);
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderCreated);
     }
 
     public Order getOrderById(Long id) {
@@ -86,7 +92,7 @@ public class OrderService {
     }
 
     public List<Order> getOrdersByMeal(Long mealId) {
-        return orderRepository.findAllByMealorders_Meal_Schedule_Cook_Id(mealId);
+        return orderRepository.findAllByMealorders_Meal_Id(mealId);
     }
 
 //    public List<Order> getOrdersByMenu(Long menuId) {

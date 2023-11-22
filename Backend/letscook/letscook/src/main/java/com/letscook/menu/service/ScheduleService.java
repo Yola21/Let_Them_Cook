@@ -229,39 +229,11 @@ public class ScheduleService {
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedDish);
     }
 
-
-//    private void uploadDishImage(Dish createDishInput, MultipartFile image) throws IOException {
-//        try {
-//            String fileName = createDishInput.getId().toString() + "_" + createDishInput.getName()
-//                    + "_dishImage" + "." + getFileExtension(image.getOriginalFilename());
-//            String filePath = getFilePath(fileName, uploadDishImageDirectory);
-//            File destFile = new File(filePath);
-//            destFile.getParentFile().mkdirs();
-//            image.transferTo(destFile);
-//            createDishInput.setImage(filePath);
-//        } catch (IOException error) {
-//            throw new IOException(error);
-//        }
-//    }
-
-//    public byte[] getDishImage(Long id) throws IOException {
-//
-//        Dish dish = dishRepository.findById(id).orElse(null);
-//        String path = dish.getImage();
-//        File destFile = new File(path);
-//        byte[] res = Files.readAllBytes(destFile.toPath());
-//        return res;
-//    }
-
     public Dish deleteDishById(Long id) {
         Dish dishToDelete = dishRepository.findById(id).orElseThrow();
         dishRepository.deleteById(id);
         return dishToDelete;
     }
-
-//    public List<Meal> getMealsByCookAddress(String address) {
-//        return mealRepository.findMealsBySchedule_Cook_Address(address);
-//    }
 
     public List<Meal> getMealsByCookDateRange(CookDateRangeInput cookDateRangeInput) {
         return mealRepository.findAllByMealDateBetweenAndSchedule_Cook_Id(cookDateRangeInput.getStartDate(),

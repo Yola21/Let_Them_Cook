@@ -22,6 +22,9 @@ public class Mealorder {
     @Column(name = "status", nullable = false)
     private String status;
 
+    @Column(name = "amount", nullable = true)
+    private Double amount;
+
     @ManyToOne
     @JsonIgnore
     private Order order;
