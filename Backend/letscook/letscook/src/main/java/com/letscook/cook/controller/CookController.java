@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.http.MediaType;
-
 @RestController
 @RequestMapping("/cooks")
 public class CookController {
@@ -32,7 +30,7 @@ public class CookController {
     }
 
     @PostMapping("/createProfile")
-    public ResponseEntity<Cook> createCookProfile(@ModelAttribute() CreateCookProfileInput createCookProfileInput) throws IOException {
+    public ResponseEntity<Cook> createCookProfile(@RequestBody CreateCookProfileInput createCookProfileInput) throws IOException {
         return cookService.createCookProfile(createCookProfileInput);
     }
 
@@ -42,18 +40,8 @@ public class CookController {
     }
 
     @PostMapping("/updateProfile")
-    public ResponseEntity<Cook> updateCookProfile(@ModelAttribute() UpdateCookProfileInput updateCookProfileInput) throws IOException {
+    public ResponseEntity<Cook> updateCookProfile(@RequestBody UpdateCookProfileInput updateCookProfileInput) throws IOException {
         return cookService.updateCookProfile(updateCookProfileInput);
-    }
-
-    @GetMapping("/profilephoto/{id}")
-    public ResponseEntity<byte[]> getCookProfile(@PathVariable() Long id) throws IOException {
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(cookService.getProfilePhoto(id));
-    }
-
-    @GetMapping("/bannerimage/{id}")
-    public ResponseEntity<byte[]> getCookBanner(@PathVariable() Long id) throws IOException {
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(cookService.getBannerPhoto(id));
     }
 
     @GetMapping("/getDishes/{id}")

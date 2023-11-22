@@ -12,13 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -50,14 +45,13 @@ public class CookService {
         cookToUpdate.setBusinessName(createCookProfileInput.getBusinessName());
         cookToUpdate.setStatus(String.valueOf(CookStatus.PENDING));
         if (createCookProfileInput.getProfilePhoto() != null) {
-            cookToUpdate.setProfilePhoto(Arrays.toString(createCookProfileInput.getProfilePhoto().getBytes()));
-            uploadCookProfilePhoto(cookToUpdate, createCookProfileInput.getProfilePhoto());
+            cookToUpdate.setProfilePhoto(createCookProfileInput.getProfilePhoto());
         }
         if (createCookProfileInput.getBannerImage() != null) {
-            uploadCookBannerImage(cookToUpdate, createCookProfileInput.getBannerImage());
+            cookToUpdate.setBannerImage(createCookProfileInput.getBannerImage());
         }
         if (createCookProfileInput.getBusinessDocument() != null) {
-            uploadBusinessDocument(cookToUpdate, createCookProfileInput.getBusinessDocument());
+            cookToUpdate.setBusinessDocument(createCookProfileInput.getBusinessDocument());
         }
         Cook updatedCook = cookRepository.save(cookToUpdate);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedCook);
@@ -85,88 +79,23 @@ public class CookService {
         }
 
         if (updateCookProfileInput.getProfilePhoto() != null) {
-            uploadCookProfilePhoto(cookToUpdate, updateCookProfileInput.getProfilePhoto());
+            cookToUpdate.setProfilePhoto(updateCookProfileInput.getProfilePhoto());
         }
 
         if (updateCookProfileInput.getBannerImage() != null) {
-            uploadCookBannerImage(cookToUpdate, updateCookProfileInput.getBannerImage());
+            cookToUpdate.setBannerImage(updateCookProfileInput.getBannerImage());
         }
 
         if (cookToUpdate.getStatus().equals(String.valueOf(CookStatus.REJECTED)) && updateCookProfileInput.getBusinessDocument() != null) {
-            uploadBusinessDocument(cookToUpdate, updateCookProfileInput.getBusinessDocument());
+            cookToUpdate.setBusinessDocument(updateCookProfileInput.getBusinessDocument());
         }
 
-        if (cookToUpdate.getStatus().equals(String.valueOf(CookStatus.REJECTED)) && updateCookProfileInput.getBusinessDocument() != null) {
-            throw new Error("Not allowed to change business document");
-        }
+//        if (cookToUpdate.getStatus().equals(String.valueOf(CookStatus.REJECTED)) && updateCookProfileInput.getBusinessDocument() != null) {
+//            throw new Error("Not allowed to change business document");
+//        }
 
         Cook updatedCook = cookRepository.save(cookToUpdate);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedCook);
-    }
-
-    private void uploadBusinessDocument(Cook cookToUpdate, MultipartFile businessDocument) throws IOException {
-        try {
-            String fileName = cookToUpdate.getId().toString() + "_" + cookToUpdate.getBusinessName() + "_businessDocument" + "." + getFileExtension(businessDocument.getOriginalFilename());
-            String filePath = getFilePath(fileName, uploadCookBusinessDocumentDirectory);
-            File destFile = new File(filePath);
-            destFile.getParentFile().mkdirs();
-            businessDocument.transferTo(destFile);
-            cookToUpdate.setBusinessDocument(filePath);
-        } catch (IOException error) {
-            throw new IOException(error);
-        }
-    }
-
-    private void uploadCookProfilePhoto(Cook cookToUpdate, MultipartFile profilePhoto) throws IOException {
-        try {
-            String fileName = cookToUpdate.getId().toString() + "_" + cookToUpdate.getBusinessName() + "_profilePhoto" + "." + getFileExtension(profilePhoto.getOriginalFilename());
-            System.out.println(uploadCookProfileDirectory);
-            String filePath = getFilePath(fileName, uploadCookProfileDirectory);
-            System.out.println(fileName + " " + filePath);
-            File destFile = new File(filePath);
-            destFile.getParentFile().mkdirs();
-            profilePhoto.transferTo(destFile);
-            cookToUpdate.setProfilePhoto(filePath);
-        } catch (IOException error) {
-            throw new IOException(error);
-        }
-    }
-
-    private void uploadCookBannerImage(Cook cookToUpdate, MultipartFile bannerImage) throws IOException {
-        try {
-            String fileName = cookToUpdate.getId().toString() + "_" + cookToUpdate.getBusinessName() + "_bannerImage" + "." + getFileExtension(bannerImage.getOriginalFilename());
-            String filePath = getFilePath(fileName, uploadCookBannerImageDirectory);
-            File destFile = new File(filePath);
-            destFile.getParentFile().mkdirs();
-            bannerImage.transferTo(destFile);
-            cookToUpdate.setBannerImage(filePath);
-        } catch (IOException error) {
-            throw new IOException(error);
-        }
-    }
-
-
-    private String getFilePath(String fileName, String uploadCookDirectory) {
-        System.out.println(uploadCookDirectory);
-        return Paths.get(uploadCookDirectory, fileName).toAbsolutePath().normalize().toString();
-    }
-
-    public byte[] getProfilePhoto(Long id) throws IOException {
-
-        Cook cookProfile = cookRepository.findById(id).orElse(null);
-        String path = cookProfile.getProfilePhoto();
-        File destFile = new File(path);
-        byte[] res = Files.readAllBytes(destFile.toPath());
-        return res;
-    }
-
-    public byte[] getBannerPhoto(Long id) throws IOException {
-
-        Cook cookProfile = cookRepository.findById(id).orElse(null);
-        String path = cookProfile.getBannerImage();
-        File destFile = new File(path);
-        byte[] res = Files.readAllBytes(destFile.toPath());
-        return res;
     }
 
     public List<Dish> getDishesByCookId(Long id) {
