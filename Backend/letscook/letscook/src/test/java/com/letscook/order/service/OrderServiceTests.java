@@ -1,4 +1,4 @@
-package com.letscook.letscook;
+package com.letscook.order.service;
 
 import com.letscook.cook.model.Cook;
 import com.letscook.customer.model.Customer;
@@ -13,7 +13,6 @@ import com.letscook.order.model.MealorderInput;
 import com.letscook.order.model.Order;
 import com.letscook.order.repository.MealorderRepository;
 import com.letscook.order.repository.OrderRepository;
-import com.letscook.order.service.OrderService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
