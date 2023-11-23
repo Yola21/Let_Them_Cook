@@ -6,7 +6,11 @@ export const uploadImageToFirebase = async (image) => {
   const imageUUID = v4();
   const imageRef = ref(imageStorage, `files/${imageUUID}`);
   await uploadBytes(imageRef, image);
-  return getImageURLFromFirebase(imageUUID);
+  // return getImageURLFromFirebase(imageUUID);
+  const imageURL = await getDownloadURL(
+    ref(imageStorage, `files/${imageUUID}`)
+  );
+  return imageURL;
 };
 
 export const getImageURLFromFirebase = async (imageUUID) => {
