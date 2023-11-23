@@ -1,7 +1,15 @@
 package com.letscook.menu.controller;
 
-import com.letscook.menu.model.*;
+import com.letscook.menu.model.CreateDish;
+import com.letscook.menu.model.DishToMealMap;
+import com.letscook.menu.model.dish.AddDishToMealInput;
+import com.letscook.menu.model.dish.Dish;
+import com.letscook.menu.model.dish.UpdateDish;
+import com.letscook.menu.model.input.*;
+import com.letscook.menu.model.meal.Meal;
+import com.letscook.menu.model.meal.Schedule;
 import com.letscook.menu.service.ScheduleService;
+import com.letscook.order.model.Mealorder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +30,12 @@ public class ScheduleController {
     }
 
     @GetMapping("/{id}")
-    public Schedule getScheduleById(@PathVariable() Long id){
+    public Schedule getScheduleById(@PathVariable() Long id) {
         return scheduleService.getScheduleById(id);
     }
 
     @GetMapping("/cook")
-    public List<Schedule> getSchedulesByCookId(@RequestParam Long cookId){
+    public List<Schedule> getSchedulesByCookId(@RequestParam Long cookId) {
         return scheduleService.getSchedulesByCook(cookId);
     }
 
@@ -37,7 +45,7 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/deleteSchedule/{id}")
-    public Schedule deleteSchedule(@PathVariable() Long id){
+    public Schedule deleteSchedule(@PathVariable() Long id) {
         return scheduleService.deleteScheduleById(id);
     }
 
@@ -52,17 +60,17 @@ public class ScheduleController {
     }
 
     @GetMapping("/meal/{id}")
-    public Meal getMealById(@PathVariable() Long id){
+    public Meal getMealById(@PathVariable() Long id) {
         return scheduleService.getMealById(id);
     }
 
     @GetMapping("/meal/cook")
-    public List<Meal> getMealsByCookId(@RequestParam() Long id){
+    public List<Meal> getMealsByCookId(@RequestParam() Long id) {
         return scheduleService.getMealsByCookId(id);
     }
 
     @DeleteMapping("/deleteMeal/{id}")
-    public Meal deleteMeal(@PathVariable() Long id){
+    public Meal deleteMeal(@PathVariable() Long id) {
         return scheduleService.deleteMealById(id);
     }
 
@@ -77,7 +85,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/dish/{id}")
-    public Dish getDishById(@PathVariable() Long id){
+    public Dish getDishById(@PathVariable() Long id) {
         return scheduleService.getDishById(id);
     }
 
@@ -92,17 +100,17 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/deleteDish/{id}")
-    public Dish deleteDish(@PathVariable() Long id){
+    public Dish deleteDish(@PathVariable() Long id) {
         return scheduleService.deleteDishById(id);
     }
 
-    @GetMapping("/meal/address")
-    public List<Meal> getMealsByCookAddress(@RequestParam() String address){
-        return scheduleService.getMealsByCookAddress(address);
-    }
+//    @GetMapping("/meal/address")
+//    public List<Meal> getMealsByCookAddress(@RequestParam() String address) {
+//        return scheduleService.getMealsByCookAddress(address);
+//    }
 
     @PostMapping("/meal/cookdaterange")
-    public List<Meal> getMealsByCookDateRange(@RequestBody() CookDateRangeInput cookDateRangeInput){
+    public List<Meal> getMealsByCookDateRange(@RequestBody() CookDateRangeInput cookDateRangeInput) {
         return scheduleService.getMealsByCookDateRange(cookDateRangeInput);
     }
 
@@ -112,12 +120,17 @@ public class ScheduleController {
     }
 
     @GetMapping("/getDishesByMeal/{id}")
-    public List<Dish> getDishesByMeal(@PathVariable() Long id){
+    public List<Dish> getDishesByMeal(@PathVariable() Long id) {
         return scheduleService.getDishesByMealId(id);
     }
 
     @GetMapping("/getMealsBySchedule/{id}")
-    public List<Meal> getMealsBySchedule(@PathVariable() Long id){
+    public List<Meal> getMealsBySchedule(@PathVariable() Long id) {
         return scheduleService.getMealsByScheduleId(id);
+    }
+
+    @GetMapping("/getMealOrders/{id}")
+    public List<Mealorder> getMealOrdersByMealId(@PathVariable() Long id) {
+        return scheduleService.getMealOrdersByMealId(id);
     }
 }

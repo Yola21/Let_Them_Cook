@@ -1,9 +1,8 @@
 package com.letscook.order.model;
 
-import com.letscook.cook.model.Cook;
 import com.letscook.customer.model.Customer;
 import com.letscook.enums.OrderStatus;
-import com.letscook.menu.model.Meal;
+import com.letscook.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +13,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -32,15 +32,18 @@ public class Order {
     @Column(name = "status", nullable = true)
     private OrderStatus status;
 
-    @ManyToOne
-    @JoinColumn(name = "meal_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Meal meal;
+//    @ManyToOne
+//    @JoinColumn(name = "meal_id", nullable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private Meal meal;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Customer customer ;
+    private Customer customer;
+
+    @Column(name = "payment_status")
+    private PaymentStatus paymentStatus;
 
     @CreatedDate
     @Column(name = "created_at")
@@ -49,4 +52,12 @@ public class Order {
     @LastModifiedDate
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @Column(name = "amount", nullable = true)
+    private Double amount;
+
+    @OneToMany(mappedBy = "order")
+    private List<Mealorder> mealorders;
+
+
 }

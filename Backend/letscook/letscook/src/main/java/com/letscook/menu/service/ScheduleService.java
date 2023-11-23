@@ -2,22 +2,28 @@ package com.letscook.menu.service;
 
 import com.letscook.cook.model.Cook;
 import com.letscook.cook.repository.CookRepository;
-import com.letscook.menu.model.*;
+import com.letscook.menu.model.CreateDish;
+import com.letscook.menu.model.DishToMealId;
+import com.letscook.menu.model.DishToMealMap;
+import com.letscook.menu.model.dish.AddDishToMealInput;
+import com.letscook.menu.model.dish.Dish;
+import com.letscook.menu.model.dish.UpdateDish;
+import com.letscook.menu.model.input.*;
+import com.letscook.menu.model.meal.Meal;
+import com.letscook.menu.model.meal.Schedule;
 import com.letscook.menu.repository.DishRepository;
 import com.letscook.menu.repository.DishToMealRepository;
 import com.letscook.menu.repository.MealRepository;
 import com.letscook.menu.repository.ScheduleRepository;
+import com.letscook.order.model.Mealorder;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,31 +63,31 @@ public class ScheduleService {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdSchedule);
     }
 
-    private void uploadMenuImage(Schedule createScheduleInput, MultipartFile image) throws IOException {
-        try {
-            String fileName = createScheduleInput.getId().toString() + "_" + createScheduleInput.getName() + "_menuImage" + "." + getFileExtension(image.getOriginalFilename());
-            String filePath = getFilePath(fileName, uploadScheduleImageDirectory);
-            File destFile = new File(filePath);
-            destFile.getParentFile().mkdirs();
-            image.transferTo(destFile);
-            //createScheduleInput.setImage(filePath);
-        } catch (IOException error) {
-            throw new IOException(error);
-        }
-    }
+//    private void uploadMenuImage(Schedule createScheduleInput, MultipartFile image) throws IOException {
+//        try {
+//            String fileName = createScheduleInput.getId().toString() + "_" + createScheduleInput.getName() + "_menuImage" + "." + getFileExtension(image.getOriginalFilename());
+//            String filePath = getFilePath(fileName, uploadScheduleImageDirectory);
+//            File destFile = new File(filePath);
+//            destFile.getParentFile().mkdirs();
+//            image.transferTo(destFile);
+//            //createScheduleInput.setImage(filePath);
+//        } catch (IOException error) {
+//            throw new IOException(error);
+//        }
+//    }
 
-    private String getFilePath(String fileName, String uploadCookDirectory) {
-        return Paths.get(uploadCookDirectory, fileName).toAbsolutePath().normalize().toString();
-    }
-
-    private String getFileExtension(String fileName) {
-        if (fileName == null) {
-            return null;
-        }
-        String[] fileNameParts = fileName.split("\\.");
-
-        return fileNameParts[fileNameParts.length - 1];
-    }
+//    private String getFilePath(String fileName, String uploadCookDirectory) {
+//        return Paths.get(uploadCookDirectory, fileName).toAbsolutePath().normalize().toString();
+//    }
+//
+//    private String getFileExtension(String fileName) {
+//        if (fileName == null) {
+//            return null;
+//        }
+//        String[] fileNameParts = fileName.split("\\.");
+//
+//        return fileNameParts[fileNameParts.length - 1];
+//    }
 
     public Schedule getScheduleById(Long id) {
         return scheduleRepository.findById(id).orElse(null);
@@ -223,38 +229,10 @@ public class ScheduleService {
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedDish);
     }
 
-
-    private void uploadDishImage(Dish createDishInput, MultipartFile image) throws IOException {
-        try {
-            String fileName = createDishInput.getId().toString() + "_" + createDishInput.getName()
-                    + "_dishImage" + "." + getFileExtension(image.getOriginalFilename());
-            String filePath = getFilePath(fileName, uploadDishImageDirectory);
-            File destFile = new File(filePath);
-            destFile.getParentFile().mkdirs();
-            image.transferTo(destFile);
-            createDishInput.setImage(filePath);
-        } catch (IOException error) {
-            throw new IOException(error);
-        }
-    }
-
-    public byte[] getDishImage(Long id) throws IOException {
-
-        Dish dish = dishRepository.findById(id).orElse(null);
-        String path = dish.getImage();
-        File destFile = new File(path);
-        byte[] res = Files.readAllBytes(destFile.toPath());
-        return res;
-    }
-
     public Dish deleteDishById(Long id) {
         Dish dishToDelete = dishRepository.findById(id).orElseThrow();
         dishRepository.deleteById(id);
         return dishToDelete;
-    }
-
-    public List<Meal> getMealsByCookAddress(String address) {
-        return mealRepository.findMealsBySchedule_Cook_Address(address);
     }
 
     public List<Meal> getMealsByCookDateRange(CookDateRangeInput cookDateRangeInput) {
@@ -278,10 +256,16 @@ public class ScheduleService {
     public List<Dish> getDishesByMealId(Long mealId) {
         List<DishToMealMap> dishToMealMaps = dishToMealRepository.findByIdMealId(mealId);
         List<Dish> dishes = new ArrayList<>();
-        for(DishToMealMap dishToMealMap:dishToMealMaps){
+        for (DishToMealMap dishToMealMap : dishToMealMaps) {
             dishes.add(dishRepository.findById(dishToMealMap.getId().getDishId()).orElseThrow());
         }
         return dishes;
+    }
+
+    public List<Mealorder> getMealOrdersByMealId(Long id) {
+        Meal meal = mealRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Meal not found with ID: " + id));
+        return meal.getMealorders();
     }
 }
 
