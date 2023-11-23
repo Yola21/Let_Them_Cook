@@ -19,7 +19,6 @@ import TiffinServiceStorePage from "./Customer/TiifinServiceStorePage";
 import MealCart from "./Customer/MealCart";
 import OrderPayment from "./Customer/OrderPayment";
 import OrderHistory from "./Customer/OrderHistory";
-import CookProfile from "./Cook/CookProfile";
 import StripeButton from "./Customer/Payment";
 
 function App() {
