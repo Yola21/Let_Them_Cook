@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { config } from "../config";
 import { toast } from "react-toastify";
+import { uploadImageToFirebase } from "../utils/config";
 
 export const createUser = createAsyncThunk(
   "auth/createUser",
@@ -61,20 +62,29 @@ export const createCookProfile = createAsyncThunk(
     const profilePicture = getCookProfilePicture(state);
     const businessDocument = getCookBusinessDocument(state);
     const bannerImage = getCookBannerImage(state);
+    const profilePictureURL = await uploadImageToFirebase(profilePicture[0]);
+    const businessDocumentURL = await uploadImageToFirebase(
+      businessDocument[0]
+    );
+    const bannerImageURL = await uploadImageToFirebase(bannerImage[0]);
 
-    const formData = new FormData();
-    formData.append("userId", args.id);
-    formData.append("businessName", businessName);
-    formData.append("businessDocument", businessDocument[0]);
-    formData.append("address", address);
-    formData.append("profilePhoto", profilePicture[0]);
-    formData.append("bannerImage", bannerImage[0]);
+    const data = {
+      userId: args.id,
+      businessName,
+      address,
+      profilePhoto: profilePictureURL,
+      businessDocument: businessDocumentURL,
+      bannerImage: bannerImageURL,
+    };
 
     const response = await fetch(
       `${config.BASE_PATH}${config.COOKS}${config.COOK_CREATE_PROFILE}`,
       {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       }
     );
     const cookInfo = await response.json();
@@ -86,8 +96,7 @@ export const createCookProfile = createAsyncThunk(
 export const fetchCookById = createAsyncThunk(
   "auth/fetchCookById",
   async (args, thunkApi) => {
-    const state = thunkApi.getState();
-    const token = currentUserToken(state);
+    const token = localStorage.getItem("token");
 
     const response = await fetch(
       `${config.BASE_PATH}${config.COOKS}/${args.id}`,
@@ -102,48 +111,6 @@ export const fetchCookById = createAsyncThunk(
   }
 );
 
-export const fetchCookProfilePhotoById = createAsyncThunk(
-  "auth/fetchCookProfilePhotoById",
-  async (args, thunkApi) => {
-    const state = thunkApi.getState();
-    const token = currentUserToken(state);
-
-    const response = await fetch(
-      `${config.BASE_PATH}${config.COOKS}/profilephoto/${args.id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const t = await response.arrayBuffer();
-    const t1 = new Blob([t], { type: "image/png" });
-    const t3 = URL.createObjectURL(t1);
-    return t3;
-  }
-);
-
-export const fetchCookBannerPhotoById = createAsyncThunk(
-  "auth/fetchCookBannerPhotoById",
-  async (args, thunkApi) => {
-    const state = thunkApi.getState();
-    const token = currentUserToken(state);
-
-    const response = await fetch(
-      `${config.BASE_PATH}${config.COOKS}/bannerimage/${args.id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${args.token}`,
-        },
-      }
-    );
-    const t = await response.arrayBuffer();
-    const t1 = new Blob([t], { type: "image/png" });
-    const t3 = URL.createObjectURL(t1);
-    return t3;
-  }
-);
-
 export const updateCookProfile = createAsyncThunk(
   "auth/updateCookProfile",
   async (args, thunkApi) => {
@@ -152,19 +119,15 @@ export const updateCookProfile = createAsyncThunk(
       {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${args.token}`,
         },
-        body: args.formData,
+        body: JSON.stringify(args.data),
       }
     );
     const cookInfo = await response.json();
-    // thunkApi.dispatch(
-    //   fetchCookBannerPhotoById({ id: args.id, token: args.token })
-    // );
-    // thunkApi.dispatch(
-    //   fetchCookProfilePhotoById({ id: args.id, token: args.token })
-    // );
-    args.history.push("/cooks");
+    thunkApi.dispatch(fetchCookById({ id: args.data.id }));
+    args.history.push(`/cooks/${args.data.id}`);
     return cookInfo;
   }
 );
@@ -247,22 +210,6 @@ export const authSlice = createSlice({
       state.cookBusinessAddress = action.payload.address;
     },
     [fetchCookById.rejected]: (state, action) => {
-      console.log(action.payload);
-    },
-
-    //fetchprofile profilePhoto
-    [fetchCookProfilePhotoById.fulfilled]: (state, action) => {
-      state.photo1 = action.payload;
-    },
-    [fetchCookProfilePhotoById.rejected]: (state, action) => {
-      console.log(action.payload);
-    },
-
-    //fetchprofile bannerPhoto
-    [fetchCookBannerPhotoById.fulfilled]: (state, action) => {
-      state.photo2 = action.payload;
-    },
-    [fetchCookBannerPhotoById.rejected]: (state, action) => {
       console.log(action.payload);
     },
 

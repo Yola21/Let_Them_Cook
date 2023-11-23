@@ -33,9 +33,11 @@ import CreateMealForm from "./CreateMealForm";
 import CreateDishForm from "./CreateDishForm";
 import CookDashboardTabs from "./CookDashboardTabs";
 import CreateMealScheduleForm from "./CreateMealScheduleForm";
+import { cookInfo, fetchCookById } from "../Authentication/authSlice";
 
 export default function Cook() {
   const schedules = useSelector(getSchedules);
+  const cook = useSelector(cookInfo);
   const history = useHistory();
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -62,6 +64,7 @@ export default function Cook() {
   };
 
   useEffect(() => {
+    dispatch(fetchCookById({ id }));
     dispatch(fetchSchedulesByCook({ cookId: id }));
     dispatch(fetchDishesByCook({ cookId: id }));
     dispatch(fetchMealsByCook({ cookId: id }));
@@ -115,7 +118,7 @@ export default function Cook() {
             )}
             <Tooltip title="User Profile">
               <Link to={`/cook/${id}/profile`}>
-                <Avatar alt="User" />
+                <Avatar src={cook?.profilePhoto} alt="User" />
               </Link>
             </Tooltip>
             <Tooltip title="Logout">
