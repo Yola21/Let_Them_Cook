@@ -39,12 +39,6 @@ public class CookControllerIntegrationTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @InjectMocks
-    private CookService cookService;
-
-    @Mock
-    private CookRepository cookRepository;
-
     @Autowired
     private UserService userService;
 
