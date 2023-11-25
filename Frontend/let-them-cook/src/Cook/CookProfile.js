@@ -11,24 +11,19 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   cookInfo,
-  fetchCookBannerPhotoById,
   fetchCookById,
-  fetchCookProfilePhotoById,
   getCookBusinessAddress,
   getCurrentUserInfo,
-  photo1,
-  photo2,
   setCookBusinessAddress,
   updateCookProfile,
 } from "../Authentication/authSlice";
 import { toast } from "react-toastify";
 import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom";
+import { uploadImageToFirebase } from "../utils/config";
 
 function CookProfile() {
   const userInfo = useSelector(getCurrentUserInfo);
   const cook = useSelector(cookInfo);
-  const p1 = useSelector(photo1);
-  const p2 = useSelector(photo2);
   const dispatch = useDispatch();
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [bannerImage, setBannerImage] = useState(null);
@@ -36,17 +31,24 @@ function CookProfile() {
   const history = useHistory();
   const { id } = useParams();
 
-  const handleUpdateProfile = () => {
+  const handleUpdateProfile = async () => {
     const token = localStorage.getItem("token");
-    const formData = new FormData();
-    formData.append("id", cook?.id);
-    formData.append("address", address);
-    bannerImage && formData.append("bannerImage", bannerImage[0]);
-    profilePhoto && formData.append("profilePhoto", profilePhoto[0]);
+    const profilePictureURL =
+      profilePhoto && (await uploadImageToFirebase(profilePhoto[0]));
+    const bannerImageURL =
+      bannerImage && (await uploadImageToFirebase(bannerImage[0]));
+
+    const data = {
+      id: cook?.id,
+      address,
+      profilePhoto: profilePictureURL,
+      bannerImage: bannerImageURL,
+    };
+
     if (address !== cook?.address || profilePhoto || bannerImage) {
       dispatch(
         updateCookProfile({
-          formData,
+          data,
           token,
           history,
         })
@@ -59,18 +61,6 @@ function CookProfile() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     dispatch(fetchCookById({ id, token }));
-    dispatch(
-      fetchCookProfilePhotoById({
-        id,
-        token,
-      })
-    );
-    dispatch(
-      fetchCookBannerPhotoById({
-        id,
-        token,
-      })
-    );
   }, [dispatch, id]);
 
   return (
@@ -82,10 +72,14 @@ function CookProfile() {
           position: "relative",
         }}
       >
-        <img style={{ width: "100vw", height: "50vh" }} src={p2} alt="Banner" />
+        <img
+          style={{ width: "100vw", height: "50vh" }}
+          src={cook?.bannerImage}
+          alt="Banner"
+        />
         <Avatar
           sx={{ width: "12rem", height: "12rem" }}
-          src={p1}
+          src={cook?.profilePhoto}
           alt="Profile"
           style={{
             position: "absolute",
@@ -116,7 +110,7 @@ function CookProfile() {
       >
         <Box className="register">
           <Typography style={{ marginBottom: "1rem" }}>
-            Business Name: {cook.businessName}
+            Business Name: {cook?.businessName}
           </Typography>
           <TextField
             required
@@ -124,7 +118,6 @@ function CookProfile() {
             label="Pickup Address"
             value={address}
             onChange={(e) => dispatch(setCookBusinessAddress(e.target.value))}
-            multiline
             sx={{ marginBottom: "1rem" }}
           />
           <Typography>Update Your Profile Photo? </Typography>

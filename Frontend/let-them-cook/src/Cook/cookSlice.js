@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { config } from "../config";
 import { toast } from "react-toastify";
-import { uploadImageToFirebase } from "../utils/config";
+import { calendarDays, uploadImageToFirebase } from "../utils/config";
 import moment from "moment";
 
 export const fetchSchedulesByCook = createAsyncThunk(
@@ -18,6 +18,35 @@ export const fetchSchedulesByCook = createAsyncThunk(
       }
     );
     const schedules = await response.json();
+    if (args.isCustomer) {
+      // console.log({ schedules });
+      const schedule = schedules.filter((schedule) => {
+        console.log(
+          moment.utc(schedule.start_date).format("YYYY-MM-DD h:mm:ss"),
+          moment
+            .utc()
+            .startOf("W")
+            .subtract(1, "d")
+            .format("YYYY-MM-DD h:mm:ss")
+        );
+
+        return (
+          moment.utc(schedule.start_date).format("YYYY-MM-DD h:mm:ss") ===
+          moment
+            .utc()
+            .startOf("W")
+            .subtract(1, "d")
+            .format("YYYY-MM-DD h:mm:ss")
+        );
+      })[0];
+
+      // console.log({ schedule });
+      thunkApi.dispatch(setCurrentWeekSchedule(schedule));
+      const startDate = new Date(schedule?.start_date);
+      const calendar = calendarDays(startDate);
+      thunkApi.dispatch(setScheduleCalendarDays(calendar));
+      thunkApi.dispatch(fetchMealsBySchedule({ scheduleId: schedule?.id }));
+    }
     return schedules;
   }
 );
@@ -430,8 +459,12 @@ export const cookSlice = createSlice({
     mealForDish: null,
     mealId: null,
     openDishesByMealDialog: false,
+    currentWeekSchedule: null,
   },
   reducers: {
+    setCurrentWeekSchedule(state, action) {
+      state.currentWeekSchedule = action.payload;
+    },
     setMealId(state, action) {
       state.mealId = action.payload;
     },
@@ -753,9 +786,11 @@ export const {
   setMealId,
   resetCurrentMeal,
   toggleOpenDishesByMealDialog,
+  setCurrentWeekSchedule,
 } = cookSlice.actions;
 
 export const getSchedules = (state) => state.cook.schedules;
+export const getCurrentWeekSchedule = (state) => state.cook.currentWeekSchedule;
 export const getMeals = (state) => state.cook.meals;
 export const dishesByCook = (state) => state.cook.dishesByCook;
 export const getCurrentDish = (state) => state.cook.currentDish;
