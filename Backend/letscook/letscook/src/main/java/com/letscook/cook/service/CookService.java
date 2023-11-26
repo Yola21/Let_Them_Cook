@@ -34,7 +34,7 @@ public class CookService {
         return cookRepository.findAllByBusinessNameIsLikeIgnoreCase(search);
     }
 
-    public ResponseEntity<Cook> createCookProfile(CreateCookProfileInput createCookProfileInput) throws IOException {
+    public ResponseEntity<Cook> createCookProfile(CreateCookProfileInput createCookProfileInput) {
         Cook cookToUpdate = new Cook();
         cookToUpdate.setId(createCookProfileInput.getUserId());
         cookToUpdate.setAddress(createCookProfileInput.getAddress());
@@ -57,14 +57,15 @@ public class CookService {
         return cookRepository.findAllByStatusIs(String.valueOf(CookStatus.PENDING));
     }
 
-    public ResponseEntity<Cook> updateCookProfile(UpdateCookProfileInput updateCookProfileInput) throws IOException {
-
-        Cook cookToUpdate = cookRepository.findById(updateCookProfileInput.getId()).orElseThrow(() -> new EntityNotFoundException("Cook not found with ID: " + updateCookProfileInput.getId()));
-
+    public ResponseEntity<Cook> updateCookProfile(UpdateCookProfileInput updateCookProfileInput) throws
+            EntityNotFoundException {
+        Cook cookToUpdate = cookRepository.findById(updateCookProfileInput.getId()).orElse(null);
+        if (cookToUpdate == null) {
+            throw new EntityNotFoundException("Cook not found with ID: " + updateCookProfileInput.getId());
+        }
         if (updateCookProfileInput.getAddress() != null) {
             cookToUpdate.setAddress(updateCookProfileInput.getAddress());
         }
-
         if (updateCookProfileInput.getProfilePhoto() != null) {
             cookToUpdate.setProfilePhoto(updateCookProfileInput.getProfilePhoto());
         }
@@ -78,11 +79,6 @@ public class CookService {
         if (updateCookProfileInput.getStatus() != null) {
             cookToUpdate.setStatus(updateCookProfileInput.getStatus());
         }
-
-//        if (!cookToUpdate.getStatus().equals(String.valueOf(CookStatus.REJECTED)) && updateCookProfileInput.getBusinessDocument() != null) {
-//            throw new Error("Not allowed to change business document");
-//        }
-
         Cook updatedCook = cookRepository.save(cookToUpdate);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedCook);
     }

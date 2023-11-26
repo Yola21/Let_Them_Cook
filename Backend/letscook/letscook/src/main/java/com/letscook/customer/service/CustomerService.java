@@ -18,7 +18,7 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    public ResponseEntity<Customer> createCustomerProfile(CreateCustomerProfileInput createCustomerProfileInput) throws IOException {
+    public ResponseEntity<Customer> createCustomerProfile(CreateCustomerProfileInput createCustomerProfileInput) {
         Customer customerToUpdate = new Customer();
         customerToUpdate.setId(createCustomerProfileInput.getUserId());
         customerToUpdate.setName(createCustomerProfileInput.getName());
@@ -27,8 +27,12 @@ public class CustomerService {
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedCustomer);
     }
 
-    public ResponseEntity<Customer> updateCustomerProfile(CreateCustomerProfileInput updateCustomerProfileInput) throws IOException {
-        Customer customerToUpdate = customerRepository.findById(updateCustomerProfileInput.getUserId()).orElseThrow(() -> new EntityNotFoundException("Customer not found with ID: " + updateCustomerProfileInput.getUserId()));
+    public ResponseEntity<Customer> updateCustomerProfile(CreateCustomerProfileInput updateCustomerProfileInput)  {
+        Customer customerToUpdate = getCustomerById(updateCustomerProfileInput.getUserId());
+        if(customerToUpdate == null) {
+            throw new EntityNotFoundException("Customer not found for : " +
+                    updateCustomerProfileInput.getUserId());
+        }
 
         if (updateCustomerProfileInput.getName() != null) {
             customerToUpdate.setName(updateCustomerProfileInput.getName());
