@@ -75,9 +75,13 @@ public class CookService {
             cookToUpdate.setBusinessDocument(updateCookProfileInput.getBusinessDocument());
         }
 
-        if (!cookToUpdate.getStatus().equals(String.valueOf(CookStatus.REJECTED)) && updateCookProfileInput.getBusinessDocument() != null) {
-            throw new Error("Not allowed to change business document");
+        if (updateCookProfileInput.getStatus() != null) {
+            cookToUpdate.setStatus(updateCookProfileInput.getStatus());
         }
+
+//        if (!cookToUpdate.getStatus().equals(String.valueOf(CookStatus.REJECTED)) && updateCookProfileInput.getBusinessDocument() != null) {
+//            throw new Error("Not allowed to change business document");
+//        }
 
         Cook updatedCook = cookRepository.save(cookToUpdate);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedCook);

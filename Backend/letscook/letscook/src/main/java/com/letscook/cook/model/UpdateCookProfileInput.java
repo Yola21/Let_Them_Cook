@@ -11,5 +11,6 @@ public class UpdateCookProfileInput {
     private String profilePhoto;
     private String bannerImage;
     private String businessDocument;
+    private String status;
 }
 

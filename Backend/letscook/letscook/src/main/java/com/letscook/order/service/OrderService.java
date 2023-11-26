@@ -4,10 +4,7 @@ import com.letscook.customer.repository.CustomerRepository;
 import com.letscook.enums.OrderStatus;
 import com.letscook.menu.model.meal.Meal;
 import com.letscook.menu.repository.MealRepository;
-import com.letscook.order.model.CreateOrderInput;
-import com.letscook.order.model.Mealorder;
-import com.letscook.order.model.MealorderInput;
-import com.letscook.order.model.Order;
+import com.letscook.order.model.*;
 import com.letscook.order.repository.MealorderRepository;
 import com.letscook.order.repository.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -93,7 +90,7 @@ public class OrderService {
     }
 
     public List<Order> getOrdersByMeal(Long mealId) {
-        List<Order> orderList = orderRepository.findAllByMealorders_Meal_IdAndMealordersStatusOrderByCreatedAtAsc(mealId, "PENDING");
+        List<Order> orderList = orderRepository.findAllByMealorders_Meal_IdOrderByCreatedAtAsc(mealId);
         for (Order order : orderList) {
             List<Mealorder> mealorders = new ArrayList<>();
             for (Mealorder mealorder : order.getMealorders()) {
@@ -105,6 +102,12 @@ public class OrderService {
 
         }
         return orderList;
+    }
+    public ResponseEntity<Mealorder> updateOrderStatus(UpdateOrderStatus updateOrderStatus) {
+        Mealorder mealorder = mealorderRepository.findById(updateOrderStatus.getMealOrderId()).orElseThrow();
+        mealorder.setStatus(updateOrderStatus.getStatus());
+        Mealorder updatedMealorder = mealorderRepository.save(mealorder);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedMealorder);
     }
 
 //    public List<Order> getOrdersByMenu(Long menuId) {
