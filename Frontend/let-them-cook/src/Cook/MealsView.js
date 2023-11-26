@@ -10,7 +10,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
   IconButton,
+  MenuItem,
+  Select,
   Typography,
 } from "@mui/material";
 import Delete from "@mui/icons-material/Delete";
@@ -21,19 +24,25 @@ import {
   deleteDish,
   deleteMeal,
   fetchDishesByMeal,
+  fetchOrdersByMeal,
   getDishesByMeal,
   getMealForDish,
+  getMealOrders,
   getMeals,
   getOpenDishesByMealDialog,
+  getOrderStatus,
   setCurrentMeal,
   setMealForDish,
   setMealId,
+  setOrderStatus,
   toggleAddDishToMealForm,
   toggleCreateMealForm,
   toggleOpenDishesByMealDialog,
   toggleUpdateMeal,
+  updateOrderStatus,
 } from "./cookSlice";
 import AddDishToMealForm from "./AddDishToMealForm";
+import moment from "moment";
 
 export default function MealsView() {
   const meals = useSelector(getMeals);
@@ -41,7 +50,9 @@ export default function MealsView() {
   const [deleteSelectedDish, setDeleteSelectedDish] = useState(null);
   const [openDeleteDIalog, setOpenDeleteDialog] = useState(false);
   const [removeMeal, setDeleteMeal] = useState(false);
+  const [openMealOrdersDialog, setOpenMealOrdersDailog] = useState(false);
   const { id } = useParams();
+  const currentDate = new Date();
 
   const onUpdateMealClick = (e, id) => {
     e.stopPropagation();
@@ -84,50 +95,204 @@ export default function MealsView() {
     dispatch(setMealId(id));
   };
 
+  const handleViewOrders = (e, meal) => {
+    e.stopPropagation();
+    dispatch(fetchOrdersByMeal({ mealId: meal?.id }));
+    setOpenMealOrdersDailog(true);
+    setDeleteSelectedDish(meal);
+  };
+
+  const getFormattedDate = (date) => {
+    return moment.utc(date).format("YYYY-MM-DD");
+  };
+
   return (
     <div
       style={{
         padding: "1rem",
-        display: "flex",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
       }}
     >
-      {meals?.map((dish) => (
-        <Card
-          style={{
-            marginBottom: "1rem",
-            width: "40%",
-            boxShadow: "5px 5px 10px #000",
-          }}
-          onClick={(e) => handleOnClick(e, dish)}
-        >
-          <CardMedia sx={{ height: 120 }} image={dish.image} />
-          <CardContent>
-            <Typography variant="h5">{dish.name}</Typography>
-            <Typography>${dish.price}</Typography>
-          </CardContent>
-          <CardActions
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <Button
-              variant="contained"
-              style={{ backgroundColor: "#000" }}
-              onClick={(e) => handleAddDishToMeal(e, dish.id)}
-            >
-              Add Dishes
-            </Button>
-            <div>
-              <IconButton onClick={(e) => onUpdateMealClick(e, dish.id)}>
-                <Edit style={{ color: "green" }} />
-              </IconButton>
-              <IconButton onClick={(e) => onDeleteMealClick(e, dish.id)}>
-                <Delete style={{ color: "red" }} />
-              </IconButton>
-            </div>
-          </CardActions>
-        </Card>
-      ))}
+      <Typography variant="h6">Today</Typography>
+      <Divider />
+      <div
+        style={{
+          marginTop: "1rem",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        }}
+      >
+        {meals?.map(
+          (dish) =>
+            getFormattedDate(currentDate) ===
+              getFormattedDate(dish?.mealDate) && (
+              <Card
+                style={{
+                  marginBottom: "1rem",
+                  width: "40%",
+                  boxShadow: "5px 5px 10px #000",
+                }}
+                onClick={(e) => handleOnClick(e, dish)}
+              >
+                <CardMedia sx={{ height: 120 }} image={dish.image} />
+                <CardContent>
+                  <Typography variant="h5">{dish.name}</Typography>
+                  <Typography>${dish.price}</Typography>
+                </CardContent>
+                <CardActions
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div>
+                    <Button
+                      variant="contained"
+                      style={{ backgroundColor: "#000" }}
+                      onClick={(e) => handleAddDishToMeal(e, dish.id)}
+                    >
+                      Add Dishes
+                    </Button>
+                    <Button
+                      variant="contained"
+                      style={{ backgroundColor: "#000", marginLeft: "1rem" }}
+                      onClick={(e) => handleViewOrders(e, dish)}
+                    >
+                      View Orders
+                    </Button>
+                  </div>
+                  <div>
+                    <IconButton onClick={(e) => onUpdateMealClick(e, dish.id)}>
+                      <Edit style={{ color: "green" }} />
+                    </IconButton>
+                    <IconButton onClick={(e) => onDeleteMealClick(e, dish.id)}>
+                      <Delete style={{ color: "red" }} />
+                    </IconButton>
+                  </div>
+                </CardActions>
+              </Card>
+            )
+        )}
+      </div>
+      <Typography variant="h6" style={{ marginTop: "1rem" }}>
+        Upcoming Meals
+      </Typography>
+      <Divider />
+      <div
+        style={{
+          marginTop: "1rem",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        }}
+      >
+        {meals?.map(
+          (dish) =>
+            getFormattedDate(currentDate) <
+              getFormattedDate(dish?.mealDate) && (
+              <Card
+                style={{
+                  marginBottom: "1rem",
+                  width: "40%",
+                  boxShadow: "5px 5px 10px #000",
+                }}
+                onClick={(e) => handleOnClick(e, dish)}
+              >
+                <CardMedia sx={{ height: 120 }} image={dish.image} />
+                <CardContent>
+                  <Typography variant="h5">{dish.name}</Typography>
+                  <Typography>${dish.price}</Typography>
+                </CardContent>
+                <CardActions
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div>
+                    <Button
+                      variant="contained"
+                      style={{ backgroundColor: "#000" }}
+                      onClick={(e) => handleAddDishToMeal(e, dish.id)}
+                    >
+                      Add Dishes
+                    </Button>
+                    <Button
+                      variant="contained"
+                      style={{ backgroundColor: "#000", marginLeft: "1rem" }}
+                      onClick={(e) => handleViewOrders(e, dish)}
+                    >
+                      View Orders
+                    </Button>
+                  </div>
+                  <div>
+                    <IconButton onClick={(e) => onUpdateMealClick(e, dish.id)}>
+                      <Edit style={{ color: "green" }} />
+                    </IconButton>
+                    <IconButton onClick={(e) => onDeleteMealClick(e, dish.id)}>
+                      <Delete style={{ color: "red" }} />
+                    </IconButton>
+                  </div>
+                </CardActions>
+              </Card>
+            )
+        )}
+      </div>
+      <Typography variant="h6" style={{ marginTop: "1rem" }}>
+        Past Meals
+      </Typography>
+      <Divider />
+      <div
+        style={{
+          marginTop: "1rem",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        }}
+      >
+        {meals?.map(
+          (dish) =>
+            getFormattedDate(currentDate) >
+              getFormattedDate(dish?.mealDate) && (
+              <Card
+                style={{
+                  marginBottom: "1rem",
+                  width: "40%",
+                  boxShadow: "5px 5px 10px #000",
+                }}
+                onClick={(e) => handleOnClick(e, dish)}
+              >
+                <CardMedia sx={{ height: 120 }} image={dish.image} />
+                <CardContent>
+                  <Typography variant="h5">{dish.name}</Typography>
+                  <Typography>${dish.price}</Typography>
+                </CardContent>
+                <CardActions
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div>
+                    <Button
+                      variant="contained"
+                      style={{ backgroundColor: "#000" }}
+                      onClick={(e) => handleAddDishToMeal(e, dish.id)}
+                    >
+                      Add Dishes
+                    </Button>
+                    <Button
+                      variant="contained"
+                      style={{ backgroundColor: "#000", marginLeft: "1rem" }}
+                      onClick={(e) => handleViewOrders(e, dish)}
+                    >
+                      View Orders
+                    </Button>
+                  </div>
+                  <div>
+                    <IconButton onClick={(e) => onUpdateMealClick(e, dish.id)}>
+                      <Edit style={{ color: "green" }} />
+                    </IconButton>
+                    <IconButton onClick={(e) => onDeleteMealClick(e, dish.id)}>
+                      <Delete style={{ color: "red" }} />
+                    </IconButton>
+                  </div>
+                </CardActions>
+              </Card>
+            )
+        )}
+      </div>
       <Dialog open={openDeleteDIalog} onClose={handleCloseDeleteDialog}>
         <DialogTitle>Delete</DialogTitle>
         <DialogContent>
@@ -143,6 +308,11 @@ export default function MealsView() {
       </Dialog>
       <AddDishToMealForm />
       <DishesByMeals />
+      <OrdersByMeal
+        open={openMealOrdersDialog}
+        setOpenMealOrdersDailog={setOpenMealOrdersDailog}
+        meal={deleteSelectedDish}
+      />
     </div>
   );
 }
@@ -194,6 +364,95 @@ export function DishesByMeals() {
               </Card>
             ))}
       </DialogContent>
+    </Dialog>
+  );
+}
+
+export function OrdersByMeal({ open, setOpenMealOrdersDailog, meal }) {
+  const orders = useSelector(getMealOrders);
+  const orderStatus = useSelector(getOrderStatus);
+  const dispatch = useDispatch();
+  const { id } = useParams();
+
+  const onClose = () => {
+    setOpenMealOrdersDailog(false);
+  };
+
+  const handleOrderStatusChange = (e, id) => {
+    dispatch(setOrderStatus({ id, value: e.target.value }));
+  };
+
+  const handleUpdateOrderStatus = (e, order) => {
+    console.log({ order }, orderStatus, orderStatus[order.id]);
+    dispatch(
+      updateOrderStatus({
+        orderId: order.id,
+        mealOrderId: order.mealorders[0].id,
+        customerId: id,
+        mealId: meal.id,
+        status: orderStatus[order.id],
+      })
+    );
+    onClose();
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Total Orders</DialogTitle>
+      <DialogContent style={{ backgroundColor: "#f7f7f7", padding: "1rem" }}>
+        {orders == null || orders.length === 0 ? (
+          <Typography>No Orders Yet</Typography>
+        ) : (
+          orders?.map((dish) => (
+            <Card
+              style={{
+                marginBottom: "1rem",
+                boxShadow: "3px #000",
+              }}
+            >
+              <CardContent>
+                <Typography>Order Status</Typography>
+                <Select
+                  value={orderStatus[dish.id]}
+                  onChange={(e) => handleOrderStatusChange(e, dish.id)}
+                >
+                  <MenuItem value="PENDING">PENDING</MenuItem>
+                  <MenuItem value="COOKING_STARTED">COOKING_STARTED</MenuItem>
+                  <MenuItem value="READY_FOR_PICKUP">READY_FOR_PICKUP</MenuItem>
+                  <MenuItem value="COMPLETED">COMPLETED</MenuItem>
+                </Select>
+                <Typography variant="h6" style={{ marginTop: "1rem" }}>
+                  Placed At:{" "}
+                  {moment.utc(dish.createdAt).format("YYYY-MM-DD hh:mm a")}
+                </Typography>
+                <Typography variant="h6">
+                  Quantity: {dish.mealorders[0].quantity}
+                </Typography>
+                <Typography variant="h6">
+                  Customer Name: {dish.customer.name}
+                </Typography>
+                <Typography variant="h6">
+                  Customer Phone Number: {dish.customer.phoneNumber}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  variant="contained"
+                  style={{ backgroundColor: "#000" }}
+                  onClick={(e) => handleUpdateOrderStatus(e, dish)}
+                >
+                  Update Order Status
+                </Button>
+              </CardActions>
+            </Card>
+          ))
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button variant="contained" onClick={onClose}>
+          Close
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 }

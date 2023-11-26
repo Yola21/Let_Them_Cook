@@ -12,12 +12,12 @@ export default function OrderHistory() {
   const { id } = useParams();
 
   const formatDate = (date) => {
-    return moment.utc(date).format("YYYY-MM-DD hh:mm:ss a");
+    return moment(date).format("YYYY-MM-DD hh:mm:ss a");
   };
 
   useEffect(() => {
     dispatch(fetchOrdersByCustomer({ id }));
-  }, [dispatch]);
+  }, [dispatch, id]);
 
   return (
     <div>

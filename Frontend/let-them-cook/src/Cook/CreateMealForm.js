@@ -115,7 +115,7 @@ export default function CreateMealForm() {
 
   const getFormattedDate = (formatDate) => {
     const date = new Date(formatDate);
-    const formattedDate = moment.utc(date).format("YYYY-MM-DD h:mm:ss");
+    const formattedDate = moment.utc(date).format("YYYY-MM-DD hh:mm:ss");
     return formattedDate;
   };
 

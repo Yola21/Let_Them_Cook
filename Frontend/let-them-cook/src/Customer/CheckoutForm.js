@@ -4,7 +4,7 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom";
+import { useParams } from "react-router-dom/cjs/react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { setPaymentSucceeded } from "./customerSlice";
@@ -17,7 +17,6 @@ export default function CheckoutForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
   const dispatch = useDispatch();
-  const history = useHistory();
   const url = `http://localhost:3000/customer/${id}`;
 
   useEffect(() => {
@@ -71,7 +70,6 @@ export default function CheckoutForm() {
     });
     dispatch(setPaymentSucceeded(true));
     toast.success("Payment Successful");
-    // history.push(url);
 
     // This point will only be reached if there is an immediate error when
     // confirming the payment. Otherwise, your customer will be redirected to
@@ -84,7 +82,6 @@ export default function CheckoutForm() {
       setMessage("An unexpected error occurred.");
     }
 
-    // toast.success("Payment Successful");
     setIsLoading(false);
   };
 

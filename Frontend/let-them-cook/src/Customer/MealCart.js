@@ -8,11 +8,9 @@ import {
   getOrderTotalAmount,
   getPaymentSucceeded,
   incrementOrderTotalAmount,
-  orderPayment,
   toggleMealsInCartQuantity,
 } from "./customerSlice";
 import {
-  Avatar,
   Box,
   Button,
   Card,
@@ -31,7 +29,6 @@ import {
 } from "../Cook/cookSlice";
 import { DishesByMeals } from "../Cook/MealsView";
 import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom";
-import StripeCheckout from "react-stripe-checkout";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm";
@@ -50,8 +47,6 @@ export default function MealCart() {
   const history = useHistory();
   const { id } = useParams();
   const paymentSucceeded = useSelector(getPaymentSucceeded);
-  // const publishableKey =
-  //   "pk_test_51ODzzmJY6GXGKQds7L6BPBTZn3zjDZDol5VdqmL8QQJ8CopXZuxq3ZNEIDHtfVscb9itLuqkH06duMkBDMdCWJdQ00g5Q5caqc";
 
   const [clientSecret, setClientSecret] = useState("");
 
@@ -67,11 +62,13 @@ export default function MealCart() {
   }, []);
 
   useEffect(() => {
-    if (paymentSucceeded) {
-      dispatch(createOrder({ id, history }));
-      setOpen(false);
-    }
-  }, [paymentSucceeded, dispatch]);
+    setTimeout(() => {
+      if (paymentSucceeded) {
+        dispatch(createOrder({ id, history }));
+        setOpen(false);
+      }
+    }, 3000);
+  }, [paymentSucceeded, dispatch, history, id]);
 
   const appearance = {
     theme: "stripe",
@@ -109,22 +106,9 @@ export default function MealCart() {
     dispatch(toggleOpenDishesByMealDialog(true));
   };
 
-  const handleCheckoutClick = () => {
-    history.push(`/customer/${id}/payment`);
-  };
-
-  const stripePrice = 1000 * 100;
-
   const onPlaceOrder = () => {
     setOpen(true);
-    // history.push(`/customer/${id}/checkout`);
-    // console.log(token);
-    // dispatch(orderPayment({ token, customerId: id, amount: 100 }));
-    // dispatch(createOrder({ id }));
-    // dispatch(orderPayment({ token, customerId: id, amount: orderTotalAmount }));
   };
-
-  console.log({ meals }, { mealsQuantity });
 
   if (Object.keys(meals).length === 0) {
     return (
@@ -232,11 +216,7 @@ export default function MealCart() {
           <Button variant="contained" onClick={onPlaceOrder}>
             Proceed to Checkout
           </Button>
-          <Dialog
-            open={open}
-            onClose={() => setOpen(false)}
-            // style={{ width: "90%" }}
-          >
+          <Dialog open={open} onClose={() => setOpen(false)}>
             {paymentSucceeded ? (
               <DialogContent>
                 <Typography>Your order is being placed...</Typography>
@@ -251,9 +231,6 @@ export default function MealCart() {
               </DialogContent>
             )}
           </Dialog>
-          {/* <Button variant="contained" onClick={onPlaceOrder}>
-            Proceed to Checkout
-          </Button> */}
         </div>
         <DishesByMeals />
       </div>

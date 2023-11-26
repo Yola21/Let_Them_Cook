@@ -32,7 +32,6 @@ function CookProfile() {
   const { id } = useParams();
 
   const handleUpdateProfile = async () => {
-    const token = localStorage.getItem("token");
     const profilePictureURL =
       profilePhoto && (await uploadImageToFirebase(profilePhoto[0]));
     const bannerImageURL =
@@ -49,7 +48,6 @@ function CookProfile() {
       dispatch(
         updateCookProfile({
           data,
-          token,
           history,
         })
       );

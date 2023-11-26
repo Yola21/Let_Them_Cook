@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { config } from "../config";
 import { toast } from "react-toastify";
 import { uploadImageToFirebase } from "../utils/config";
+import { fetchCooks } from "../Admin/adminSlice";
 
 export const createUser = createAsyncThunk(
   "auth/createUser",
@@ -114,20 +115,26 @@ export const fetchCookById = createAsyncThunk(
 export const updateCookProfile = createAsyncThunk(
   "auth/updateCookProfile",
   async (args, thunkApi) => {
+    const token = localStorage.getItem("token");
+
     const response = await fetch(
       `${config.BASE_PATH}${config.COOKS}/updateProfile`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${args.token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(args.data),
       }
     );
     const cookInfo = await response.json();
-    thunkApi.dispatch(fetchCookById({ id: args.data.id }));
-    args.history.push(`/cooks/${args.data.id}`);
+    if (args.isAdmin) {
+      thunkApi.dispatch(fetchCooks());
+    } else {
+      thunkApi.dispatch(fetchCookById({ id: args.data.id }));
+      args.history.push(`/cooks/${args.data.id}`);
+    }
     return cookInfo;
   }
 );
@@ -146,8 +153,12 @@ export const authSlice = createSlice({
     cookInfo: {},
     photo1: null,
     photo2: null,
+    customerPhoneNumber: null,
   },
   reducers: {
+    setCustomerPhoneNumber(state, action) {
+      state.customerPhoneNumber = action.payload;
+    },
     setCookBusinessName(state, action) {
       state.cookBusinessName = action.payload;
     },
@@ -234,8 +245,10 @@ export const {
   setCookProfilePicture,
   setCookBusinessDocument,
   setCookBannerImage,
+  setCustomerPhoneNumber,
 } = authSlice.actions;
 
+export const getCustomerPhoneNumber = (state) => state.auth.customerPhoneNumber;
 export const getCurrentUserInfo = (state) => state.auth.currentUserInfo;
 export const getCurrentUserRole = (state) => state.auth.currentUserRole;
 export const currentUserToken = (state) => state.auth.userToken;

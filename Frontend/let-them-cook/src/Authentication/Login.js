@@ -42,7 +42,8 @@ function Login() {
         container
         justifyContent="center"
         alignItems="center"
-        marginTop={2}>
+        marginTop={2}
+      >
         <div className="logoDiv">
           <img src="/logo.png" alt="Let Them Cook" className="logo" />
         </div>
@@ -58,7 +59,8 @@ function Login() {
           container
           className="leftItem"
           alignItems="center"
-          justifyContent="center">
+          justifyContent="center"
+        >
           <Grid item>
             <Typography variant="h4">Late To School?</Typography>
             <Typography>Order food from favorite cooks near by.</Typography>
@@ -73,7 +75,8 @@ function Login() {
           container
           className="rightItem"
           alignItems="center"
-          justifyContent="center">
+          justifyContent="center"
+        >
           <div className="signin">
             <Typography marginBottom="3rem" variant="h5">
               Sign In
@@ -85,7 +88,8 @@ function Login() {
                 flexDirection: "column",
               }}
               noValidate
-              autoComplete="off">
+              autoComplete="off"
+            >
               <TextField
                 required
                 id="outlined-required"
@@ -108,7 +112,8 @@ function Login() {
               <Button
                 variant="contained"
                 className="actionButton"
-                onClick={handleLogin}>
+                onClick={handleLogin}
+              >
                 Login
               </Button>
               <Button sx={{ color: "#000" }}>Forgot Password?</Button>

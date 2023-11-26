@@ -4,7 +4,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchOrdersByCustomer,
-  fetchTiffinServices,
   fetchTiffinServicesByBusinessName,
   getSearchCookBusinessName,
   getTiffinServices,
@@ -31,10 +30,6 @@ export default function CustomerDashboard() {
     dispatch(setSearchCookBusinessName(e.target.value));
   };
 
-  // useEffect(() => {
-  //   dispatch(fetchTiffinServices());
-  // }, [dispatch]);
-
   useEffect(() => {
     dispatch(
       fetchTiffinServicesByBusinessName({
@@ -42,7 +37,7 @@ export default function CustomerDashboard() {
       })
     );
     dispatch(fetchOrdersByCustomer({ id }));
-  }, [dispatch, searchCookBusinessName]);
+  }, [dispatch, searchCookBusinessName, id]);
 
   return (
     <div>
