@@ -10,9 +10,9 @@ public class EmailSenderService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendSimpleEmail(String toEmail,
-                                String subject,
-                                String body
+    public boolean sendSimpleEmail(String toEmail,
+                                   String subject,
+                                   String body
     ) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("fromemail@gmail.com");
@@ -20,10 +20,11 @@ public class EmailSenderService {
         message.setText(body);
         message.setSubject(subject);
         mailSender.send(message);
-        System.out.println("Mail Send...");
+        return true;
 
 
     }
+    
 
 }
 

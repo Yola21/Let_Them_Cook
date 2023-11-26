@@ -30,8 +30,7 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -249,7 +248,7 @@ public class MenuServiceTests {
         // Arrange
         List<Meal> mealList = new ArrayList<>();
         mealList.add(meal);
-        when(mealRepository.findMealsBySchedule_Cook_Id(1L)).thenReturn(mealList);
+        when(mealRepository.findMealsBySchedule_Cook_IdOrderByMealDateAsc(1L)).thenReturn(mealList);
 
         // Act
         List<Meal> mealResponse = scheduleService.getMealsByCookId(1L);
@@ -405,6 +404,48 @@ public class MenuServiceTests {
         List<Mealorder> mealorders = scheduleService.getMealOrdersByMealId(1L);
         // Assert
         assertEquals(mealorders.size(), mealorderList.size());
+    }
+
+    @Test
+    public void testMealOrder() throws IOException {
+        // Arrange
+        Mealorder mealorder = new Mealorder();
+        mealorder.setId(1L);
+        mealorder.setQuantity(4L);
+        mealorder.setStatus("PENDING");
+        mealorder.setAmount(100.00);
+        mealorder.setMeal(meal);
+        // Assert
+        assertTrue(!Objects.isNull(mealorder));
+        assertTrue(mealorder.getId() == 1L);
+        assertTrue(!Objects.isNull(mealorder.getQuantity()));
+        assertTrue(!Objects.isNull(mealorder.getStatus()));
+        assertTrue(!Objects.isNull(mealorder.getAmount()));
+        assertTrue(!Objects.isNull(mealorder.getMeal()));
+    }
+
+    @Test
+    public void testDish() throws IOException {
+        // Arrange
+        Dish newDish = new Dish();
+        Long id = 6L;
+        String img = "dishUrl";
+        String name = "chole";
+        String description = "Chole Tiffin";
+        String type = "Veg";
+        newDish.setId(id);
+        newDish.setName(name);
+        newDish.setImage(img);
+        newDish.setDescription(description);
+        newDish.setType(type);
+        newDish.setCook(cook);
+        // Assert
+        assertEquals(newDish.getId(), id);
+        assertEquals(newDish.getImage(), img);
+        assertEquals(newDish.getName(), name);
+        assertEquals(newDish.getDescription(), description);
+        assertEquals(newDish.getType(), type);
+        assertEquals(newDish.getCook().getId(), cook.getId());
     }
 
 

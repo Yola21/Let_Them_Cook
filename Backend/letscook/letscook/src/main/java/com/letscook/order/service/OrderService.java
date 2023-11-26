@@ -73,7 +73,7 @@ public class OrderService {
             mealorder.setMeal(meal);
             mealorder.setOrder(orderCreated);
             mealorder.setQuantity(mealorderInput.getQuantity());
-            mealorder.setStatus(String.valueOf(OrderStatus.PENDING));
+            mealorder.setStatus(OrderStatus.PENDING.name());
             mealorder.setAmount(meal.getPrice() * mealorderInput.getQuantity());
             mealorderRepository.save(mealorder);
         }
@@ -93,7 +93,18 @@ public class OrderService {
     }
 
     public List<Order> getOrdersByMeal(Long mealId) {
-        return orderRepository.findAllByMealorders_Meal_Id(mealId);
+        List<Order> orderList = orderRepository.findAllByMealorders_Meal_IdAndMealordersStatusOrderByCreatedAtAsc(mealId, "PENDING");
+        for (Order order : orderList) {
+            List<Mealorder> mealorders = new ArrayList<>();
+            for (Mealorder mealorder : order.getMealorders()) {
+                if (mealorder.getMeal().getId() == mealId) {
+                    mealorders.add(mealorder);
+                }
+            }
+            order.setMealorders(mealorders);
+
+        }
+        return orderList;
     }
 
 //    public List<Order> getOrdersByMenu(Long menuId) {

@@ -259,11 +259,15 @@ public class OrderServiceTests {
     public void testGetOrdersByMeal() {
         // Arrange
         List<Order> orderList = new ArrayList<>();
+        Mealorder mealorder = new Mealorder();
+        mealorder.setMeal(meal);
+        order.setMealorders(Arrays.asList(mealorder));
         orderList.add(order);
 
-        when(orderRepository.findAllByMealorders_Meal_Id(1L)).thenReturn(orderList);
 
-        List<Order> custOrderList = orderService.getOrdersByMeal(1L);
+        when(orderRepository.findAllByMealorders_Meal_IdAndMealordersStatusOrderByCreatedAtAsc(2L, "PENDING")).thenReturn(orderList);
+
+        List<Order> custOrderList = orderService.getOrdersByMeal(2L);
 
         // Act
         assertEquals(custOrderList.size(), orderList.size());
