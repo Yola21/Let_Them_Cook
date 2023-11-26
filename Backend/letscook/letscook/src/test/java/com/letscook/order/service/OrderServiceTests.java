@@ -265,7 +265,7 @@ public class OrderServiceTests {
         orderList.add(order);
 
 
-        when(orderRepository.findAllByMealorders_Meal_IdAndMealordersStatusOrderByCreatedAtAsc(2L, "PENDING")).thenReturn(orderList);
+        when(orderRepository.findAllByMealorders_Meal_IdOrderByCreatedAtAsc(2L)).thenReturn(orderList);
 
         List<Order> custOrderList = orderService.getOrdersByMeal(2L);
 
