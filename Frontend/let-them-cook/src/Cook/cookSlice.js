@@ -270,7 +270,7 @@ export const fetchMealsByCook = createAsyncThunk(
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-      `${config.BASE_PATH}${config.MENU}${config.MEAL}${config.COOK}?id=${args.cookId}`,
+      `${config.BASE_PATH}${config.MENU}${config.MEAL}${config.COOK}/${args.cookId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -368,7 +368,7 @@ export const updateMealToSchedule = createAsyncThunk(
     const state = thunkApi.getState();
     const token = localStorage.getItem("token");
     const mealId = getMealId(state);
-    // const imageURL = await uploadImageToFirebase(args.mealImage[0]);
+    const imageURL = await uploadImageToFirebase(args.mealImage?.[0]);
 
     const data = {
       id: mealId,
@@ -378,7 +378,7 @@ export const updateMealToSchedule = createAsyncThunk(
       mealDate: args.mealDate,
       name: args.mealName,
       price: args.mealPrice,
-      // image: imageURL,
+      image: imageURL,
       scheduleId: args.scheduleId,
     };
 
@@ -416,6 +416,53 @@ export const deleteMeal = createAsyncThunk(
 
     const menu = await response.json();
     thunkApi.dispatch(fetchMealsByCook({ cookId: args.cookId }));
+    return menu;
+  }
+);
+
+export const fetchOrdersByMeal = createAsyncThunk(
+  "cook/fetchMealsBySchedule",
+  async (args, thunkApi) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${config.BASE_PATH}${config.ORDER}${config.MEAL}/${args.mealId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const meals = await response.json();
+    return meals;
+  }
+);
+
+export const updateOrderStatus = createAsyncThunk(
+  "cook/updateOrderStatus",
+  async (args, thunkApi) => {
+    const token = localStorage.getItem("token");
+
+    const data = {
+      orderId: args.orderId,
+      mealOrderId: args.mealOrderId,
+      customerId: args.customerId,
+      status: args.status,
+    };
+
+    const response = await fetch(
+      `${config.BASE_PATH}${config.ORDER}${config.UPDATE_ORDER_STATUS}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    const menu = await response.json();
+    thunkApi.dispatch(fetchOrdersByMeal({ mealId: args.mealId }));
     return menu;
   }
 );
@@ -460,8 +507,15 @@ export const cookSlice = createSlice({
     mealId: null,
     openDishesByMealDialog: false,
     currentWeekSchedule: null,
+    mealOrders: null,
+    orderStatus: {},
   },
   reducers: {
+    setOrderStatus(state, action) {
+      const tempOrderStatus = { ...state.orderStatus };
+      tempOrderStatus[action.payload.id] = action.payload.value;
+      state.orderStatus = { ...state.orderStatus, ...tempOrderStatus };
+    },
     setCurrentWeekSchedule(state, action) {
       state.currentWeekSchedule = action.payload;
     },
@@ -750,6 +804,29 @@ export const cookSlice = createSlice({
     [addDishToMeal.rejected]: (state, action) => {
       console.log("Rejected", action.payload);
     },
+
+    // fetchOrdersByMeal
+    [fetchOrdersByMeal.fulfilled]: (state, action) => {
+      console.log("Fulfilled", action.payload);
+      state.mealOrders = action.payload;
+      const tempOrderStatus = { ...state.orderStatus };
+      action.payload.forEach((meal) => {
+        tempOrderStatus[meal.id] = meal.mealorders[0].status;
+      });
+      state.orderStatus = { ...state.orderStatus, ...tempOrderStatus };
+    },
+    [fetchOrdersByMeal.rejected]: (state, action) => {
+      console.log("Rejected", action.payload);
+    },
+
+    // updateOrderStatus
+    [updateOrderStatus.fulfilled]: (state, action) => {
+      console.log("Fulfilled", action.payload);
+      toast.success("Order Status Updated Successfully!");
+    },
+    [updateOrderStatus.rejected]: (state, action) => {
+      console.log("Rejected", action.payload);
+    },
   },
 });
 
@@ -787,8 +864,10 @@ export const {
   resetCurrentMeal,
   toggleOpenDishesByMealDialog,
   setCurrentWeekSchedule,
+  setOrderStatus,
 } = cookSlice.actions;
 
+export const getOrderStatus = (state) => state.cook.orderStatus;
 export const getSchedules = (state) => state.cook.schedules;
 export const getCurrentWeekSchedule = (state) => state.cook.currentWeekSchedule;
 export const getMeals = (state) => state.cook.meals;
@@ -832,5 +911,6 @@ export const getMealId = (state) => state.cook.mealId;
 export const getDishesByMeal = (state) => state.cook.dishesByMeal;
 export const getOpenDishesByMealDialog = (state) =>
   state.cook.openDishesByMealDialog;
+export const getMealOrders = (state) => state.cook.mealOrders;
 
 export default cookSlice.reducer;

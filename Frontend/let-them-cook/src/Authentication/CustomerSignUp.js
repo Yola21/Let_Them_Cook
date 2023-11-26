@@ -3,8 +3,12 @@ import cooking from "./images/cooking.jpg";
 import Grid from "@mui/material/Grid";
 import "./Login.css";
 import { Box, Button, TextField, Typography } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { createUser } from "./authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createUser,
+  getCustomerPhoneNumber,
+  setCustomerPhoneNumber,
+} from "./authSlice";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { toast } from "react-toastify";
 
@@ -13,6 +17,7 @@ function CustomerSignUp() {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState(null);
+  const phoneNumber = useSelector(getCustomerPhoneNumber);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -32,8 +37,12 @@ function CustomerSignUp() {
     setConfirmPassword(e.target.value);
   };
 
+  const onChangePhoneNumber = (e) => {
+    setCustomerPhoneNumber(e.target.value);
+  };
+
   const handleCustomerRegistration = () => {
-    if (name && email && password && confirmPassword) {
+    if (name && email && phoneNumber && password && confirmPassword) {
       if (password === confirmPassword) {
         dispatch(
           createUser({
@@ -60,7 +69,8 @@ function CustomerSignUp() {
         container
         justifyContent="center"
         alignItems="center"
-        marginTop={2}>
+        marginTop={2}
+      >
         <div className="logoDiv">
           <img src="/logo.png" alt="Let Them Cook" className="logo" />
         </div>
@@ -76,7 +86,8 @@ function CustomerSignUp() {
           container
           className="leftItem"
           alignItems="center"
-          justifyContent="center">
+          justifyContent="center"
+        >
           <Grid item>
             <Typography variant="h4">Late To School?</Typography>
             <Typography>Order food from favorite cooks near by.</Typography>
@@ -91,7 +102,8 @@ function CustomerSignUp() {
           container
           className="rightItem"
           alignItems="center"
-          justifyContent="center">
+          justifyContent="center"
+        >
           <div className="signin">
             <Typography marginBottom="3rem" variant="h5">
               Customer Sign Up
@@ -103,7 +115,8 @@ function CustomerSignUp() {
                 flexDirection: "column",
               }}
               noValidate
-              autoComplete="off">
+              autoComplete="off"
+            >
               <TextField
                 required
                 id="outlined-required"
@@ -120,6 +133,15 @@ function CustomerSignUp() {
                 value={email}
                 onChange={onChangeEmail}
                 sx={{ marginBottom: "1rem" }}
+              />
+              <TextField
+                required
+                id="outlined-disabled"
+                label="Phone Number"
+                type="number"
+                value={phoneNumber}
+                onChange={onChangePhoneNumber}
+                sx={{ marginBottom: "3rem" }}
               />
               <TextField
                 required
@@ -143,7 +165,8 @@ function CustomerSignUp() {
               <Button
                 variant="contained"
                 className="actionButton"
-                onClick={handleCustomerRegistration}>
+                onClick={handleCustomerRegistration}
+              >
                 Sign Up
               </Button>
             </Box>

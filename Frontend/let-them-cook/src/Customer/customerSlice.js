@@ -1,7 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { config } from "../config";
-import { useDispatch, useSelector } from "react-redux";
-import { getSchedules } from "../Cook/cookSlice";
 import { toast } from "react-toastify";
 
 export const fetchTiffinServices = createAsyncThunk(
@@ -58,28 +56,17 @@ export const fetchOrdersByCustomer = createAsyncThunk(
 export const orderPayment = createAsyncThunk(
   "customer/orderPayment",
   async (args, thunkApi) => {
-    console.log(args);
-    const authToken = localStorage.getItem("token");
-
     const data = {
       amount: args.amount * 100,
       token: args.token,
-      // token: {
-      //   id: args.token.id,
-      // },
     };
 
     console.log(data);
     const response = await fetch(`${config.BASE_PATH}${config.ORDER_PAYMENT}`, {
       method: "POST",
-      headers: {
-        // "Content-Type": "application/json",
-        // Authorization: `Bearer ${authToken}`,
-      },
       body: JSON.stringify(data),
     });
     const paymentResponse = await response.json();
-    console.log({ paymentResponse });
     return paymentResponse;
   }
 );
@@ -87,10 +74,10 @@ export const orderPayment = createAsyncThunk(
 export const createOrder = createAsyncThunk(
   "customer/createOrder",
   async (args, thunkApi) => {
-    console.log(args);
     const state = thunkApi.getState();
     const authToken = localStorage.getItem("token");
     const mealsInCart = getMealsInCart(state);
+    const subscribeMeal = getSubscribeMeal(state);
     const mealsInCartQuantity = getMealsInCartQuantity(state);
     const mealOrders = [];
     Object.keys(mealsInCart).forEach((meal) => {
@@ -100,17 +87,14 @@ export const createOrder = createAsyncThunk(
       });
     });
 
-    console.log({ mealOrders });
-
     const data = {
       customerId: args.id,
-      type: "normal",
+      type: subscribeMeal ? "subscribe" : "normal",
       status: "PENDING",
       paymentStatus: "ACCEPTED",
       mealorderInputs: mealOrders,
     };
 
-    console.log(data);
     const response = await fetch(
       `${config.BASE_PATH}${config.ORDER}${config.CREATE_ORDER}`,
       {
@@ -123,10 +107,9 @@ export const createOrder = createAsyncThunk(
       }
     );
     const paymentResponse = await response.json();
-    console.log({ paymentResponse });
     thunkApi.dispatch(resetMealCart());
     thunkApi.dispatch(setPaymentSucceeded(false));
-    args.history.push(`/customer/${args.id}`);
+    args.history.push(`/customer/${args.id}/order-history`);
     return paymentResponse;
   }
 );
@@ -142,8 +125,12 @@ export const customerSlice = createSlice({
     searchCookBusinessName: "",
     orders: null,
     paymentSucceeded: false,
+    subscribeMeal: false,
   },
   reducers: {
+    setSubscribeMeal(state, action) {
+      state.subscribeMeal = action.payload;
+    },
     setPaymentSucceeded(state, action) {
       state.paymentSucceeded = action.payload;
     },
@@ -253,6 +240,7 @@ export const {
   setSearchCookBusinessName,
   resetMealCart,
   setPaymentSucceeded,
+  setSubscribeMeal,
 } = customerSlice.actions;
 
 export default customerSlice.reducer;
@@ -269,3 +257,4 @@ export const getOrderTotalAmount = (state) => state.customer.orderTotalAmount;
 export const getSearchCookBusinessName = (state) =>
   state.customer.searchCookBusinessName;
 export const getOrders = (state) => state.customer.orders;
+export const getSubscribeMeal = (state) => state.customer.subscribeMeal;

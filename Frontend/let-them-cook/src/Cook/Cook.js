@@ -44,7 +44,7 @@ export default function Cook() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    history.push("/login");
+    history.push("/");
   };
 
   const handleCreateDish = () => {

@@ -14,7 +14,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchDishesByMeal,
-  getCurrentWeekSchedule,
   getMealsByDinnerSchedule,
   getMealsByLunchSchedule,
   getScheduleCalendarDays,
@@ -46,14 +45,6 @@ export default function StoreMealSchedule() {
   const calendarDays = useSelector(getScheduleCalendarDays);
   const mealsByLunchSchedule = useSelector(getMealsByLunchSchedule);
   const mealsByDinnerSchedule = useSelector(getMealsByDinnerSchedule);
-  //   const dispatch = useDispatch();
-  const schedule = useSelector(getCurrentWeekSchedule);
-  console.log(
-    { calendarDays },
-    { mealsByLunchSchedule },
-    { mealsByDinnerSchedule },
-    { schedule }
-  );
 
   return (
     <Paper elevation={5}>

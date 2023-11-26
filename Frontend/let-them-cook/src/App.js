@@ -19,7 +19,6 @@ import TiffinServiceStorePage from "./Customer/TiifinServiceStorePage";
 import MealCart from "./Customer/MealCart";
 import OrderPayment from "./Customer/OrderPayment";
 import OrderHistory from "./Customer/OrderHistory";
-import StripeButton from "./Customer/Payment";
 
 function App() {
   const loggedInUserRole = useSelector(getCurrentUserRole);
@@ -28,25 +27,21 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/cook/signup">
+        <Route exact path="/cook/signup">
           {" "}
           <CookSignUp />{" "}
         </Route>
-        <Route path="/customer/signup">
+        <Route exact path="/customer/signup">
           {" "}
           <CustomerSignUp />{" "}
         </Route>
-        <Route path="/cook/:id/profile">
+        <Route exact path="/cook/:id/profile">
           {" "}
           <CookProfile />{" "}
         </Route>
-        <Route path="/cook/:id">
+        <Route exact path="/cook/:id">
           {" "}
           <Cook />{" "}
-        </Route>
-        <Route exact path="/customer/:id">
-          {" "}
-          <CustomerDashboard />{" "}
         </Route>
         <Route exact path="/customer/:id/order-history">
           {" "}
@@ -64,13 +59,16 @@ function App() {
           {" "}
           <MealCart />{" "}
         </Route>
+        <Route path="/customer/:id">
+          {" "}
+          <CustomerDashboard />{" "}
+        </Route>
         <Route path="/admin">
           {" "}
           <Admin />{" "}
         </Route>
         {loggedInUserRole != null && (
           <Redirect
-            from="/"
             to={
               loggedInUserRole === "admin"
                 ? "/admin"
@@ -80,17 +78,12 @@ function App() {
             }
           />
         )}
-        <Route path = "/payment">
-          <StripeButton />
-        </Route>
-        <Route path="/">
+        <Route exact path="/">
           <Login />
         </Route>
       </Switch>
       <ToastContainer autoClose={3000} position="bottom-center" theme="dark" />
     </Router>
-    //   </Elements>
-    // )
   );
 }
 

@@ -23,17 +23,28 @@ export const adminSlice = createSlice({
   initialState: {
     cooks: null,
     pendingCooks: null,
+    verifiedCooks: null,
+    showCookDetails: false,
+    selectedCook: null,
   },
-  reducers: {},
+  reducers: {
+    setShowCookDetails(state, action) {
+      console.log(action.payload);
+      state.showCookDetails = action.payload;
+    },
+    setSelectedCook(state, action) {
+      console.log(action.payload);
+      state.selectedCook = action.payload;
+    },
+  },
   extraReducers: {
-    //Fetch Cooks
-    // [fetchCooks.pending]: (state, action) => {
-    //   console.log("Fetch Cooks Request Pending");
-    // },
     [fetchCooks.fulfilled]: (state, action) => {
       state.cooks = action.payload;
       state.pendingCooks = action.payload.filter(
-        (cook) => cook.status === "pending"
+        (cook) => cook.status.toLowerCase() === "pending"
+      );
+      state.verifiedCooks = action.payload.filter(
+        (cook) => cook.status.toLowerCase() === "accepted"
       );
     },
     [fetchCooks.rejected]: (state, action) => {
@@ -42,7 +53,11 @@ export const adminSlice = createSlice({
   },
 });
 
+export const { setShowCookDetails, setSelectedCook } = adminSlice.actions;
 export const getAllCooks = (state) => state.admin.cooks;
 export const getPendingCooks = (state) => state.admin.pendingCooks;
+export const getVerifiedCooks = (state) => state.admin.verifiedCooks;
+export const getShowCookDetails = (state) => state.admin.showCookDetails;
+export const getSelectedCook = (state) => state.admin.selectedCook;
 
 export default adminSlice.reducer;
