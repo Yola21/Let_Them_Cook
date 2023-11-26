@@ -28,6 +28,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,75 +40,54 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MenuServiceTests {
-
-    @Mock
-    private ScheduleRepository menuRepository;
-
     @Mock
     private MealRepository mealRepository;
-
     @Mock
     private DishRepository dishRepository;
-
     @Mock
     private DishToMealRepository dishToMealRepository;
-
     @Mock
     private CookRepository cookRepository;
-
     @Mock
     private ScheduleRepository scheduleRepository;
-
     @InjectMocks
     private ScheduleService scheduleService;
 
     private Schedule schedule;
-
     private Cook cook;
-
     private Meal meal;
-
     private Dish dish;
+
+    private static final long COOK_ID = 1L;
+    private static final long SCHEDULE_ID = 1L;
+    private static final long ORDER_ID = 1L;
+    private static final long MAX_ORDER_LIMIT = 100L;
+    private static final Double MEAL_PRICE = 100.00;
+    private static final int YEAR = 2023;
+    private static final int MONTH = Calendar.DECEMBER;
+    private static final int DAY = Calendar.DAY_OF_MONTH;
+    private static Date DATE;
 
     @BeforeAll
     public void init() {
-        cook = new Cook();
-        cook.setId(1L);
-        schedule = new Schedule();
-        schedule.setId(1L);
-        schedule.setName("Week 1");
-        schedule.setStart_date(new Date(2023, 11, 10, 10, 10, 10));
-        schedule.setCook(cook);
-        meal = new Meal();
-        meal.setId(1L);
-        meal.setName("Pav Bhaji");
-        meal.setMealDate(new Date(2023, 11, 10, 17, 10, 10));
-        meal.setSlot("lunch");
-        meal.setMaxOrderLimit(100L);
-        meal.setOrderDeadline(new Date(2023, 11, 10, 15, 10, 10));
-        meal.setImage("pavbhajiurl");
-        meal.setPrice(100.00);
-        meal.setSchedule(schedule);
-        dish = new Dish();
-        dish.setId(1L);
-        dish.setName("Bhaji");
-        dish.setType("Veg");
-        dish.setDescription("Bhaji of Pav Bhaji");
-        dish.setImage("dish image url");
-        dish.setCook(cook);
+        LocalDate localDate = LocalDate.of(YEAR, MONTH, DAY);
+        DATE = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        buildCookAndScheduleData();
+        buildMealData();
+        buildDishData();
     }
 
     @Test
-    public void createScheduleTest() throws IOException {
+    public void createScheduleTest() {
         // Arrange
-
         CreateScheduleInput createScheduleInput = new CreateScheduleInput();
         createScheduleInput.setName("Week 1");
-        createScheduleInput.setStart_date(new Date(2023, 11, 10, 10, 10, 10));
-        createScheduleInput.setCookId(1L);
+        createScheduleInput.setStart_date(DATE);
+        createScheduleInput.setCookId(COOK_ID);
 
-        when(cookRepository.findById(1L)).thenReturn(Optional.of(cook));
-        when(scheduleRepository.save(any(Schedule.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(cookRepository.findById(COOK_ID)).thenReturn(Optional.of(cook));
+        when(scheduleRepository.save(any(Schedule.class))).thenAnswer(invocation ->
+                invocation.getArgument(0));
 
         // Act
         ResponseEntity<Schedule> response = scheduleService.createSchedule(createScheduleInput);
@@ -117,50 +98,50 @@ public class MenuServiceTests {
     }
 
     @Test
-    public void getScheduleTest() throws IOException {
+    public void getScheduleTest() {
         // Arrange
-        when(scheduleRepository.findById(1L)).thenReturn(Optional.of(schedule));
+        when(scheduleRepository.findById(SCHEDULE_ID)).thenReturn(Optional.of(schedule));
         // Act
-        Schedule scheduleResponse = scheduleService.getScheduleById(1L);
+        Schedule scheduleResponse = scheduleService.getScheduleById(SCHEDULE_ID);
         // Assert
-        assertEquals(scheduleResponse.getId(), 1L);
+        assertEquals(scheduleResponse.getId(), SCHEDULE_ID);
     }
 
     @Test
-    public void deleteScheduleTest() throws IOException {
+    public void deleteScheduleTest() {
         // Arrange
-        when(scheduleRepository.findById(1L)).thenReturn(Optional.of(schedule));
-        doNothing().when(scheduleRepository).deleteById(1L);
+        when(scheduleRepository.findById(SCHEDULE_ID)).thenReturn(Optional.of(schedule));
+        doNothing().when(scheduleRepository).deleteById(SCHEDULE_ID);
         // Act
-        Schedule scheduleResponse = scheduleService.deleteScheduleById(1L);
+        Schedule scheduleResponse = scheduleService.deleteScheduleById(SCHEDULE_ID);
         // Assert
-        assertEquals(scheduleResponse.getId(), 1L);
+        assertEquals(scheduleResponse.getId(), SCHEDULE_ID);
     }
 
     @Test
-    public void getSchedulesByCookTest() throws IOException {
+    public void getSchedulesByCookTest() {
         // Arrange
         List<Schedule> scheduleList = new ArrayList<>();
         scheduleList.add(schedule);
-        when(scheduleRepository.findAllByCook_Id(1L)).thenReturn(scheduleList);
+        when(scheduleRepository.findAllByCook_Id(COOK_ID)).thenReturn(scheduleList);
 
         // Act
-        List<Schedule> scheduleResponse = scheduleService.getSchedulesByCook(1L);
+        List<Schedule> scheduleResponse = scheduleService.getSchedulesByCook(COOK_ID);
         // Assert
-        assertEquals(scheduleResponse.get(0).getCook().getId(), 1L);
+        assertEquals(scheduleResponse.get(0).getCook().getId(), COOK_ID);
     }
 
     @Test
-    public void updateScheduleTest() throws IOException {
+    public void updateScheduleTest() {
         // Arrange
-
         UpdateScheduleInput updateScheduleInput = new UpdateScheduleInput();
-        updateScheduleInput.setId(1L);
+        updateScheduleInput.setId(SCHEDULE_ID);
         updateScheduleInput.setName("Week 1");
-        updateScheduleInput.setStart_date(new Date(2023, 11, 10, 10, 10, 10));
+        updateScheduleInput.setStart_date(DATE);
 
-        when(scheduleRepository.findById(1L)).thenReturn(Optional.of(schedule));
-        when(scheduleRepository.save(any(Schedule.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(scheduleRepository.findById(SCHEDULE_ID)).thenReturn(Optional.of(schedule));
+        when(scheduleRepository.save(any(Schedule.class))).thenAnswer(invocation ->
+                invocation.getArgument(0));
 
         // Act
         ResponseEntity<Schedule> response = scheduleService.updateSchedule(updateScheduleInput);
@@ -171,20 +152,11 @@ public class MenuServiceTests {
     }
 
     @Test
-    public void addMealToScheduleTests() throws IOException {
+    public void addMealToScheduleTests(){
         // Arrange
+        AddMealToScheduleInput addMealToScheduleInput = getAddMealToScheduleInput();
 
-        AddMealToScheduleInput addMealToScheduleInput = new AddMealToScheduleInput();
-        addMealToScheduleInput.setName("Pav Bhaji");
-        addMealToScheduleInput.setMealDate(new Date(2023, 11, 10, 17, 10, 10));
-        addMealToScheduleInput.setSlot("lunch");
-        addMealToScheduleInput.setMaxOrderLimit(100L);
-        addMealToScheduleInput.setOrderDeadline(new Date(2023, 11, 10, 15, 10, 10));
-        addMealToScheduleInput.setImage("pavbhajiurl");
-        addMealToScheduleInput.setPrice(100.00);
-        addMealToScheduleInput.setScheduleId(1L);
-
-        when(scheduleRepository.findById(1L)).thenReturn(Optional.of(schedule));
+        when(scheduleRepository.findById(SCHEDULE_ID)).thenReturn(Optional.of(schedule));
         when(mealRepository.save(any(Meal.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
@@ -196,32 +168,22 @@ public class MenuServiceTests {
     }
 
     @Test
-    public void getMealByIdTest() throws IOException {
+    public void getMealByIdTest() {
         // Arrange
-        when(mealRepository.findById(1L)).thenReturn(Optional.of(meal));
+        when(mealRepository.findById(ORDER_ID)).thenReturn(Optional.of(meal));
         // Act
-        Meal mealResponse = scheduleService.getMealById(1L);
+        Meal mealResponse = scheduleService.getMealById(ORDER_ID);
         // Assert
-        assertEquals(mealResponse.getId(), 1L);
+        assertEquals(mealResponse.getId(), ORDER_ID);
     }
 
     @Test
-    public void updateMealToScheduleTest() throws IOException {
+    public void updateMealToScheduleTest() {
         // Arrange
+        UpdateMealToScheduleInput updateMealToScheduleInput = getUpdateMealToScheduleInput();
 
-        UpdateMealToScheduleInput updateMealToScheduleInput = new UpdateMealToScheduleInput();
-        updateMealToScheduleInput.setId(1L);
-        updateMealToScheduleInput.setName("Pav Bhaji");
-        updateMealToScheduleInput.setMealDate(new Date(2023, 11, 10, 17, 10, 10));
-        updateMealToScheduleInput.setSlot("lunch");
-        updateMealToScheduleInput.setMaxOrderLimit(100L);
-        updateMealToScheduleInput.setOrderDeadline(new Date(2023, 11, 10, 15, 10, 10));
-        updateMealToScheduleInput.setImage("pavbhajiurl");
-        updateMealToScheduleInput.setPrice(100.00);
-        updateMealToScheduleInput.setScheduleId(1L);
-
-        when(mealRepository.findById(1L)).thenReturn(Optional.of(meal));
-        when(scheduleRepository.findById(1L)).thenReturn(Optional.of(schedule));
+        when(mealRepository.findById(ORDER_ID)).thenReturn(Optional.of(meal));
+        when(scheduleRepository.findById(SCHEDULE_ID)).thenReturn(Optional.of(schedule));
         when(mealRepository.save(any(Meal.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
@@ -233,54 +195,53 @@ public class MenuServiceTests {
     }
 
     @Test
-    public void deleteMealByIdTest() throws IOException {
+    public void deleteMealByIdTest() {
         // Arrange
-        when(mealRepository.findById(1L)).thenReturn(Optional.of(meal));
-        doNothing().when(mealRepository).deleteById(1L);
+        when(mealRepository.findById(ORDER_ID)).thenReturn(Optional.of(meal));
+        doNothing().when(mealRepository).deleteById(ORDER_ID);
         // Act
-        Meal mealResponse = scheduleService.deleteMealById(1L);
+        Meal mealResponse = scheduleService.deleteMealById(ORDER_ID);
         // Assert
-        assertEquals(mealResponse.getId(), 1L);
+        assertEquals(mealResponse.getId(), ORDER_ID);
     }
 
     @Test
-    public void getMealsByCookIdTest() throws IOException {
+    public void getMealsByCookIdTest() {
         // Arrange
         List<Meal> mealList = new ArrayList<>();
         mealList.add(meal);
-        when(mealRepository.findMealsBySchedule_Cook_IdOrderByMealDateAsc(1L)).thenReturn(mealList);
+        when(mealRepository.findMealsBySchedule_Cook_IdOrderByMealDateAsc(COOK_ID)).thenReturn(mealList);
 
         // Act
-        List<Meal> mealResponse = scheduleService.getMealsByCookId(1L);
+        List<Meal> mealResponse = scheduleService.getMealsByCookId(COOK_ID);
         // Assert
-        assertEquals(mealResponse.get(0).getSchedule().getCook().getId(), 1L);
+        assertEquals(mealResponse.get(0).getSchedule().getCook().getId(), COOK_ID);
     }
 
     @Test
-    public void getMealsByScheduleIdTest() throws IOException {
+    public void getMealsByScheduleIdTest() {
         // Arrange
         List<Meal> mealList = new ArrayList<>();
         mealList.add(meal);
-        when(mealRepository.findMealsBySchedule_Id(1L)).thenReturn(mealList);
+        when(mealRepository.findMealsBySchedule_Id(SCHEDULE_ID)).thenReturn(mealList);
 
         // Act
-        List<Meal> mealResponse = scheduleService.getMealsByScheduleId(1L);
+        List<Meal> mealResponse = scheduleService.getMealsByScheduleId(SCHEDULE_ID);
         // Assert
-        assertEquals(mealResponse.get(0).getSchedule().getCook().getId(), 1L);
+        assertEquals(mealResponse.get(0).getSchedule().getCook().getId(), SCHEDULE_ID);
     }
 
     @Test
-    public void createDishTest() throws IOException {
+    public void createDishTest() {
         // Arrange
-
         CreateDish createDish = new CreateDish();
         createDish.setName("Bhaji");
         createDish.setType("Veg");
         createDish.setDescription("Bhaji of Pav Bhaji");
         createDish.setImage("dish image url");
-        createDish.setCookId(1L);
+        createDish.setCookId(COOK_ID);
 
-        when(cookRepository.findById(1L)).thenReturn(Optional.of(cook));
+        when(cookRepository.findById(COOK_ID)).thenReturn(Optional.of(cook));
         when(dishRepository.save(any(Dish.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
@@ -292,28 +253,26 @@ public class MenuServiceTests {
     }
 
     @Test
-    public void getDishByIdTest() throws IOException {
+    public void getDishByIdTest() {
         // Arrange
-        when(dishRepository.findById(1L)).thenReturn(Optional.of(dish));
+        when(dishRepository.findById(ORDER_ID)).thenReturn(Optional.of(dish));
         // Act
-        Dish dish = scheduleService.getDishById(1L);
+        Dish dish = scheduleService.getDishById(ORDER_ID);
         // Assert
-        assertEquals(dish.getId(), 1L);
+        assertEquals(dish.getId(), ORDER_ID);
     }
 
     @Test
-    public void updateDishTest() throws IOException {
+    public void updateDishTest() {
         // Arrange
-
         UpdateDish updateDish = new UpdateDish();
-        updateDish.setId(1L);
+        updateDish.setId(ORDER_ID);
         updateDish.setName("Bhaji");
         updateDish.setType("Veg");
         updateDish.setDescription("Bhaji of Pav Bhaji");
         updateDish.setImage("dish image url");
 
-
-        when(dishRepository.findById(1L)).thenReturn(Optional.of(dish));
+        when(dishRepository.findById(ORDER_ID)).thenReturn(Optional.of(dish));
         when(dishRepository.save(any(Dish.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
@@ -325,43 +284,44 @@ public class MenuServiceTests {
     }
 
     @Test
-    public void deleteDishByIdTest() throws IOException {
+    public void deleteDishByIdTest() {
         // Arrange
-        when(dishRepository.findById(1L)).thenReturn(Optional.of(dish));
-        doNothing().when(dishRepository).deleteById(1L);
+        when(dishRepository.findById(ORDER_ID)).thenReturn(Optional.of(dish));
+        doNothing().when(dishRepository).deleteById(ORDER_ID);
         // Act
-        Dish dishResponse = scheduleService.deleteDishById(1L);
+        Dish dishResponse = scheduleService.deleteDishById(ORDER_ID);
         // Assert
-        assertEquals(dishResponse.getId(), 1L);
+        assertEquals(dishResponse.getId(), ORDER_ID);
     }
 
     @Test
-    public void getMealsByCookDateRangeTest() throws IOException {
+    public void getMealsByCookDateRangeTest() {
         // Arrange
         CookDateRangeInput cookDateRangeInput = new CookDateRangeInput();
-        cookDateRangeInput.setStartDate(new Date(2023, 11, 9, 15, 10, 10));
-        cookDateRangeInput.setEndDate(new Date(2023, 11, 12, 15, 10, 10));
-        cookDateRangeInput.setId(1L);
+        cookDateRangeInput.setStartDate(DATE);
+        cookDateRangeInput.setEndDate(DATE);
+        cookDateRangeInput.setId(COOK_ID);
         List<Meal> mealList = new ArrayList<>();
         mealList.add(meal);
-        when(mealRepository.findAllByMealDateBetweenAndSchedule_Cook_Id(any(Date.class), any(Date.class), any(Long.class))).thenReturn(mealList);
+        when(mealRepository.findAllByMealDateBetweenAndSchedule_Cook_Id(any(), any(),
+                any())).thenReturn(mealList);
         // Act
         List<Meal> mealResponse = scheduleService.getMealsByCookDateRange(cookDateRangeInput);
         // Assert
-        assertEquals(mealResponse.get(0).getId(), 1L);
+        assertEquals(mealResponse.get(0).getId(), COOK_ID);
     }
 
     @Test
-    public void addDishToMealTest() throws IOException {
+    public void addDishToMealTest() {
         // Arrange
-
         AddDishToMealInput addDishToMealInput = new AddDishToMealInput();
-        addDishToMealInput.setDish_id(1L);
-        addDishToMealInput.setMeal_id(1L);
+        addDishToMealInput.setDish_id(ORDER_ID);
+        addDishToMealInput.setMeal_id(ORDER_ID);
 
-        when(mealRepository.findById(1L)).thenReturn(Optional.of(meal));
-        when(dishRepository.findById(1L)).thenReturn(Optional.of(dish));
-        when(dishToMealRepository.save(any(DishToMealMap.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(mealRepository.findById(ORDER_ID)).thenReturn(Optional.of(meal));
+        when(dishRepository.findById(ORDER_ID)).thenReturn(Optional.of(dish));
+        when(dishToMealRepository.save(any(DishToMealMap.class))).thenAnswer(invocation ->
+                invocation.getArgument(0));
 
         // Act
         ResponseEntity<DishToMealMap> response = scheduleService.addDishToMeal(addDishToMealInput);
@@ -370,54 +330,53 @@ public class MenuServiceTests {
     }
 
     @Test
-    public void getDishesByMealIdTest() throws IOException {
+    public void getDishesByMealIdTest() {
         // Arrange
 
         DishToMealMap dishToMealMap = new DishToMealMap();
         DishToMealId id = new DishToMealId();
-        id.setDishId(1L);
-        id.setMealId(2L);
+        id.setDishId(ORDER_ID);
+        id.setMealId(ORDER_ID);
         dishToMealMap.setId(id);
 
-        when(dishToMealRepository.findByIdMealId(2L)).thenReturn(Arrays.asList(dishToMealMap));
-        when(dishRepository.findById(1L)).thenReturn(Optional.of(dish));
+        when(dishToMealRepository.findByIdMealId(ORDER_ID)).thenReturn(List.of(dishToMealMap));
+        when(dishRepository.findById(ORDER_ID)).thenReturn(Optional.of(dish));
 
         // Act
-        List<Dish> dishList = scheduleService.getDishesByMealId(2L);
+        List<Dish> dishList = scheduleService.getDishesByMealId(ORDER_ID);
         // Assert
         assertEquals(dishList.get(0).getId(), dish.getId());
     }
 
     @Test
-    public void getMealOrdersByMealIdTest() throws IOException {
+    public void getMealOrdersByMealIdTest() {
         // Arrange
-
         List<Mealorder> mealorderList = new ArrayList<>();
         Mealorder mealorder = new Mealorder();
-        mealorder.setId(1L);
+        mealorder.setId(ORDER_ID);
         mealorderList.add(mealorder);
         meal.setMealorders(mealorderList);
 
-        when(mealRepository.findById(1L)).thenReturn(Optional.of(meal));
+        when(mealRepository.findById(ORDER_ID)).thenReturn(Optional.of(meal));
 
         // Act
-        List<Mealorder> mealorders = scheduleService.getMealOrdersByMealId(1L);
+        List<Mealorder> mealOrders = scheduleService.getMealOrdersByMealId(ORDER_ID);
         // Assert
-        assertEquals(mealorders.size(), mealorderList.size());
+        assertEquals(mealOrders.size(), mealorderList.size());
     }
 
     @Test
     public void testMealOrder() throws IOException {
         // Arrange
         Mealorder mealorder = new Mealorder();
-        mealorder.setId(1L);
-        mealorder.setQuantity(4L);
+        mealorder.setId(ORDER_ID);
+        mealorder.setQuantity(ORDER_ID);
         mealorder.setStatus("PENDING");
-        mealorder.setAmount(100.00);
+        mealorder.setAmount(MEAL_PRICE);
         mealorder.setMeal(meal);
         // Assert
         assertTrue(!Objects.isNull(mealorder));
-        assertTrue(mealorder.getId() == 1L);
+        assertTrue(mealorder.getId() == ORDER_ID);
         assertTrue(!Objects.isNull(mealorder.getQuantity()));
         assertTrue(!Objects.isNull(mealorder.getStatus()));
         assertTrue(!Objects.isNull(mealorder.getAmount()));
@@ -428,7 +387,7 @@ public class MenuServiceTests {
     public void testDish() throws IOException {
         // Arrange
         Dish newDish = new Dish();
-        Long id = 6L;
+        Long id = ORDER_ID;
         String img = "dishUrl";
         String name = "chole";
         String description = "Chole Tiffin";
@@ -447,6 +406,67 @@ public class MenuServiceTests {
         assertEquals(newDish.getType(), type);
         assertEquals(newDish.getCook().getId(), cook.getId());
     }
+
+    private static UpdateMealToScheduleInput getUpdateMealToScheduleInput() {
+        UpdateMealToScheduleInput updateMealToScheduleInput = new UpdateMealToScheduleInput();
+        updateMealToScheduleInput.setId(SCHEDULE_ID);
+        updateMealToScheduleInput.setName("Pav Bhaji");
+        updateMealToScheduleInput.setMealDate(DATE);
+        updateMealToScheduleInput.setSlot("lunch");
+        updateMealToScheduleInput.setMaxOrderLimit(MAX_ORDER_LIMIT);
+        updateMealToScheduleInput.setOrderDeadline(DATE);
+        updateMealToScheduleInput.setImage("meal url");
+        updateMealToScheduleInput.setPrice(MEAL_PRICE);
+        updateMealToScheduleInput.setScheduleId(SCHEDULE_ID);
+        return updateMealToScheduleInput;
+    }
+
+    private void buildDishData() {
+        dish = new Dish();
+        dish.setId(ORDER_ID);
+        dish.setName("Bhaji");
+        dish.setType("Veg");
+        dish.setDescription("Bhaji of Pav Bhaji");
+        dish.setImage("dish image url");
+        dish.setCook(cook);
+    }
+
+    private void buildMealData() {
+        meal = new Meal();
+        meal.setId(ORDER_ID);
+        meal.setName("Pav Bhaji");
+        meal.setMealDate(DATE);
+        meal.setSlot("lunch");
+        meal.setMaxOrderLimit(MAX_ORDER_LIMIT);
+        meal.setOrderDeadline(DATE);
+        meal.setImage("meal url");
+        meal.setPrice(MEAL_PRICE);
+        meal.setSchedule(schedule);
+    }
+
+    private void buildCookAndScheduleData() {
+        cook = new Cook();
+        cook.setId(COOK_ID);
+        schedule = new Schedule();
+        schedule.setId(SCHEDULE_ID);
+        schedule.setName("Week 1");
+        schedule.setStart_date(DATE);
+        schedule.setCook(cook);
+    }
+
+    private static AddMealToScheduleInput getAddMealToScheduleInput() {
+        AddMealToScheduleInput addMealToScheduleInput = new AddMealToScheduleInput();
+        addMealToScheduleInput.setName("Pav Bhaji");
+        addMealToScheduleInput.setMealDate(DATE);
+        addMealToScheduleInput.setSlot("lunch");
+        addMealToScheduleInput.setMaxOrderLimit(MAX_ORDER_LIMIT);
+        addMealToScheduleInput.setOrderDeadline(DATE);
+        addMealToScheduleInput.setImage("meal url");
+        addMealToScheduleInput.setPrice(MEAL_PRICE);
+        addMealToScheduleInput.setScheduleId(SCHEDULE_ID);
+        return addMealToScheduleInput;
+    }
+
 
 
 }

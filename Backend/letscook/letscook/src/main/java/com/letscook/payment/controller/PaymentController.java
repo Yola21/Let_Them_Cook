@@ -16,13 +16,6 @@ public class PaymentController {
     @Autowired
     PaymentService paymentService;
 
-//    @PostMapping
-//    public ResponseEntity<String> completePayment(@RequestBody PaymentRequestInput paymentRequestInput) throws StripeException {
-//        String chargeId= paymentService.chargeCustomer(paymentRequestInput);
-//        return chargeId!=null? new ResponseEntity<String>(chargeId, HttpStatus.OK):
-//                new ResponseEntity<String>("Please check the credit card details entered",HttpStatus.BAD_REQUEST);
-//    }
-
     @PostMapping
     public PaymentResponse completePayment(@RequestBody String payment) throws StripeException {
         PaymentResponse response = new PaymentResponse();
