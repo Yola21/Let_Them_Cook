@@ -4,11 +4,11 @@
 
 ### Problem Statement:
 
-People often require assistance when traveling. This frequently happens on flights with multiple stopovers. People need to check in, security check, navigate the airport, need in-flight support, change terminals, and even check in their luggage sometimes again on the same route. Through our system, users will be able to find companions who will help them on their journey. The companion will already be traveling on the same route.
+In Canada, the scarcity of platforms offering tiffin services is a pervasive issue faced by numerous local and small-scale food businesses. This challenge often results in difficulty for customers hailing from various regions in finding these specialized food services. The struggle to locate tiffin services spans across different communities and contributes to the ongoing predicament faced by both businesses and consumers in the Canadian market.
 
 ### Our Solution
 
-Let them cook allows users to browse the available tiffin service and book the meal or tiffin by the cook.
+An innovative application tailored to enhance sales for local food businesses by offering a comprehensive platform. It serves as a unified space for advertising, order collection, and management. Users can set their meal schedules akin to a cook's routine and access in-depth analytics to bolster sales strategies. Whether opting for a one-time order or subscribing to meals, customers can conveniently view meal schedules and personalize their subscriptions within the platform.
 
 ### Test Case Coverage
 ![Static Badge](https://img.shields.io/badge/Class_Coverage-100%25-blue)
@@ -155,6 +155,17 @@ These dependencies are required for building and running the application. The de
 | lombok | 5.7.1 | Lombok dependency for getter setter |
 | junit-jupiter-api | 5.8.1 | junit jupiter for unit testing in java |
 
+### Continuous Integration and Continuous Deployment
+Application uses multiple stages to build, test, and deploy code along with analysing the code quality of the changed files.
+- npm test - Runs all the tests written for the frontend code implemented using Karma Unit Tests for React files
+- npm build - Builds the frontend package into main.js, vendor.js files of version es2015 and es2020
+- npm deploy - Deploys the packaged js files into the NETLIFY server to the URL: https://let-them-cook.netlify.app/
+- test - Checks if the code adheres to the code quality gate guidelines of GitLab Server.
+- build - Runs the Designite jar file in the GitLab Server
+- issue - Runs the Designite tool on the backend code of the application
+- publish - Builds the backend of the application using gradle build
+- gradle test - Runs all the tests written for backend in the GitLab Server
+- deploy - Deploys the backend code to the Dal VM Server with the URL: http://os-vm173.research.cs.dal.ca/
 
 ## Usage Scenarios for Let Them Cook
 
@@ -258,14 +269,14 @@ This provides the steps a Customer and Cook will follow on the Let them Cook ser
 1. Nikunj Lalitkumar Hudka (B00959783)
 2. Yash Khorja (B00957065)
 3. Parth Rajendra Kharkhanis (B00959176)
-4. Sanjana Rampur Kottur ()
+4. Sanjana Rampur Kottur (B00957180)
 
 ### Client team:
 
-1. Prithvi Manoj Krishna
-2. Smit Patel
-3. Vivek Alpeshbhai Sonani
-4. Aniket Mhatre
-5. Rabia Asif
+1. Aniket Mhatre (B00969798)
+2. Prithvi Manoj Krishna (B00961642)
+3. Rabia Asif (B00931734)
+4. Vivek Alpeshbhai Sonani (B00953064)
+5. Smit Patel (B00963945)
 
 Course Instructor: [Dr. Tushar Sharma](https://tusharma.in)
