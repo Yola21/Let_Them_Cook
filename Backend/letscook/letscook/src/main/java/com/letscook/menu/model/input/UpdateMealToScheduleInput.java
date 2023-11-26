@@ -1,5 +1,6 @@
 package com.letscook.menu.model.input;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +13,9 @@ public class UpdateMealToScheduleInput {
     private String name;
     private Long maxOrderLimit;
     private String slot;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date orderDeadline;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date mealDate;
     private String image;
     private Double price;

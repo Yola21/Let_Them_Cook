@@ -167,7 +167,7 @@ public class ScheduleService {
     }
 
     public List<Meal> getMealsByCookId(Long cookId) {
-        return mealRepository.findMealsBySchedule_Cook_Id(cookId);
+        return mealRepository.findMealsBySchedule_Cook_IdOrderByMealDateAsc(cookId);
     }
 
     public List<Meal> getMealsByScheduleId(Long scheduleId) {

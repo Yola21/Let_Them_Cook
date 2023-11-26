@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface MealRepository extends JpaRepository<Meal, Long> {
-    List<Meal> findMealsBySchedule_Cook_Id(Long id);
+    List<Meal> findMealsBySchedule_Cook_IdOrderByMealDateAsc(Long id);
 
 //    List<Meal> findMealsBySchedule_Cook_Address(String address);
 
