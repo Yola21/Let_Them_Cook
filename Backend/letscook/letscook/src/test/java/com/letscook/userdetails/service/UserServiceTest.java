@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 class UserServiceTest {
@@ -76,7 +76,7 @@ class UserServiceTest {
         userInfo.setName("Group17");
         userInfo.setRole("Admin");
         when(userDetailsRepository.save(userInfo)).thenReturn(userInfo);
-        doNothing().when(emailSenderService).sendSimpleEmail(Mockito.any(), Mockito.any(),
+        doReturn(true).when(emailSenderService).sendSimpleEmail(Mockito.any(), Mockito.any(),
                 Mockito.any());
         ResponseEntity<UserInfo> responseEntity = userService.register(userInfo);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
@@ -150,5 +150,73 @@ class UserServiceTest {
         // Act and Assert
         assertThrows(Exception.class, () -> userService.login(userInput),
                 "user doesn't exist");
+    }
+
+    @Test
+    void testGetUserName() {
+        // Arrange
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(USER_EMAIL);
+
+        // Act and Assert
+        assertTrue(userInfo.getEmail() == userInfo.getUsername());
+    }
+
+    @Test
+    void testisAccountNonExpired() {
+        // Arrange
+        UserInfo userInfo = new UserInfo();
+
+        // Act and Assert
+        assertTrue(userInfo.isAccountNonExpired());
+    }
+
+    @Test
+    void testIsAccountNonLocked() {
+        // Arrange
+        UserInfo userInfo = new UserInfo();
+
+        // Act and Assert
+        assertTrue(userInfo.isAccountNonLocked());
+    }
+
+    @Test
+    void testIsCredentialsNonExpired() {
+        // Arrange
+        UserInfo userInfo = new UserInfo();
+
+        // Act and Assert
+        assertTrue(userInfo.isCredentialsNonExpired());
+    }
+
+    @Test
+    void testIsEnabled() {
+        // Arrange
+        UserInfo userInfo = new UserInfo();
+
+        // Act and Assert
+        assertTrue(userInfo.isEnabled());
+    }
+
+    @Test
+    void testUserId() {
+        // Arrange
+        UserInfo userInfo = new UserInfo();
+        Long id = 1L;
+        userInfo.setId(id);
+
+        // Act and Assert
+        assertTrue(userInfo.getId() == id);
+    }
+
+    @Test
+    void testUserRole() {
+        // Arrange
+        UserInfo userInfo = new UserInfo();
+        String role = "cook";
+        userInfo.setRole(role);
+
+        // Act and Assert
+        assertTrue(userInfo.getRole() == role);
     }
 }

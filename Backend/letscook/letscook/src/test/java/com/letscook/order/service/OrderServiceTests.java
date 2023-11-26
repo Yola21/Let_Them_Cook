@@ -7,10 +7,7 @@ import com.letscook.enums.OrderStatus;
 import com.letscook.menu.model.meal.Meal;
 import com.letscook.menu.model.meal.Schedule;
 import com.letscook.menu.repository.MealRepository;
-import com.letscook.order.model.CreateOrderInput;
-import com.letscook.order.model.Mealorder;
-import com.letscook.order.model.MealorderInput;
-import com.letscook.order.model.Order;
+import com.letscook.order.model.*;
 import com.letscook.order.repository.MealorderRepository;
 import com.letscook.order.repository.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -227,13 +224,46 @@ public class OrderServiceTests {
     public void testGetOrdersByMeal() {
         // Arrange
         List<Order> orderList = new ArrayList<>();
+        Mealorder mealorder = new Mealorder();
+        mealorder.setMeal(meal);
+        order.setMealorders(Arrays.asList(mealorder));
         orderList.add(order);
-        when(orderRepository.findAllByMealorders_Meal_Id(ORDER_ID)).
-                thenReturn(orderList);
+
+        when(orderRepository.findAllByMealorders_Meal_IdOrderByCreatedAtAsc(ORDER_ID)).thenReturn(orderList);
         List<Order> custOrderList = orderService.getOrdersByMeal(ORDER_ID);
 
         // Act
         assertEquals(custOrderList.size(), orderList.size());
+    }
+
+    @Test
+    public void testUpdateOrderStatus() {
+        // Arrange
+        Long mealOrderId= ORDER_ID;
+        Long orderId= ORDER_ID;
+        Long customerId= customer.getId();
+        UpdateOrderStatus updateOrderStatus = new UpdateOrderStatus();
+        updateOrderStatus.setMealOrderId(mealOrderId);
+        updateOrderStatus.setOrderId(orderId);
+        updateOrderStatus.setStatus(OrderStatus.COOKING_STARTED.name());
+        updateOrderStatus.setCustomerId(customerId);
+        Mealorder mealorder = new Mealorder();
+        mealorder.setMeal(meal);
+        mealorder.setId(mealOrderId);
+        mealorder.setStatus(OrderStatus.PENDING.name());
+
+
+        when(mealorderRepository.findById(mealOrderId)).thenReturn(Optional.of(mealorder));
+        when(mealorderRepository.save(any(Mealorder.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Mealorder updatedOrder = orderService.updateOrderStatus(updateOrderStatus).getBody();
+
+        // Act
+        assert updatedOrder != null;
+        assertEquals(updatedOrder.getStatus(),updateOrderStatus.getStatus());
+        assertEquals(updateOrderStatus.getOrderId(),orderId);
+        assertEquals(updateOrderStatus.getMealOrderId(),mealOrderId);
+        assertEquals(updateOrderStatus.getCustomerId(),customerId);
     }
 
     private void buildOrder() {

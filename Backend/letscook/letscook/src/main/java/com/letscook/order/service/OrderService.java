@@ -4,10 +4,7 @@ import com.letscook.customer.repository.CustomerRepository;
 import com.letscook.enums.OrderStatus;
 import com.letscook.menu.model.meal.Meal;
 import com.letscook.menu.repository.MealRepository;
-import com.letscook.order.model.CreateOrderInput;
-import com.letscook.order.model.Mealorder;
-import com.letscook.order.model.MealorderInput;
-import com.letscook.order.model.Order;
+import com.letscook.order.model.*;
 import com.letscook.order.repository.MealorderRepository;
 import com.letscook.order.repository.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -60,14 +57,6 @@ public class OrderService {
         return orderRepository.findById(id).orElse(null);
     }
 
-    public List<Order> getOrdersByCustomer(Long customerId) {
-        return orderRepository.findAllByCustomer_IdOrderByCreatedAtDesc(customerId);
-    }
-
-    public List<Order> getOrdersByMeal(Long mealId) {
-        return orderRepository.findAllByMealorders_Meal_Id(mealId);
-    }
-
     private static double computeOrderToCreateAmount(CreateOrderInput createOrderInput,
                                                      HashMap<Long, Meal> mealMap, double amount) {
         for (MealorderInput mealorderInput : createOrderInput.getMealorderInputs()) {
@@ -94,7 +83,7 @@ public class OrderService {
             mealorder.setMeal(meal);
             mealorder.setOrder(orderCreated);
             mealorder.setQuantity(mealorderInput.getQuantity());
-            mealorder.setStatus(String.valueOf(OrderStatus.PENDING));
+            mealorder.setStatus(OrderStatus.PENDING.name());
             mealorder.setAmount(meal.getPrice() * mealorderInput.getQuantity());
             mealorderRepository.save(mealorder);
         }
@@ -111,5 +100,30 @@ public class OrderService {
             throw new EntityNotFoundException("Customer not found for: " + createOrderInput.getCustomerId());
         }
         return orderToCreate;
+    }
+
+    public List<Order> getOrdersByCustomer(Long customerId) {
+        return orderRepository.findAllByCustomer_IdOrderByCreatedAtDesc(customerId);
+    }
+
+    public List<Order> getOrdersByMeal(Long mealId) {
+        List<Order> orderList = orderRepository.findAllByMealorders_Meal_IdOrderByCreatedAtAsc(mealId);
+        for (Order order : orderList) {
+            List<Mealorder> mealOrders = new ArrayList<>();
+            for (Mealorder mealorder : order.getMealorders()) {
+                if (Objects.equals(mealorder.getMeal().getId(), mealId)) {
+                    mealOrders.add(mealorder);
+                }
+            }
+            order.setMealorders(mealOrders);
+
+        }
+        return orderList;
+    }
+    public ResponseEntity<Mealorder> updateOrderStatus(UpdateOrderStatus updateOrderStatus) {
+        Mealorder mealorder = mealorderRepository.findById(updateOrderStatus.getMealOrderId()).orElseThrow();
+        mealorder.setStatus(updateOrderStatus.getStatus());
+        Mealorder updatedMealorder = mealorderRepository.save(mealorder);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedMealorder);
     }
 }

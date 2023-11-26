@@ -1,7 +1,9 @@
 package com.letscook.order.controller;
 
 import com.letscook.order.model.CreateOrderInput;
+import com.letscook.order.model.Mealorder;
 import com.letscook.order.model.Order;
+import com.letscook.order.model.UpdateOrderStatus;
 import com.letscook.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +42,11 @@ public class OrderController {
     @GetMapping("/meal/{id}")
     public List<Order> getOrdersByMeal(@PathVariable Long id) {
         return orderService.getOrdersByMeal(id);
+    }
+
+    @PostMapping("/updateOrderStatus")
+    public ResponseEntity<Mealorder> updateOrderStatus(@RequestBody UpdateOrderStatus updateOrderStatus) {
+        return orderService.updateOrderStatus(updateOrderStatus);
     }
 
 //    @GetMapping("/menu")

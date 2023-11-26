@@ -2,6 +2,7 @@ package com.letscook.enums;
 
 public enum OrderStatus {
     PENDING,
-    IN_PROGRESS,
+    COOKING_STARTED,
+    READY_FOR_PICKUP,
     COMPLETED
 }

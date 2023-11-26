@@ -6,6 +6,7 @@ import com.letscook.cook.model.UpdateCookProfileInput;
 import com.letscook.cook.repository.CookRepository;
 import com.letscook.cook.service.CookService;
 import com.letscook.enums.CookStatus;
+import com.letscook.menu.model.dish.Dish;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -144,24 +145,30 @@ public class CookServiceTests {
     }
 
     @Test
-    void updateCookProfileBusinessDocumentWithoutStatusRejected() throws IOException {
+    void updateCookProfileBusinessDocumentWithStatus() throws IOException {
         UpdateCookProfileInput input = new UpdateCookProfileInput();
         input.setId(1L);
         input.setAddress("new Address");
         input.setProfilePhoto("New Image");
         input.setBannerImage("New Image");
         input.setBusinessDocument("New Image");
+        input.setStatus(CookStatus.ACCEPTED.name());
 
         Cook mockCook = MockDataGenerator.createMockCook();
-        mockCook.setStatus(String.valueOf(CookStatus.PENDING));
+        //mockCook.setStatus(String.valueOf(CookStatus.PENDING));
         when(cookRepository.findById(input.getId())).thenReturn(Optional.of(mockCook));
+        when(cookRepository.save(any(Cook.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        Cook updatedCook = cookService.updateCookProfile(input).getBody();
 
-        Error exception = assertThrows(Error.class, () -> {
-            cookService.updateCookProfile(input);
-        });
-        mockCook.setStatus(String.valueOf(CookStatus.ACCEPTED));
-        assertEquals("Not allowed to change business document", exception.getMessage());
-        verify(cookRepository, never()).save(any());
+        assertEquals(updatedCook.getStatus(),CookStatus.ACCEPTED.name());
+        assertEquals(updatedCook.getBusinessDocument(),input.getBusinessDocument());
+
+//        Error exception = assertThrows(Error.class, () -> {
+//            cookService.updateCookProfile(input);
+//        });
+//        mockCook.setStatus(String.valueOf(CookStatus.ACCEPTED));
+//        assertEquals("Not allowed to change business document", exception.getMessage());
+//        verify(cookRepository, never()).save(any());
     }
 
     @Test

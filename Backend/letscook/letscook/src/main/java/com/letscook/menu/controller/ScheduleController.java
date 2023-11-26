@@ -64,8 +64,8 @@ public class ScheduleController {
         return scheduleService.getMealById(id);
     }
 
-    @GetMapping("/meal/cook")
-    public List<Meal> getMealsByCookId(@RequestParam() Long id) {
+    @GetMapping("/meal/cook/{id}")
+    public List<Meal> getMealsByCookId(@PathVariable() Long id) {
         return scheduleService.getMealsByCookId(id);
     }
 
