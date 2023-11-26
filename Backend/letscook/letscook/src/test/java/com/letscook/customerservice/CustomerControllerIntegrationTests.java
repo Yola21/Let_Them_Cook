@@ -1,4 +1,4 @@
-package com.letscook.letscook;
+package com.letscook.customerservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.letscook.LetscookApplication;
