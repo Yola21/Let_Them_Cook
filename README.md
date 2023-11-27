@@ -156,16 +156,35 @@ These dependencies are required for building and running the application. The de
 | junit-jupiter-api | 5.8.1 | junit jupiter for unit testing in java |
 
 ### Continuous Integration and Continuous Deployment
-Application uses multiple stages to build, test, and deploy code along with analysing the code quality of the changed files.
-- npm test - Runs all the tests written for the frontend code implemented using Karma Unit Tests for React files
-- npm build - Builds the frontend package into main.js, vendor.js files of version es2015 and es2020
-- npm deploy - Deploys the packaged js files into the NETLIFY server to the URL: https://let-them-cook.netlify.app/
-- test - Checks if the code adheres to the code quality gate guidelines of GitLab Server.
-- build - Runs the Designite jar file in the GitLab Server
-- issue - Runs the Designite tool on the backend code of the application
-- publish - Builds the backend of the application using gradle build
-- gradle test - Runs all the tests written for backend in the GitLab Server
-- deploy - Deploys the backend code to the Dal VM Server with the URL: http://os-vm173.research.cs.dal.ca/
+The application employs a multi-stage approach for code development, testing, deployment, and code quality analysis of modified files. 
+We have expanded our CI/CD pipeline by adding extra stages to bolster our capabilities, ensuring thorough checks for code quality. 
+The CI/CD uses a custom runner tagged using development for running the pipeline.
+Here is an overview of the various CI/CD stages:
+
+- npm test: Executes all the frontend tests using Karma Unit Tests for React files in the VM Server.
+- npm build: Compiles the frontend package into main.js and vendor.js files of both es2015 and es2020 versions.
+- npm deploy: Deploys the packaged JS files to the NETLIFY server at https://let-them-cook.netlify.app/.
+- test: Verifies if the code aligns with the code quality gate guidelines on the GitLab Server.
+- build: Utilizes the Designite tool via a jar file on the GitLab Server to analyze the code.
+- issue: Applies the Designite tool to the application's backend code.
+- publish: Uses the Gradle build to construct the backend of the application.
+- gradle test: Runs all backend tests within the GitLab Server.
+- deploy: Deploys the backend code to the Dal VM Server, accessible at http://os-vm173.research.cs.dal.ca/.
+
+### Smells
+The code repository shows minimal issues flagged by the Designite code quality tool, with the majority of identified problems already resolved. 
+The remaining detected issues are considered False Positives because altering that code might impact the overall syntax and functionality. 
+Exhaustive analysis has effectively tackled Architecture and Implementation concerns, resolving them at an impressive rate of 99%.
+
+### Code Quality
+Our team has prioritized top-notch code quality while steadfastly upholding functionality. Our coding approach adheres to specific principles, guaranteeing:
+
+- Singular Responsibility
+- Open/Closed Principle
+- Liskov Substitution
+
+These principles form the foundation upon which our code is built, ensuring both quality and robust functionality.
+
 
 ## Usage Scenarios for Let Them Cook
 
