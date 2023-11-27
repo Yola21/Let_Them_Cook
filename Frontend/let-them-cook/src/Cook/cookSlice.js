@@ -19,24 +19,16 @@ export const fetchSchedulesByCook = createAsyncThunk(
     );
     const schedules = await response.json();
     if (args.isCustomer) {
-      // console.log({ schedules });
+      console.log({ schedules });
       const schedule = schedules.filter((schedule) => {
         console.log(
           moment.utc(schedule.start_date).format("YYYY-MM-DD"),
-          moment
-            .utc()
-            .startOf("W")
-            .subtract(1, "d")
-            .format("YYYY-MM-DD")
+          moment.utc().startOf("W").subtract(1, "d").format("YYYY-MM-DD")
         );
 
         return (
           moment.utc(schedule.start_date).format("YYYY-MM-DD") ===
-          moment
-            .utc()
-            .startOf("W")
-            .subtract(1, "d")
-            .format("YYYY-MM-DD")
+          moment.utc().startOf("W").subtract(1, "d").format("YYYY-MM-DD")
         );
       })[0];
 
