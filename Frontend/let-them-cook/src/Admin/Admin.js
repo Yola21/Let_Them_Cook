@@ -15,6 +15,7 @@ import { fetchCooks } from "./adminSlice";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import PendingCooksRequests, { CookDetails } from "./PendingCooksRequests";
 import VerifiedCooksRequests from "./VerifiedCooksRequests";
+import { setCurrentUserRole } from "../Authentication/authSlice";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -46,7 +47,7 @@ export default function Admin() {
   };
 
   const handleLogout = () => {
-    // localStorage.removeItem("token");
+    dispatch(setCurrentUserRole(null));
     history.push("/");
   };
 

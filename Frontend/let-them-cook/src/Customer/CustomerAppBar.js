@@ -15,16 +15,18 @@ import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getMealsInCartCount } from "./customerSlice";
+import { setCurrentUserRole } from "../Authentication/authSlice";
 
 export default function CustomerAppBar() {
   const mealsInCartCount = useSelector(getMealsInCartCount);
   const history = useHistory();
+  const dispatch = useDispatch();
   const { id } = useParams();
 
   const handleLogout = () => {
-    // localStorage.removeItem("token");
+    dispatch(setCurrentUserRole(null));
     history.push("/");
   };
 
