@@ -7,6 +7,8 @@ import com.letscook.menu.repository.MealRepository;
 import com.letscook.order.model.*;
 import com.letscook.order.repository.MealorderRepository;
 import com.letscook.order.repository.OrderRepository;
+import com.letscook.userdetails.repository.UserDetailsRepository;
+import com.letscook.util.EmailSenderService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,12 @@ public class OrderService {
 
     @Autowired
     private MealorderRepository mealorderRepository;
+
+    @Autowired
+    private EmailSenderService senderService;
+
+    @Autowired
+    private UserDetailsRepository userDetailsRepository;
 
     public ResponseEntity<Order> createOrder(CreateOrderInput createOrderInput)
             throws EntityNotFoundException {
@@ -120,10 +128,19 @@ public class OrderService {
         }
         return orderList;
     }
+
     public ResponseEntity<Mealorder> updateOrderStatus(UpdateOrderStatus updateOrderStatus) {
         Mealorder mealorder = mealorderRepository.findById(updateOrderStatus.getMealOrderId()).orElseThrow();
         mealorder.setStatus(updateOrderStatus.getStatus());
         Mealorder updatedMealorder = mealorderRepository.save(mealorder);
+        try {
+            String email = userDetailsRepository.findById(updateOrderStatus.getCustomerId()).get().getEmail();
+            senderService.sendSimpleEmail(email, "Order Status Update",
+                    "You order status for order " + updateOrderStatus.getOrderId() + " is " + updateOrderStatus.getStatus());
+        } catch (Exception e) {
+
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedMealorder);
     }
 }

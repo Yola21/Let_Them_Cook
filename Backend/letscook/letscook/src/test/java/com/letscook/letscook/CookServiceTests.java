@@ -6,7 +6,9 @@ import com.letscook.cook.model.UpdateCookProfileInput;
 import com.letscook.cook.repository.CookRepository;
 import com.letscook.cook.service.CookService;
 import com.letscook.enums.CookStatus;
-import com.letscook.menu.model.dish.Dish;
+import com.letscook.userdetails.model.UserInfo;
+import com.letscook.userdetails.repository.UserDetailsRepository;
+import com.letscook.util.EmailSenderService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +25,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CookServiceTests {
@@ -31,8 +35,16 @@ public class CookServiceTests {
     @Mock
     private CookRepository cookRepository;
 
+    @Mock
+    private UserDetailsRepository userDetailsRepository;
+
+    @Mock
+    private EmailSenderService emailSenderService;
+
     @InjectMocks
     private CookService cookService;
+
+    private UserInfo userInfo;
 
     // Utility class for generating mock data
     private static class MockDataGenerator {
@@ -138,6 +150,13 @@ public class CookServiceTests {
         when(cookRepository.findById(input.getId())).thenReturn(Optional.of(mockCook));
         when(cookRepository.save(any(Cook.class))).thenReturn(mockCook);
 
+        userInfo = new UserInfo();
+        userInfo.setId(1L);
+        userInfo.setEmail("");
+
+        //when(userDetailsRepository.findById(1L)).thenReturn(Optional.of(userInfo));
+        //doReturn(true).when(emailSenderService).sendSimpleEmail(anyString(), anyString(), anyString());
+
         ResponseEntity<Cook> result = cookService.updateCookProfile(input);
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -153,6 +172,12 @@ public class CookServiceTests {
         input.setBannerImage("New Image");
         input.setBusinessDocument("New Image");
         input.setStatus(CookStatus.ACCEPTED.name());
+        userInfo = new UserInfo();
+        userInfo.setId(1L);
+        userInfo.setEmail("");
+
+        when(userDetailsRepository.findById(1L)).thenReturn(Optional.of(userInfo));
+        doReturn(true).when(emailSenderService).sendSimpleEmail(anyString(), anyString(), anyString());
 
         Cook mockCook = MockDataGenerator.createMockCook();
         //mockCook.setStatus(String.valueOf(CookStatus.PENDING));
@@ -160,8 +185,8 @@ public class CookServiceTests {
         when(cookRepository.save(any(Cook.class))).thenAnswer(invocation -> invocation.getArgument(0));
         Cook updatedCook = cookService.updateCookProfile(input).getBody();
 
-        assertEquals(updatedCook.getStatus(),CookStatus.ACCEPTED.name());
-        assertEquals(updatedCook.getBusinessDocument(),input.getBusinessDocument());
+        assertEquals(updatedCook.getStatus(), CookStatus.ACCEPTED.name());
+        assertEquals(updatedCook.getBusinessDocument(), input.getBusinessDocument());
 
 //        Error exception = assertThrows(Error.class, () -> {
 //            cookService.updateCookProfile(input);
@@ -180,6 +205,10 @@ public class CookServiceTests {
         when(cookRepository.findById(input.getId())).thenReturn(Optional.of(mockCook));
         when(cookRepository.save(any(Cook.class))).thenReturn(mockCook);
 
+        userInfo = new UserInfo();
+        userInfo.setId(1L);
+        userInfo.setEmail("");
+
         ResponseEntity<Cook> result = cookService.updateCookProfile(input);
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -190,6 +219,9 @@ public class CookServiceTests {
     void updateCookProfile_EntityNotFoundException() {
         UpdateCookProfileInput input = new UpdateCookProfileInput();
         input.setId(1L);
+        userInfo = new UserInfo();
+        userInfo.setId(1L);
+        userInfo.setEmail("");
 
         when(cookRepository.findById(input.getId())).thenReturn(Optional.empty());
 
