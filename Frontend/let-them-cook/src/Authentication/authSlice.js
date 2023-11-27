@@ -28,8 +28,16 @@ export const createUser = createAsyncThunk(
         thunkApi.dispatch(
           createCookProfile({ id: userInfo.id, history: args.history })
         );
+      } else if (userInfo.role === "user") {
+        thunkApi.dispatch(
+          createCustomerProfile({
+            userId: userInfo.id,
+            name: userInfo.name,
+            history: args.history,
+          })
+        );
       } else {
-        args.history.push("/login");
+        args.history.push("/");
       }
     }
 
@@ -50,8 +58,19 @@ export const userLogin = createAsyncThunk("auth/userLogin", async (args) => {
     },
     body: JSON.stringify(data),
   });
-  const userInfo = await response.json();
-  return userInfo;
+  const user = await response.json();
+  if (user != null) {
+    console.log({ user });
+    const role = user.userInfo.role;
+    if (role === "admin") {
+      args.history.push("/admin");
+    } else if (role === "cook") {
+      args.history.push(`/cook/${user.userInfo.id}`);
+    } else if (role === "user") {
+      args.history.push(`/customer/${user.userInfo.id}`);
+    }
+  }
+  return user;
 });
 
 export const createCookProfile = createAsyncThunk(
@@ -89,7 +108,36 @@ export const createCookProfile = createAsyncThunk(
       }
     );
     const cookInfo = await response.json();
-    args.history.push("/login");
+    args.history.push("/");
+    return cookInfo;
+  }
+);
+
+export const createCustomerProfile = createAsyncThunk(
+  "auth/createCustomerProfile",
+  async (args, thunkApi) => {
+    const state = thunkApi.getState();
+    const phoneNumber = getCustomerPhoneNumber(state);
+
+    const data = {
+      userId: args.userId,
+      name: args.name,
+      phoneNumber,
+    };
+
+    console.log({ args }, { data });
+    const response = await fetch(
+      `${config.BASE_PATH}${config.CUSTOMERS}${config.CUSTOMERS_CREATE_PROFILE}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    const cookInfo = await response.json();
+    args.history.push("/");
     return cookInfo;
   }
 );
@@ -157,6 +205,7 @@ export const authSlice = createSlice({
   },
   reducers: {
     setCustomerPhoneNumber(state, action) {
+      console.log(action.payload);
       state.customerPhoneNumber = action.payload;
     },
     setCookBusinessName(state, action) {
@@ -211,6 +260,14 @@ export const authSlice = createSlice({
       toast.success("COOK REGISTERED SUCCESSFULLY!");
     },
     [createCookProfile.rejected]: (state, action) => {
+      console.log(action.payload);
+    },
+    //Create Customer Profile
+    [createCustomerProfile.fulfilled]: (state, action) => {
+      console.log("Customer profile created", action.payload);
+      toast.success("CUSTOMER REGISTERED SUCCESSFULLY!");
+    },
+    [createCustomerProfile.rejected]: (state, action) => {
       console.log(action.payload);
     },
 
