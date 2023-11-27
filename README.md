@@ -31,7 +31,9 @@ An innovative application tailored to enhance sales for local food businesses by
   - Move to the Java project root directory
   - run gradle task in verifaction `test`, this will run test cases and give results in the terminal
 
-The deployed project can be accessed at https://let-them-cook.netlify.app/
+### The deployed project can be accessed at https://let-them-cook.netlify.app/
+  - Admin credentials: email= admin@gmail.com & password=password
+  - Admin url: https://let-them-cook.netlify.app/admin
 
 ### React instructions
 
@@ -179,9 +181,9 @@ Exhaustive analysis has effectively tackled Architecture and Implementation conc
 ### Code Quality
 Our team has prioritized top-notch code quality while steadfastly upholding functionality. Our coding approach adheres to specific principles, guaranteeing:
 
-- Singular Responsibility
-- Open/Closed Principle
-- Liskov Substitution
+- Singular Responsibility: Each controller and service class have reponsibilty of just one. Like CookController have apis for cook only, PaymentService have only methods related to payment.
+- Open/Closed Principle: We have written and refactored code such that it is open of extension but closed for modification.
+- Liskov Substitution: we created classes such that objects of a superclass shall be replaceable with objects of its subclasses without breaking the application.
 
 These principles form the foundation upon which our code is built, ensuring both quality and robust functionality.
 
