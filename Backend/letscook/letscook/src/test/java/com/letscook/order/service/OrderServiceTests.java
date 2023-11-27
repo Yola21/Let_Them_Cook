@@ -10,6 +10,9 @@ import com.letscook.menu.repository.MealRepository;
 import com.letscook.order.model.*;
 import com.letscook.order.repository.MealorderRepository;
 import com.letscook.order.repository.OrderRepository;
+import com.letscook.userdetails.model.UserInfo;
+import com.letscook.userdetails.repository.UserDetailsRepository;
+import com.letscook.util.EmailSenderService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -59,6 +62,12 @@ public class OrderServiceTests {
     private CustomerRepository customerRepository;
     @Mock
     private MealorderRepository mealorderRepository;
+    @Mock
+    private UserDetailsRepository userDetailsRepository;
+
+    @Mock
+    private EmailSenderService emailSenderService;
+
     @InjectMocks
     private OrderService orderService;
     private Schedule schedule;
@@ -68,6 +77,8 @@ public class OrderServiceTests {
     private Meal limitedMeal;
     private Customer customer;
     private Order order;
+
+    private UserInfo userinfo;
 
     @BeforeAll
     public void init() {
@@ -85,6 +96,9 @@ public class OrderServiceTests {
         buildLimitedMeal(mealDate);
         buildCustomer();
         buildOrder();
+        userinfo = new UserInfo();
+        userinfo.setId(1L);
+        userinfo.setEmail("test@gmail.com");
     }
 
     @Test
@@ -239,9 +253,9 @@ public class OrderServiceTests {
     @Test
     public void testUpdateOrderStatus() {
         // Arrange
-        Long mealOrderId= ORDER_ID;
-        Long orderId= ORDER_ID;
-        Long customerId= customer.getId();
+        Long mealOrderId = ORDER_ID;
+        Long orderId = ORDER_ID;
+        Long customerId = customer.getId();
         UpdateOrderStatus updateOrderStatus = new UpdateOrderStatus();
         updateOrderStatus.setMealOrderId(mealOrderId);
         updateOrderStatus.setOrderId(orderId);
@@ -254,16 +268,19 @@ public class OrderServiceTests {
 
 
         when(mealorderRepository.findById(mealOrderId)).thenReturn(Optional.of(mealorder));
+        when(userDetailsRepository.findById(customerId)).thenReturn(Optional.of(userinfo));
+        doReturn(true).when(emailSenderService).sendSimpleEmail(anyString(), anyString(), anyString());
+
         when(mealorderRepository.save(any(Mealorder.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Mealorder updatedOrder = orderService.updateOrderStatus(updateOrderStatus).getBody();
 
         // Act
         assert updatedOrder != null;
-        assertEquals(updatedOrder.getStatus(),updateOrderStatus.getStatus());
-        assertEquals(updateOrderStatus.getOrderId(),orderId);
-        assertEquals(updateOrderStatus.getMealOrderId(),mealOrderId);
-        assertEquals(updateOrderStatus.getCustomerId(),customerId);
+        assertEquals(updatedOrder.getStatus(), updateOrderStatus.getStatus());
+        assertEquals(updateOrderStatus.getOrderId(), orderId);
+        assertEquals(updateOrderStatus.getMealOrderId(), mealOrderId);
+        assertEquals(updateOrderStatus.getCustomerId(), customerId);
     }
 
     private void buildOrder() {
