@@ -17,7 +17,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TiffinServiceStorePage from "./Customer/TiifinServiceStorePage";
 import MealCart from "./Customer/MealCart";
-import OrderPayment from "./Customer/OrderPayment";
 import OrderHistory from "./Customer/OrderHistory";
 
 function App() {
@@ -46,10 +45,6 @@ function App() {
         <Route exact path="/customer/:id/order-history">
           {" "}
           <OrderHistory />{" "}
-        </Route>
-        <Route exact path="/customer/:id/payment">
-          {" "}
-          <OrderPayment />{" "}
         </Route>
         <Route exact path="/customer/:id/store">
           {" "}
