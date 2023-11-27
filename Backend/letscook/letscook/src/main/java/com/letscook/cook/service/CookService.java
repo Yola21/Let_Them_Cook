@@ -6,20 +6,26 @@ import com.letscook.cook.model.UpdateCookProfileInput;
 import com.letscook.cook.repository.CookRepository;
 import com.letscook.enums.CookStatus;
 import com.letscook.menu.model.dish.Dish;
+import com.letscook.userdetails.repository.UserDetailsRepository;
+import com.letscook.util.EmailSenderService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
 public class CookService {
     @Autowired
     private CookRepository cookRepository;
+
+    @Autowired
+    private EmailSenderService senderService;
+
+    @Autowired
+    private UserDetailsRepository userDetailsRepository;
 
     public Cook getCook(Long id) {
         return cookRepository.findById(id).orElse(null);
@@ -77,7 +83,14 @@ public class CookService {
         }
 
         if (updateCookProfileInput.getStatus() != null) {
-            cookToUpdate.setStatus(updateCookProfileInput.getStatus());
+            try {
+                String email = userDetailsRepository.findById(cookToUpdate.getId()).get().getEmail();
+                senderService.sendSimpleEmail(email, "Verification update",
+                        "You status for business verfication is " + updateCookProfileInput.getStatus());
+                cookToUpdate.setStatus(updateCookProfileInput.getStatus());
+            } catch (Exception e) {
+
+            }
         }
         Cook updatedCook = cookRepository.save(cookToUpdate);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedCook);

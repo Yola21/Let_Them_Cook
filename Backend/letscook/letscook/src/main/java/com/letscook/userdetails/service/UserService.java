@@ -40,6 +40,8 @@ public class UserService {
         } else {
             userDetails.setPassword(passwordEncoder().encode(userDetails.getPassword()));
             UserInfo createdUser = userDetailsRepository.save(userDetails);
+            senderService.sendSimpleEmail(userDetails.getEmail(), "Registration",
+                    "You have successfully registered");
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         }
     }
@@ -68,8 +70,8 @@ public class UserService {
         jwtClaimsSetBuilder.issuedAt(Instant.now());
         jwtClaimsSetBuilder.expiresAt(Instant.now().plusSeconds(EXPIRE_AFTER_SECONDS));
         jwtClaimsSetBuilder.subject(userInfo.getName());
-        jwtClaimsSetBuilder.claim("scope",createScope(userInfo));
-        var claims  = jwtClaimsSetBuilder.build();
+        jwtClaimsSetBuilder.claim("scope", createScope(userInfo));
+        var claims = jwtClaimsSetBuilder.build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims))
                 .getTokenValue();
     }
