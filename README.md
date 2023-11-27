@@ -11,10 +11,10 @@ In Canada, the scarcity of platforms offering tiffin services is a pervasive iss
 An innovative application tailored to enhance sales for local food businesses by offering a comprehensive platform. It serves as a unified space for advertising, order collection, and management. Users can set their meal schedules akin to a cook's routine and access in-depth analytics to bolster sales strategies. Whether opting for a one-time order or subscribing to meals, customers can conveniently view meal schedules and personalize their subscriptions within the platform.
 
 ### Test Case Coverage
-![Static Badge](https://img.shields.io/badge/Class_Coverage-100%25-blue)
-![Static Badge](https://img.shields.io/badge/Method_Coverage-93%25-blue)
-![Static Badge](https://img.shields.io/badge/Line_Coverage-95%25-blue)
-![Static Badge](https://img.shields.io/badge/Branch_Coverage-88%25-blue)
+![Static Badge](https://img.shields.io/badge/Class_Coverage-92%25-blue)
+![Static Badge](https://img.shields.io/badge/Method_Coverage-78%25-blue)
+![Static Badge](https://img.shields.io/badge/Line_Coverage-86%25-blue)
+![Static Badge](https://img.shields.io/badge/Branch_Coverage-79%25-blue)
 
 ## Build/deployment instructions
 
@@ -194,7 +194,7 @@ These principles form the foundation upon which our code is built, ensuring both
 
 - Upon visiting Let Them Cook, users are presented with options to `Log In` or `Sign Up`.
 
-![Landing Page Screenshot](url)
+![Landing Page Screenshot](./assets/Screenshot1.png)
 
 #### Authentication
 
@@ -202,80 +202,83 @@ These principles form the foundation upon which our code is built, ensuring both
 
 - Existing users enter their credentials to access their accounts. Based on their roles they will be directed to their respective dashboard.
 
-![Log In Screenshot](url)
+![Log In Screenshot](assets/Screenshot1.png)
 
 ##### Sign Up
 
 - New users navigate to the `Sign Up Page` and complete `User Registration` to create an account.
 
-![Sign Up Screenshot](url)
+![Sign Up Screenshot](assets/Screenshot7.png)
 - User has create their profile which requires name, phone number. For cook it requires few more things like profile picture, banner image and business documents.
-![Create Profile](url)
+![Create Profile](assets/Screenshot9.png)
+![Create Profile](assets/Screenshot10.png)
+
+#### Admin Dashboard
+
+- Admin can see the cooks that has verfication pending and they can verify by seeing their business documents
+![Cook Dashboard Screenshot](assets/Screenshot12.png)
+![Cook Dashboard Screenshot](assets/Screenshot15.png)
 
 #### Cook Dashboard
 
 - Once authenticated, the cook is directed to the landing page. The dashboard will have create schedule, create dish, create meal options and will see the schedules, dishes, and meals they have added.
 
-![Cook Dashboard Screenshot](url)
+![Cook Dashboard Screenshot](assets/Screenshot16.png)
 
 #### Update Profile
 
 - Users can update their personal details such as name, email, profile picture, banner image, phone number and business document under certain condition.
 
-![Update Profile Screenshot](url)
+![Update Profile Screenshot](assets/Screenshot46.png)
 
 ### Screens for cook menu management
 
 - cooks select `Add dish` to add new dish.
 
-![Add Dish Screenshot](url)
+![Add Dish Screenshot](assets/Screenshot34.png)
 
 - cooks can edit dish the dish they have created.
 
-![Edit Dish Screenshot](url)
+![Edit Dish Screenshot](assets/Screenshot42.png)
 
 - Cooks can add the dish to meal by clicking on `Add meal`.
 
-![Add Meal Screenshot](url)
+![Add Meal Screenshot](assets/Screenshot24.png)
 
 - Cooks can edit the meal they have created, they can edit name, price and other parameters.
 
-![Edit Meal Screenshot](url)
+![Edit Meal Screenshot](assets/Screenshot38.png)
 
 - Cooks can create a schedule which customer will see and order from it.
 
-![Schedule Screenshot](url)
-
-- Cooks can edit the schedule they have created, they can edit date, order deadline, limit.
-
-![Edit Schedule Screenshot](url)
+![Schedule Screenshot](assets/Screenshot20.png)
 
 
 ### Screens for cook order management
 
 - Cooks can see the orders they received and change the status of it.
 
-![Cook Order Management Screenshot](url)
+![Cook Order Management Screenshot](assets/Screenshot49.png)
 
 ### Customer Dashboard 
 
 - Customer will get to see all the cooks available as a list and can order a meal from their schedule.
 
-![Customer Dashboard Screenshot](url)
+![Customer Dashboard Screenshot](assets/Screenshot53.png)
 
 ### Screens for customers ordering meal
 
 - Customers can order a single meal or get a subscription for a week from the cook they selected and proceed to checkout.
 
-![Order Meal Screenshot](url)
+![Order Meal Screenshot](assets/Screenshot55.png)
 
 - Afterwards, in checkout customer will see amout to pay and details.
 
-![Checkout Screenshot](url)
+![Checkout Screenshot](assets/Screenshot57.png)
 
 - On clicking `pay` user will bee redirected to page where they add card details and pay the amount and upon successful payment order will be placed.
 
-![Pay Screenshot](url)
+![Pay Screenshot](assets/Screenshot59.png)
 
 ## Conclusion
 
