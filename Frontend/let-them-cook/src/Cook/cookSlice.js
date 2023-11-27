@@ -421,7 +421,7 @@ export const deleteMeal = createAsyncThunk(
 );
 
 export const fetchOrdersByMeal = createAsyncThunk(
-  "cook/fetchMealsBySchedule",
+  "cook/fetchOrdersByMeal",
   async (args, thunkApi) => {
     const token = localStorage.getItem("token");
 

@@ -79,7 +79,6 @@ export default function CreateMealScheduleForm() {
         </Typography>
         <input
           type="date"
-          min={getFullDate(calendarDays[0])}
           value={scheduleStartDate}
           onChange={handleScheduleStartDateChange}
         />

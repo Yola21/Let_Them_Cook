@@ -116,6 +116,7 @@ function Login() {
                 variant="contained"
                 className="actionButton"
                 onClick={handleLogin}
+                style={{ marginBottom: "1rem" }}
               >
                 Login
               </Button>
