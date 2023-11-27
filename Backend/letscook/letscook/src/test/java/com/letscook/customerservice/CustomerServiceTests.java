@@ -1,4 +1,4 @@
-package com.letscook.letscook;
+package com.letscook.customerservice;
 
 import com.letscook.customer.model.CreateCustomerProfileInput;
 import com.letscook.customer.model.Customer;
@@ -17,16 +17,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+
 public class CustomerServiceTests {
     @InjectMocks
     private CustomerService customerService;
 
     @Mock
     private CustomerRepository customerRepository;
+    
+    private static final Long ID = 1L;
 
     @BeforeEach
     void setUp() {
@@ -35,7 +39,7 @@ public class CustomerServiceTests {
 
     private CreateCustomerProfileInput createDummyCreateCustomerProfileInput() {
         CreateCustomerProfileInput input = new CreateCustomerProfileInput();
-        input.setUserId(1L);
+        input.setUserId(ID);
         input.setName("Nikunj Hudka");
         input.setPhoneNumber("1234567890");
         return input;
@@ -46,7 +50,7 @@ public class CustomerServiceTests {
         // Mocking
         CreateCustomerProfileInput input = createDummyCreateCustomerProfileInput();
         Customer expectedCustomer = new Customer();
-        expectedCustomer.setId(1L);
+        expectedCustomer.setId(ID);
         expectedCustomer.setName(input.getName());
         expectedCustomer.setPhoneNumber(input.getPhoneNumber());
         when(customerRepository.save(any(Customer.class))).thenReturn(expectedCustomer);
@@ -69,7 +73,7 @@ public class CustomerServiceTests {
         existingCustomer.setName("Old Name");
         existingCustomer.setPhoneNumber("9876543210");
 
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(existingCustomer));
+        when(customerRepository.findById(ID)).thenReturn(Optional.of(existingCustomer));
         when(customerRepository.save(any(Customer.class))).thenReturn(existingCustomer);
 
         // Test the method
@@ -92,7 +96,7 @@ public class CustomerServiceTests {
         input.setPhoneNumber(null);
         input.setName(null);
 
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(existingCustomer));
+        when(customerRepository.findById(ID)).thenReturn(Optional.of(existingCustomer));
         when(customerRepository.save(any(Customer.class))).thenReturn(existingCustomer);
 
         // Test the method
@@ -109,7 +113,7 @@ public class CustomerServiceTests {
     @Test
     void testGetCustomerById() {
         // Mocking
-        Long customerId = 1L;
+        Long customerId = ID;
         Customer expectedCustomer = new Customer();
         expectedCustomer.setId(customerId);
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(expectedCustomer));
@@ -139,7 +143,7 @@ public class CustomerServiceTests {
     @Test
     void testDeleteCustomerById() {
         // Mocking
-        Long customerId = 1L;
+        Long customerId = ID;
         Customer customerToDelete = new Customer();
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customerToDelete));
 

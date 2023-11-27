@@ -38,7 +38,7 @@ function CustomerSignUp() {
   };
 
   const onChangePhoneNumber = (e) => {
-    setCustomerPhoneNumber(e.target.value);
+    dispatch(setCustomerPhoneNumber(e.target.value));
   };
 
   const handleCustomerRegistration = () => {
@@ -141,7 +141,7 @@ function CustomerSignUp() {
                 type="number"
                 value={phoneNumber}
                 onChange={onChangePhoneNumber}
-                sx={{ marginBottom: "3rem" }}
+                sx={{ marginBottom: "1rem" }}
               />
               <TextField
                 required
