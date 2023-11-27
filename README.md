@@ -208,77 +208,77 @@ These principles form the foundation upon which our code is built, ensuring both
 
 - New users navigate to the `Sign Up Page` and complete `User Registration` to create an account.
 
-![Sign Up Screenshot](assets/Screenshot%20(7).png)
+![Sign Up Screenshot](assets/Screenshot7.png)
 - User has create their profile which requires name, phone number. For cook it requires few more things like profile picture, banner image and business documents.
-![Create Profile](assets/Screenshot%20(9).png)
-![Create Profile](assets/Screenshot%20(10).png)
+![Create Profile](assets/Screenshot9.png)
+![Create Profile](assets/Screenshot10.png)
 
 #### Admin Dashboard
 
 - Admin can see the cooks that has verfication pending and they can verify by seeing their business documents
-![Cook Dashboard Screenshot](assets/Screenshot%20(12).png)
-![Cook Dashboard Screenshot](assets/Screenshot%20(15).png)
+![Cook Dashboard Screenshot](assets/Screenshot12.png)
+![Cook Dashboard Screenshot](assets/Screenshot15.png)
 
 #### Cook Dashboard
 
 - Once authenticated, the cook is directed to the landing page. The dashboard will have create schedule, create dish, create meal options and will see the schedules, dishes, and meals they have added.
 
-![Cook Dashboard Screenshot](assets/Screenshot%20(16).png)
+![Cook Dashboard Screenshot](assets/Screenshot16.png)
 
 #### Update Profile
 
 - Users can update their personal details such as name, email, profile picture, banner image, phone number and business document under certain condition.
 
-![Update Profile Screenshot](assets/Screenshot%20(46).png)
+![Update Profile Screenshot](assets/Screenshot46.png)
 
 ### Screens for cook menu management
 
 - cooks select `Add dish` to add new dish.
 
-![Add Dish Screenshot](assets/Screenshot%20(34).png)
+![Add Dish Screenshot](assets/Screenshot34.png)
 
 - cooks can edit dish the dish they have created.
 
-![Edit Dish Screenshot](assets/Screenshot%20(42).png)
+![Edit Dish Screenshot](assets/Screenshot42.png)
 
 - Cooks can add the dish to meal by clicking on `Add meal`.
 
-![Add Meal Screenshot](assets/Screenshot%20(24).png)
+![Add Meal Screenshot](assets/Screenshot24.png)
 
 - Cooks can edit the meal they have created, they can edit name, price and other parameters.
 
-![Edit Meal Screenshot](assets/Screenshot%20(38).png)
+![Edit Meal Screenshot](assets/Screenshot38.png)
 
 - Cooks can create a schedule which customer will see and order from it.
 
-![Schedule Screenshot](assets/Screenshot%20(20).png)
+![Schedule Screenshot](assets/Screenshot20.png)
 
 
 ### Screens for cook order management
 
 - Cooks can see the orders they received and change the status of it.
 
-![Cook Order Management Screenshot](assets/Screenshot%20(49).png)
+![Cook Order Management Screenshot](assets/Screenshot49.png)
 
 ### Customer Dashboard 
 
 - Customer will get to see all the cooks available as a list and can order a meal from their schedule.
 
-![Customer Dashboard Screenshot](assets/Screenshot%20(53).png)
+![Customer Dashboard Screenshot](assets/Screenshot53.png)
 
 ### Screens for customers ordering meal
 
 - Customers can order a single meal or get a subscription for a week from the cook they selected and proceed to checkout.
 
-![Order Meal Screenshot](assets/Screenshot%20(55).png)
+![Order Meal Screenshot](assets/Screenshot55.png)
 
 - Afterwards, in checkout customer will see amout to pay and details.
 
-![Checkout Screenshot](assets/Screenshot%20(57).png)
+![Checkout Screenshot](assets/Screenshot57.png)
 
 - On clicking `pay` user will bee redirected to page where they add card details and pay the amount and upon successful payment order will be placed.
 
-![Pay Screenshot](assets/Screenshot%20(59).png)
+![Pay Screenshot](assets/Screenshot59.png)
 
 ## Conclusion
 
