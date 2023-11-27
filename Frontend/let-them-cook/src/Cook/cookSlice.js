@@ -370,9 +370,13 @@ export const updateMealToSchedule = createAsyncThunk(
       mealDate: args.mealDate,
       name: args.mealName,
       price: args.mealPrice,
-      image: imageURL,
       scheduleId: args.scheduleId,
     };
+
+    const updatedData = { ...data };
+    if (args.mealImage) {
+      updatedData["image"] = imageURL;
+    }
 
     const response = await fetch(
       `${config.BASE_PATH}${config.MENU}${config.MENU_UPDATE_MEAL_TO_SCHEDULE}`,
@@ -382,7 +386,7 @@ export const updateMealToSchedule = createAsyncThunk(
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(updatedData),
       }
     );
     const menu = await response.json();

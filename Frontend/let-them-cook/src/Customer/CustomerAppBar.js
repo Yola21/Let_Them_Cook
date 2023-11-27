@@ -33,9 +33,14 @@ export default function CustomerAppBar() {
   return (
     <AppBar style={{ backgroundColor: "#fff", color: "#000" }}>
       <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography variant="h6" component="div">
-          Let Them Cook
-        </Typography>
+        <Link
+          to={`/customer/${id}`}
+          style={{ textDecoration: "none", color: "#000" }}
+        >
+          <Typography variant="h6" component="div">
+            Let Them Cook
+          </Typography>
+        </Link>
         <div style={{ display: "flex" }}>
           <Tooltip title="Order History">
             <Link to={`/customer/${id}/order-history`}>

@@ -372,7 +372,6 @@ export function OrdersByMeal({ open, setOpenMealOrdersDailog, meal }) {
   const orders = useSelector(getMealOrders);
   const orderStatus = useSelector(getOrderStatus);
   const dispatch = useDispatch();
-  const { id } = useParams();
 
   const onClose = () => {
     setOpenMealOrdersDailog(false);
@@ -387,8 +386,8 @@ export function OrdersByMeal({ open, setOpenMealOrdersDailog, meal }) {
     dispatch(
       updateOrderStatus({
         orderId: order.id,
-        mealOrderId: order.mealorders[0].id,
-        customerId: id,
+        mealOrderId: order?.mealorders[0]?.id,
+        customerId: order?.customer?.id,
         mealId: meal.id,
         status: orderStatus[order.id],
       })
