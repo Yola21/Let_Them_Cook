@@ -7,11 +7,13 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { userLogin } from "./authSlice";
 import { toast } from "react-toastify";
+import { useHistory } from "react-router-dom/cjs/react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const onChangeEmail = (e) => {
     setEmail(e.target.value);
@@ -27,6 +29,7 @@ function Login() {
         userLogin({
           email: email,
           password: password,
+          history,
         })
       );
     } else {
@@ -116,7 +119,6 @@ function Login() {
               >
                 Login
               </Button>
-              <Button sx={{ color: "#000" }}>Forgot Password?</Button>
               <Link to="/cook/signup">
                 <Button fullWidth variant="contained" className="actionButton">
                   Register As a Cook
