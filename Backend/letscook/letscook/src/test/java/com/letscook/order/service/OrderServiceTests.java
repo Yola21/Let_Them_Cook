@@ -125,6 +125,8 @@ public class OrderServiceTests {
                 invocation.getArgument(0));
         when(mealorderRepository.save(any(Mealorder.class))).thenAnswer(invocation ->
                 invocation.getArgument(0));
+        when(userDetailsRepository.findById(CUSTOMER_ID)).thenReturn(Optional.of(userinfo));
+        doReturn(true).when(emailSenderService).sendSimpleEmail(anyString(), anyString(), anyString());
 
         // Act
         ResponseEntity<Order> response = orderService.createOrder(createOrderInput);

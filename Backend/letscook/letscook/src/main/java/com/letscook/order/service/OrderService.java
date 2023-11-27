@@ -58,6 +58,9 @@ public class OrderService {
         orderToCreate.setAmount(amount);
         Order orderCreated = orderRepository.save(orderToCreate);
         createMealOrder(createOrderInput, mealMap, orderCreated);
+        String email = userDetailsRepository.findById(createOrderInput.getCustomerId()).get().getEmail();
+        senderService.sendSimpleEmail(email, "Order Created",
+                "You order has been place with order id" + orderCreated.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(orderCreated);
     }
 
