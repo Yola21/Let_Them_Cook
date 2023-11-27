@@ -194,7 +194,7 @@ These principles form the foundation upon which our code is built, ensuring both
 
 - Upon visiting Let Them Cook, users are presented with options to `Log In` or `Sign Up`.
 
-![Landing Page Screenshot](./assets/Screenshot%20(1).png)
+![Landing Page Screenshot](./assets/Screenshot1.png)
 
 #### Authentication
 
@@ -202,7 +202,7 @@ These principles form the foundation upon which our code is built, ensuring both
 
 - Existing users enter their credentials to access their accounts. Based on their roles they will be directed to their respective dashboard.
 
-![Log In Screenshot](assets/Screenshot%20(1).png)
+![Log In Screenshot](assets/Screenshot1.png)
 
 ##### Sign Up
 
