@@ -22,6 +22,7 @@ public class EmailSenderService {
             message.setSubject(subject);
             mailSender.send(message);
         } catch (Exception e) {
+            System.out.println(e);
 
         }
         return true;
