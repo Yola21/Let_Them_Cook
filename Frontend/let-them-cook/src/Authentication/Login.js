@@ -113,10 +113,10 @@ function Login() {
                 variant="contained"
                 className="actionButton"
                 onClick={handleLogin}
+                style={{ marginBottom: "1rem" }}
               >
                 Login
               </Button>
-              <Button sx={{ color: "#000" }}>Forgot Password?</Button>
               <Link to="/cook/signup">
                 <Button fullWidth variant="contained" className="actionButton">
                   Register As a Cook

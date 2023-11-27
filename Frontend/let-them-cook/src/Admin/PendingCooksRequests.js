@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   CardMedia,
@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  fetchCooks,
   getPendingCooks,
   getSelectedCook,
   getShowCookDetails,
@@ -52,6 +53,10 @@ export default function PendingCooksRequests() {
     };
     dispatch(updateCookProfile({ data }));
   };
+
+  useEffect(() => {
+    dispatch(fetchCooks());
+  }, [dispatch]);
 
   return (
     <TableContainer component={Paper}>
