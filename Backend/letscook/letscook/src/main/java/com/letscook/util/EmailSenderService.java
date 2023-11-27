@@ -14,17 +14,21 @@ public class EmailSenderService {
                                    String subject,
                                    String body
     ) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("fromemail@gmail.com");
-        message.setTo(toEmail);
-        message.setText(body);
-        message.setSubject(subject);
-        mailSender.send(message);
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("fromemail@gmail.com");
+            message.setTo(toEmail);
+            message.setText(body);
+            message.setSubject(subject);
+            mailSender.send(message);
+        } catch (Exception e) {
+
+        }
         return true;
 
 
     }
-    
+
 
 }
 
