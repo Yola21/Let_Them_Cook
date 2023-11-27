@@ -223,6 +223,9 @@ export const authSlice = createSlice({
     setCookBusinessDocument(state, action) {
       state.cookBusinessDocument = action.payload;
     },
+    setCurrentUserRole(state, action) {
+      state.currentUserRole = action.payload;
+    },
   },
   extraReducers: {
     //Create User
@@ -303,6 +306,7 @@ export const {
   setCookBusinessDocument,
   setCookBannerImage,
   setCustomerPhoneNumber,
+  setCurrentUserRole,
 } = authSlice.actions;
 
 export const getCustomerPhoneNumber = (state) => state.auth.customerPhoneNumber;

@@ -33,7 +33,11 @@ import CreateMealForm from "./CreateMealForm";
 import CreateDishForm from "./CreateDishForm";
 import CookDashboardTabs from "./CookDashboardTabs";
 import CreateMealScheduleForm from "./CreateMealScheduleForm";
-import { cookInfo, fetchCookById } from "../Authentication/authSlice";
+import {
+  cookInfo,
+  fetchCookById,
+  setCurrentUserRole,
+} from "../Authentication/authSlice";
 
 export default function Cook() {
   const schedules = useSelector(getSchedules);
@@ -43,7 +47,7 @@ export default function Cook() {
   const { id } = useParams();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    dispatch(setCurrentUserRole(null));
     history.push("/");
   };
 
