@@ -15,6 +15,8 @@ include:
 npm test:
   stage: npm test
   image: node:18
+  tags:
+    - deployment
   script:
     - cd Frontend/let-them-cook
     - npm install
@@ -23,6 +25,8 @@ npm test:
 npm build:
   stage: npm build
   image: node:18
+  tags:
+    - deployment
   before_script:
     - cat ${FRONTEND_ENVIRONMENT_VARIABLES} >> .env
   script:
@@ -39,6 +43,8 @@ npm build:
 npm deploy: 
   stage: npm deploy
   image: node:18
+  tags:
+    - deployment
   script:
     - cd Frontend/let-them-cook
     - npm install -g netlify-cli@latest
@@ -47,6 +53,8 @@ npm deploy:
 build-smell-job:
   stage: build
   image: openjdk:11
+  tags:
+    - deployment
   script:
     - echo "Compiling the project"
     - mkdir smells/
@@ -61,6 +69,8 @@ issue-job:
   dependencies:
     - build-smell-job
   image: "python:3.10"
+  tags:
+    - deployment
   script:
     - ls -a smells/
     - pip install -r $CI_PROJECT_DIR/.gitlab/requirements.txt
@@ -90,11 +100,12 @@ publish:
   only:
     - main
     - development
-    - feature/LTC-49/CICD-for-project
 
 gradle test:
   stage: gradle test
   image: gradle:jdk17
+  tags:
+    - deployment
   before_script:
     - cd Backend/letscook/letscook
     - echo "distributionUrl=https\://services.gradle.org/distributions/gradle-7.2-all.zip" > gradle/wrapper/gradle-wrapper.properties
@@ -139,5 +150,4 @@ deploy:
   only:
     - main
     - development
-    - feature/LTC-49/CICD-for-project
 
