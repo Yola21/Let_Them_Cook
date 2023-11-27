@@ -3,8 +3,8 @@ stages:
   - npm build
   - npm deploy
   - test
-  - build
-  - issue
+  # - build
+  # - issue
   - publish
   - gradle test
   - deploy
@@ -50,31 +50,31 @@ npm deploy:
     - npm install -g netlify-cli@latest
     - netlify deploy --dir=build --prod
 
-build-smell-job:
-  stage: build
-  image: openjdk:11
-  tags:
-    - deployment
-  script:
-    - echo "Compiling the project"
-    - mkdir smells/
-    - java -jar $CI_PROJECT_DIR/.gitlab/DesigniteJava.jar -i $CI_PROJECT_DIR -o $CI_PROJECT_DIR/smells/ -d
-  artifacts:
-    paths:
-      - smells/
-      - $CI_PROJECT_DIR
+# build-smell-job:
+#   stage: build
+#   image: openjdk:11
+#   tags:
+#     - deployment
+#   script:
+#     - echo "Compiling the project"
+#     - mkdir smells/
+#     - java -jar $CI_PROJECT_DIR/.gitlab/DesigniteJava.jar -i $CI_PROJECT_DIR -o $CI_PROJECT_DIR/smells/ -d
+#   artifacts:
+#     paths:
+#       - smells/
+#       - $CI_PROJECT_DIR
 
-issue-job:
-  stage: issue
-  dependencies:
-    - build-smell-job
-  image: "python:3.10"
-  tags:
-    - deployment
-  script:
-    - ls -a smells/
-    - pip install -r $CI_PROJECT_DIR/.gitlab/requirements.txt
-    - python $CI_PROJECT_DIR/.gitlab/issue.py $CI_COMMIT_SHAß
+# issue-job:
+#   stage: issue
+#   dependencies:
+#     - build-smell-job
+#   image: "python:3.10"
+#   tags:
+#     - deployment
+#   script:
+#     - ls -a smells/
+#     - pip install -r $CI_PROJECT_DIR/.gitlab/requirements.txt
+#     - python $CI_PROJECT_DIR/.gitlab/issue.py $CI_COMMIT_SHAß
 
 publish:
   image: docker:latest
