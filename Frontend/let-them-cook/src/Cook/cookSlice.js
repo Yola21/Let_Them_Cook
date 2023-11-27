@@ -31,12 +31,12 @@ export const fetchSchedulesByCook = createAsyncThunk(
         );
 
         return (
-          moment.utc(schedule.start_date).format("YYYY-MM-DD h:mm:ss") ===
+          moment.utc(schedule.start_date).format("YYYY-MM-DD") ===
           moment
             .utc()
             .startOf("W")
             .subtract(1, "d")
-            .format("YYYY-MM-DD h:mm:ss")
+            .format("YYYY-MM-DD")
         );
       })[0];
 
